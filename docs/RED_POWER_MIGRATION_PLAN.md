@@ -168,14 +168,20 @@ Detailed execution plan: [`docs/PHASE_3_PLAN.md`](./PHASE_3_PLAN.md).
 
 ### Phase 4 — Open-to-close workflow
 
-- [ ] Add activity timeline, work updates, and audit events.
-- [ ] Prevent closure while any required work item remains open; explain what remains.
-- [ ] Add close-card confirmation and final status.
-- [ ] Add dashboard counters for card stages.
+Detailed execution plan: [`docs/PHASE_4_PLAN.md`](./PHASE_4_PLAN.md).
+
+- [x] Add activity timeline, work updates, and audit events.
+- [x] Prevent closure while any required work item remains open; explain what remains.
+- [x] Add close-card confirmation and final status.
+- [x] Add dashboard counters for card stages.
 
 **Exit condition:** the lifecycle enforces the client rule that all requested work must close before the receipt closes.
 
+> **Status (2026-09-04):** Phase 4 is **code-complete**. The service-layer closure guard, close confirmation, activity timeline, work-item updates, and live counters are implemented. `npm run build` passes; manual browser QA for RTL, keyboard dialog navigation, timeline layout, and lifecycle interactions remains before full verification sign-off.
+
 ### Phase 5 — Quality and operational readiness
+
+Detailed execution plan: [`docs/PHASE_5_PLAN.md`](./PHASE_5_PLAN.md).
 
 - [ ] Validate Arabic labels and workshop terminology with the client.
 - [ ] Test responsive, keyboard, screen-reader, and RTL behavior.

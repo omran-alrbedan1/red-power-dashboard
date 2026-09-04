@@ -116,6 +116,9 @@
     "total": "Total",
     "addRow": "Add Work Item",
     "noWork": "No work items yet",
+    "editWork": "Update Work Item",
+    "assigneePlaceholder": "Technician or assignee name",
+    "updateError": "Unable to update this work item. Check the status transition.",
     "statuses": {
       "pending": "Pending",
       "in_progress": "In Progress",
@@ -152,5 +155,33 @@
     "title": "Filter Cards",
     "status": "Status",
     "createdAt": "Created At"
+  },
+  "activity": {
+    "title": "Activity Timeline",
+    "noActivity": "No activity recorded yet",
+    "card_created": "Card created",
+    "card_status_changed": "Card status changed",
+    "work_added": "Work item added",
+    "work_updated": "Work item updated",
+    "work_status_changed": "Work status changed",
+    "work_completed": "Work completed",
+    "work_cancelled": "Work cancelled",
+    "approval_recorded": "Customer approval recorded",
+    "delivery_scheduled": "Delivery scheduled",
+    "card_closed": "Card closed",
+    "card_cancelled": "Card cancelled"
+  },
+  "closureGuard": {
+    "title": "Cannot close yet",
+    "requiredWorkRemaining": "{{count}} required work item(s) remain open",
+    "remainingWork": "Remaining work"
+  },
+  "closeCard": {
+    "title": "Close maintenance card",
+    "summary": "All required work must be completed or cancelled before closing.",
+    "confirmDescription": "After closing, work items and card status can no longer be changed.",
+    "ready": "All required work is complete. This card is ready to close.",
+    "close": "Close card",
+    "error": "Unable to close the card. Review required work and try again."
   }
 }

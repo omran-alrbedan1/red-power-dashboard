@@ -36,16 +36,18 @@ export const WorkItemEdit: React.FC<WorkItemEditProps> = ({
   const [assignee, setAssignee] = useState(workItem.assignee || "")
 
   const handleSave = () => {
-    updateWorkItem.mutate({
-      cardId,
-      workItemId: workItem.id,
-      updates: {
-        progress,
-        status,
-        assignee: assignee || undefined,
+    updateWorkItem.mutate(
+      {
+        cardId,
+        workItemId: workItem.id,
+        updates: {
+          progress,
+          status,
+          assignee: assignee || undefined,
+        },
       },
-    })
-    onOpenChange(false)
+      { onSuccess: () => onOpenChange(false) },
+    )
   }
 
   const handleCancel = () => {
@@ -108,6 +110,9 @@ export const WorkItemEdit: React.FC<WorkItemEditProps> = ({
         </div>
 
         <DialogFooter>
+          {updateWorkItem.isError && (
+            <p className="me-auto text-sm text-destructive">{t("work.updateError")}</p>
+          )}
           <Button variant="outline" onClick={handleCancel}>
             {t("cancel")}
           </Button>

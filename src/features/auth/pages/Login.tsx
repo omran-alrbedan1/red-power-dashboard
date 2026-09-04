@@ -46,12 +46,11 @@ const Login: React.FC = () => {
         <div className="w-full max-w-md">
           <div className="flex flex-col gap-6">
             <div className="mx-auto mb-4 flex flex-col items-center gap-3">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary shadow-[0_0_42px_rgba(225,6,19,0.35)]">
-                <Wrench className="h-8 w-8 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-                Red Power
-              </h1>
+              <img
+                src="/images/red-power/brand/red-power-logo.png"
+                alt="Red Power Garage"
+                className="h-auto w-48 object-contain"
+              />
             </div>
 
             <div>
@@ -111,26 +110,26 @@ const Login: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Panel: Brand image */}
-      <div className="relative hidden w-1/2 md:block">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
+      {/* Left-side desktop brand image panel */}
+      <div className="relative hidden w-1/2 overflow-hidden md:block">
         <div className="absolute inset-0 overflow-hidden">
           <img
-            src={null}
-            alt="Red Power Garage"
-            className="h-screen w-full object-cover opacity-10"
-            style={{ display: 'none' }}
+            src="/images/red-power/brand/og-share-background-og.jpg"
+            alt=""
+            className="h-full w-full object-cover"
           />
         </div>
-        <div className="relative flex h-full w-full flex-col items-center justify-center gap-6 bg-background-secondary p-12">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/65 to-background/95" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+        <div className="relative flex h-full w-full flex-col items-center justify-center gap-6 p-12 text-center">
           <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary shadow-[0_0_42px_rgba(225,6,19,0.35)]">
             <Wrench className="h-12 w-12 text-white" />
           </div>
-          <h2 className="text-4xl font-bold text-text-primary">Red Power Garage</h2>
-          <p className="max-w-sm text-center text-lg text-text-secondary">
+          <h2 className="text-4xl font-bold text-white">Red Power Garage</h2>
+          <p className="max-w-sm text-lg text-zinc-200">
             لوحة تحكم إدارة ورشة Red Power
           </p>
-          <div className="mt-4 border-t border-border pt-4">
+          <div className="mt-4 border-t border-white/20 pt-4">
             <LanguageSwitcher />
           </div>
         </div>

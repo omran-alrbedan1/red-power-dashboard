@@ -1,5 +1,5 @@
-import type { MaintenanceCard } from "../types/maintenance.types"
-import type { WorkItem } from "../types/work-item.types"
+import type { MaintenanceCard, MaintenanceStatus } from "../types/maintenance.types"
+import type { WorkItem, WorkStatus } from "../types/work-item.types"
 import type { MaintenanceCardSummary } from "../types/summary.types"
 import type { ActivityEvent, ActivityType } from "../types/activity.types"
 import {
@@ -44,17 +44,22 @@ const createActivityEvent = (
   metadata,
 })
 
-const canCloseCard = (card: MaintenanceCard): { allowed: boolean; reason?: string } => {
+export const getClosureStatus = (card: MaintenanceCard): { allowed: boolean; remainingWork: WorkItem[] } => {
   const openRequiredWork = card.workItems.filter(
     (w) => w.isRequired && w.status !== "completed" && w.status !== "cancelled"
   )
-  if (openRequiredWork.length > 0) {
-    return {
-      allowed: false,
-      reason: `${openRequiredWork.length} required work items remain open`,
-    }
+  return { allowed: openRequiredWork.length === 0, remainingWork: openRequiredWork }
+}
+
+const canTransitionWorkStatus = (from: WorkStatus, to: WorkStatus) => {
+  if (from === to) return true
+  const transitions: Record<WorkStatus, WorkStatus[]> = {
+    pending: ["in_progress", "cancelled"],
+    in_progress: ["completed", "cancelled"],
+    completed: [],
+    cancelled: [],
   }
-  return { allowed: true }
+  return transitions[from].includes(to)
 }
 
 export const maintenanceService = {
@@ -114,6 +119,7 @@ export const maintenanceService = {
   async addWorkItem(
     cardId: string,
     item: Omit<WorkItem, "id">,
+    actor?: string,
   ): Promise<MaintenanceCard | undefined> {
     await delay(150)
     const index = cards.findIndex((c) => c.id === cardId)
@@ -124,6 +130,9 @@ export const maintenanceService = {
       workItems: [...cards[index].workItems, workItem],
       updatedAt: new Date().toISOString(),
     }
+    cards[index].activityEvents.push(
+      createActivityEvent(cardId, "work_added", "Work item added", actor, { workItemId: workItem.id }),
+    )
     return cards[index]
   },
 
@@ -173,6 +182,17 @@ export const maintenanceService = {
     return { customers: selectorCustomers, vehicles: selectorVehicles }
   },
 
+  async getStatusCounts(): Promise<Record<MaintenanceStatus, number>> {
+    await delay(150)
+    return cards.reduce<Record<MaintenanceStatus, number>>(
+      (counts, card) => {
+        counts[card.status] += 1
+        return counts
+      },
+      { draft: 0, open: 0, in_progress: 0, waiting_parts: 0, ready_for_delivery: 0, closed: 0, cancelled: 0 },
+    )
+  },
+
   async updateWorkItem(
     cardId: string,
     workItemId: string,
@@ -188,6 +208,10 @@ export const maintenanceService = {
 
     const oldStatus = workItem.status
     const newStatus = updates.status
+
+    if (newStatus && !canTransitionWorkStatus(oldStatus, newStatus)) {
+      throw new Error("INVALID_WORK_STATUS_TRANSITION")
+    }
 
     cards[index] = {
       ...cards[index],
@@ -221,7 +245,7 @@ export const maintenanceService = {
 
   async updateCardStatus(
     cardId: string,
-    status: string,
+    status: MaintenanceStatus,
     actor?: string
   ): Promise<MaintenanceCard | undefined> {
     await delay(150)
@@ -232,16 +256,16 @@ export const maintenanceService = {
 
     // Closure guard
     if (status === "closed") {
-      const guard = canCloseCard(card)
+      const guard = getClosureStatus(card)
       if (!guard.allowed) {
-        throw new Error(guard.reason)
+        throw new Error("REQUIRED_WORK_REMAINING")
       }
     }
 
     const oldStatus = card.status
     cards[index] = {
       ...cards[index],
-      status: status as any,
+      status,
       updatedAt: new Date().toISOString(),
     }
 
@@ -263,9 +287,9 @@ export const maintenanceService = {
     if (index === -1) return undefined
 
     const card = cards[index]
-    const guard = canCloseCard(card)
+    const guard = getClosureStatus(card)
     if (!guard.allowed) {
-      throw new Error(guard.reason)
+      throw new Error("REQUIRED_WORK_REMAINING")
     }
 
     cards[index] = {

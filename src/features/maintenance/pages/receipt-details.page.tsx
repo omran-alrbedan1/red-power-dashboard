@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { useState } from "react"
-import { User2, Car, ClipboardList, Wrench, BadgeCheck, Boxes, Fuel, History, Edit } from "lucide-react"
+import { User2, Car, ClipboardList, Wrench, BadgeCheck, Boxes, Fuel, History, Edit, LockKeyhole } from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,8 @@ import { useActivityTimeline } from "../hooks/useActivityTimeline"
 import { ReceiptHeader } from "../components/sections/receipt-header"
 import { ActivityTimeline } from "../components/activity-timeline"
 import { WorkItemEdit } from "../components/work-item-edit"
+import { CloseCardDialog } from "../components/close-card-dialog"
+import { ClosureGuardBadge } from "../components/closure-guard-badge"
 import { formatCurrency, formatDateTime } from "@/lib/formatter"
 
 const ReceiptDetailsPage: React.FC = () => {
@@ -20,6 +22,7 @@ const ReceiptDetailsPage: React.FC = () => {
   const { data: card, isLoading, isError } = useMaintenanceCard(cardId)
   const { data: activityEvents } = useActivityTimeline(cardId)
   const [editingWorkItem, setEditingWorkItem] = useState<string | null>(null)
+  const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
 
   if (isLoading) {
     return (
@@ -61,6 +64,24 @@ const ReceiptDetailsPage: React.FC = () => {
           />
         </CardHeader>
       </Card>
+
+      {card.status !== "closed" && card.status !== "cancelled" && (
+        <Card>
+          <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium text-text-primary">{t("closeCard.title")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t("closeCard.summary")}</p>
+            </div>
+            <Button className="shrink-0" onClick={() => setIsCloseDialogOpen(true)}>
+              <LockKeyhole className="h-4 w-4" />
+              {t("closeCard.close")}
+            </Button>
+          </CardContent>
+          <CardContent className="pt-0">
+            <ClosureGuardBadge card={card} />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-3">
@@ -416,6 +437,13 @@ const ReceiptDetailsPage: React.FC = () => {
           cardId={cardId!}
           open={!!editingWorkItem}
           onOpenChange={(open) => !open && setEditingWorkItem(null)}
+        />
+      )}
+      {card && (
+        <CloseCardDialog
+          card={card}
+          open={isCloseDialogOpen}
+          onOpenChange={setIsCloseDialogOpen}
         />
       )}
     </div>

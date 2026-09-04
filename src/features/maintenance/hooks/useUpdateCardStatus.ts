@@ -21,6 +21,7 @@ export function useUpdateCardStatus() {
       queryClient.invalidateQueries({ queryKey: ["maintenance", "card", data?.id] })
       queryClient.invalidateQueries({ queryKey: ["activity", "timeline", data?.id] })
       queryClient.invalidateQueries({ queryKey: ["maintenance", "list"] })
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "maintenance-status-counts"] })
     },
   })
 }

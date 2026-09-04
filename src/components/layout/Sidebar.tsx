@@ -8,7 +8,6 @@ import {
   UserCircle,
   Settings,
   X,
-  Wrench as WrenchIcon,
 } from "lucide-react"
 
 interface MenuItem {
@@ -266,13 +265,12 @@ const TitleSection: React.FC<TitleSectionProps> = ({ isMobile, onClose }) => {
         onClick={handleClick}
         className="flex cursor-pointer items-center justify-center gap-2 rounded-md p-2 transition-colors hover:bg-background-secondary"
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary shadow-[0_0_26px_rgba(225,6,19,0.3)]">
-          <WrenchIcon className="h-5 w-5 text-white" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-lg font-bold text-text-primary leading-tight">Red Power</span>
-          <span className="text-xs text-text-muted">لوحة التحكم</span>
-        </div>
+        <img
+          src="/images/red-power/brand/red-power-logo.png"
+          alt="Red Power Garage"
+          className="h-12 w-auto max-w-[170px] object-contain"
+        />
+        <span className="text-xs text-text-muted">لوحة التحكم</span>
       </div>
     </div>
   )
