@@ -12,7 +12,7 @@ import {
 
 export type MaintenanceCardInput = Omit<
   MaintenanceCard,
-  "id" | "receiptNumber" | "createdAt" | "updatedAt"
+  "id" | "receiptNumber" | "createdAt" | "updatedAt" | "activityEvents"
 >
 
 let cards: MaintenanceCard[] = [...initialCards]

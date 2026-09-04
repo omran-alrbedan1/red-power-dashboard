@@ -36,7 +36,7 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
       <Button
         variant="outline"
         className={cn(
-          "w-full justify-start text-left font-normal",
+          "w-full justify-start text-start font-normal",
           !field.value?.length && "text-muted-foreground",
           inputClassName
         )}

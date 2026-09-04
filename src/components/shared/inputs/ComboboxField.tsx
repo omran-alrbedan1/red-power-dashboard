@@ -30,7 +30,7 @@ export const ComboboxField: React.FC<ComboboxFieldProps> = ({
       <Button
         variant="outline"
         className={cn(
-          "w-full justify-between text-left font-normal",
+          "w-full justify-between text-start font-normal",
           !field.value && "text-muted-foreground",
           inputClassName
         )}

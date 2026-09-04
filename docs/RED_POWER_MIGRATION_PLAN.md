@@ -189,6 +189,8 @@ Detailed execution plan: [`docs/PHASE_5_PLAN.md`](./PHASE_5_PLAN.md).
 - [ ] Add focused tests for customer search, receipt validation, and closure guard.
 - [ ] Retire old delivery/e-commerce routes only after replacements are accepted.
 
+> **Tooling note (2026-09-04):** TypeScript is installed as a development dependency. The receipt-creation form now separates Zod input and output types, and service-created activity events are excluded from the receipt creation payload.
+
 ## Data-model starting point
 
 ```text

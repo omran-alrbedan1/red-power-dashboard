@@ -63,7 +63,7 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
         type="button"
         variant="outline"
         className={cn(
-          "w-full justify-start text-left font-normal",
+          "w-full justify-start text-start font-normal",
           !field.value && "text-muted-foreground",
           inputClassName
         )}

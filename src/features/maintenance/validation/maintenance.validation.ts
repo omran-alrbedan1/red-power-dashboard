@@ -96,8 +96,12 @@ export const createReceiptFormSchema = (t: (key: string) => string) =>
       }
     })
 
-export type ReceiptFormValues = z.infer<
+export type ReceiptFormValues = z.output<
   ReturnType<typeof createReceiptFormSchema>
 >
 
-export const FUEL_LEVEL_VALUES: string[] = FUEL_LEVELS
+export type ReceiptFormInputValues = z.input<
+  ReturnType<typeof createReceiptFormSchema>
+>
+
+export const FUEL_LEVEL_VALUES: readonly string[] = FUEL_LEVELS

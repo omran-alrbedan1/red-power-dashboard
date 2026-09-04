@@ -5,10 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   User2,
-  Car,
   ClipboardList,
-  Wrench,
-  BadgeCheck,
   Plus,
 } from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
@@ -19,6 +16,7 @@ import { useAuth } from "@/features/auth/context/AuthContext"
 import { useCreateMaintenanceCard } from "../hooks/useMaintenanceCards"
 import {
   createReceiptFormSchema,
+  type ReceiptFormInputValues,
   type ReceiptFormValues,
   type WorkItemRowValues,
 } from "../validation/maintenance.validation"
@@ -47,7 +45,7 @@ const ReceiptCreatePage: React.FC = () => {
   const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>()
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>()
 
-  const form = useForm<ReceiptFormValues>({
+  const form = useForm<ReceiptFormInputValues, unknown, ReceiptFormValues>({
     resolver: zodResolver(createReceiptFormSchema(t)),
     defaultValues: {
       customerName: "",
@@ -230,25 +228,15 @@ const ReceiptCreatePage: React.FC = () => {
         </Card>
 
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Wrench className="h-4 w-4 text-primary" />
-              {t("work.title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+
+          <CardContent className="space-y-3 pt-6">
             <WorkSection control={form.control} />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <BadgeCheck className="h-4 w-4 text-primary" />
-              {t("approval.title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+    
+          <CardContent className="space-y-3 pt-6">
             <DeliverySection control={form.control} />
           </CardContent>
         </Card>

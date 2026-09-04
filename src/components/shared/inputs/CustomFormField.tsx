@@ -202,9 +202,12 @@
       }
 
       const labelContent = (
-        <Label className={cn("text-sm font-medium ", labelClassName)}>
+        <Label
+          dir="auto"
+          className={cn("block w-full text-start text-sm font-medium", labelClassName)}
+        >
           {label}
-          {required && <span className="text-destructive ml-1 text-red-500">*</span>}
+          {required && <span className="text-destructive ms-1 text-red-500">*</span>}
         </Label>
       )
 
@@ -213,7 +216,7 @@
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-1 cursor-help">
+                <div className="flex w-full items-center gap-1 text-start cursor-help" dir="auto">
                   {labelContent}
                   <AlertCircle className="h-3.5 w-3.5 text-muted-foreground" />
                 </div>
@@ -234,7 +237,7 @@
         name={name}
         control={control}
         render={({ field, fieldState }) => (
-          <div className={cn("space-y-4 rtl:text-end", containerClassName, className)} dir={dir}>
+          <div className={cn("space-y-4", containerClassName, className)} dir={dir}>
             {renderLabel()}
             
             {loading ? (
@@ -247,13 +250,13 @@
             )}
             
             {description && (
-              <p className={cn("text-xs text-muted-foreground", props.descriptionClassName)}>
+              <p dir="auto" className={cn("text-start text-xs text-muted-foreground", props.descriptionClassName)}>
                 {description}
               </p>
             )}
             
             {fieldState.error && (
-              <p className={cn("text-xs text-destructive", props.errorClassName)}>
+              <p dir="auto" className={cn("text-start text-xs text-destructive", props.errorClassName)}>
                 {fieldState.error.message}
               </p>
             )}

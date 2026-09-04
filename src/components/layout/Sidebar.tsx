@@ -260,18 +260,19 @@ const TitleSection: React.FC<TitleSectionProps> = ({ isMobile, onClose }) => {
   }
 
   return (
-    <div className="mb-6 border-b border-border pb-4 px-2">
-      <div
+    <div className="mb-5 border-b border-border px-3 py-4">
+      <button
+        type="button"
         onClick={handleClick}
-        className="flex cursor-pointer items-center justify-center gap-2 rounded-md p-2 transition-colors hover:bg-background-secondary"
+        className="red-power-sidebar-brand flex w-full items-center justify-center rounded-lg border border-transparent bg-transparent px-4 py-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label="Red Power Garage"
       >
         <img
           src="/images/red-power/brand/red-power-logo.png"
           alt="Red Power Garage"
-          className="h-12 w-auto max-w-[170px] object-contain"
+          className="h-12 w-auto max-w-[180px] object-contain"
         />
-        <span className="text-xs text-text-muted">لوحة التحكم</span>
-      </div>
+      </button>
     </div>
   )
 }
