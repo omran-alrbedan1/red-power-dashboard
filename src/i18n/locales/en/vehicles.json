@@ -1,0 +1,8 @@
+{
+  "title":"Vehicles","subtitle":"Manage vehicles and ownership records","add":"Add vehicle","edit":"Edit vehicle","create":"Create vehicle","save":"Save changes","back":"Back to vehicles","details":"Vehicle details","loadError":"Unable to load vehicle","empty":"No vehicles found","search":"Search plate, VIN, make, or model","apply":"Apply","all":"All","active":"Active","inactive":"Inactive","activate":"Activate","deactivate":"Deactivate","confirmActivate":"Activate this vehicle?","confirmDeactivate":"Deactivate this vehicle?","history":"Maintenance history","noHistory":"No maintenance history","previous":"Previous","next":"Next",
+  "fields":{"customer":"Customer","make":"Make","model":"Model","year":"Manufacture year","plate":"Plate number","vin":"VIN","color":"Color","transmission":"Transmission"},
+  "transmission":{"AUTOMATIC":"Automatic","MANUAL":"Manual"},
+  "table":{"vehicle":"Vehicle","owner":"Current owner","status":"Status"},
+  "ownership":{"title":"Ownership","current":"Current owner","target":"Select new owner","transfer":"Transfer ownership"},
+  "validation":{"customer":"Select a customer","make":"Make is required","model":"Model is required","plate":"Plate number is required","vin":"VIN must contain exactly 17 characters"}
+}

@@ -1,148 +1,59 @@
-import type { Customer } from "../types/customer.types"
-import type { Vehicle } from "../types/vehicle.types"
-import type { CustomerHistory } from "../types/visit-summary.types"
-import type { CustomerFilterValues } from "../configs/customer-filter.config"
-import {
-  initialCustomers,
-  initialVehicles,
-  initialHistoryByCustomer,
-} from "../data/customers.data"
-
-export type CustomerInput = Omit<Customer, "id" | "createdAt" | "updatedAt">
-export type VehicleInput = Omit<
-  Vehicle,
-  "id" | "customerId" | "createdAt" | "updatedAt"
->
-
-let customers: Customer[] = [...initialCustomers]
-let vehicles: Vehicle[] = [...initialVehicles]
-
-const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const uid = (prefix: string) =>
-  `${prefix}-${Math.random().toString(36).slice(2, 10)}`
-
-const normalizeFilter = (value: string | undefined) =>
-  (value ?? "").trim().toLowerCase()
-
-function vehicleMatches(v: Vehicle, f: CustomerFilterValues): boolean {
-  return (
-    (f.plateNumber &&
-      normalizeFilter(v.plateNumber).includes(normalizeFilter(f.plateNumber))) ||
-    (f.vin &&
-      v.vin &&
-      normalizeFilter(v.vin).includes(normalizeFilter(f.vin))) ||
-    (f.make && normalizeFilter(v.make).includes(normalizeFilter(f.make))) ||
-    (f.model && normalizeFilter(v.model).includes(normalizeFilter(f.model)))
-  )
-}
+import { API_ENDPOINTS } from "@/lib/api/api.endpoints"
+import { httpClient } from "@/lib/api/http-client"
+import type { ApiSuccessResponse, PaginatedResponse } from "@/lib/api/api.types"
+import type {
+  CreateCustomerDto,
+  Customer,
+  CustomerDetails,
+  CustomerListParams,
+  UpdateCustomerDto,
+  MaintenanceHistoryParams,
+  CustomerMaintenanceHistory,
+} from "../types/customer.types"
 
 export const customerService = {
-  async list(): Promise<Customer[]> {
-    await delay()
-    return [...customers].sort((a, b) =>
-      b.createdAt.localeCompare(a.createdAt),
+  async list(params: CustomerListParams): Promise<PaginatedResponse<Customer>> {
+    const response = await httpClient.get<ApiSuccessResponse<PaginatedResponse<Customer>>>(
+      API_ENDPOINTS.customers.list,
+      { params },
     )
+    return response.data.data
   },
 
-  async search(filters: CustomerFilterValues): Promise<Customer[]> {
-    await delay()
-    const name = normalizeFilter(filters.name)
-    const phone = normalizeFilter(filters.phone)
-    const hasVehicleFilter = Boolean(
-      filters.plateNumber || filters.vin || filters.make || filters.model,
+  async getById(id: string): Promise<CustomerDetails> {
+    const response = await httpClient.get<ApiSuccessResponse<CustomerDetails>>(
+      API_ENDPOINTS.customers.detail(id),
     )
-
-    return customers
-      .filter((customer) => {
-        const matchCustomer =
-          (name === "" || normalizeFilter(customer.name).includes(name)) &&
-          (phone === "" || normalizeFilter(customer.phone).includes(phone))
-
-        if (!hasVehicleFilter) return matchCustomer
-
-        const owned = vehicles.filter(
-          (v) => v.customerId === customer.id,
-        )
-        const matchVehicle = owned.some((v) => vehicleMatches(v, filters))
-        return matchCustomer || matchVehicle
-      })
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    return response.data.data
   },
 
-  async getById(id: string): Promise<Customer | undefined> {
-    await delay()
-    return customers.find((c) => c.id === id)
+  async create(input: CreateCustomerDto): Promise<Customer> {
+    const response = await httpClient.post<ApiSuccessResponse<Customer>>(
+      API_ENDPOINTS.customers.create,
+      input,
+    )
+    return response.data.data
   },
 
-  async create(input: CustomerInput): Promise<Customer> {
-    await delay()
-    const now = new Date().toISOString()
-    const customer: Customer = {
-      id: uid("cus"),
-      ...input,
-      createdAt: now,
-      updatedAt: now,
-    }
-    customers.push(customer)
-    return customer
+  async update(id: string, input: UpdateCustomerDto): Promise<Customer> {
+    const response = await httpClient.patch<ApiSuccessResponse<Customer>>(
+      API_ENDPOINTS.customers.update(id),
+      input,
+    )
+    return response.data.data
   },
 
-  async update(id: string, input: CustomerInput): Promise<Customer | undefined> {
-    await delay()
-    const index = customers.findIndex((c) => c.id === id)
-    if (index === -1) return undefined
-    customers[index] = {
-      ...customers[index],
-      ...input,
-      updatedAt: new Date().toISOString(),
-    }
-    return customers[index]
+  async setActive(id: string, isActive: boolean): Promise<Customer> {
+    const endpoint = isActive ? API_ENDPOINTS.customers.activate(id) : API_ENDPOINTS.customers.deactivate(id)
+    const response = await httpClient.patch<ApiSuccessResponse<Customer>>(endpoint)
+    return response.data.data
   },
 
-  async listVehicles(customerId: string): Promise<Vehicle[]> {
-    await delay(200)
-    return vehicles
-      .filter((v) => v.customerId === customerId)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-  },
-
-  async getVehicleCounts(): Promise<Record<string, number>> {
-    await delay(150)
-    return vehicles.reduce<Record<string, number>>((acc, v) => {
-      acc[v.customerId] = (acc[v.customerId] ?? 0) + 1
-      return acc
-    }, {})
-  },
-
-  async addVehicle(
-    customerId: string,
-    input: VehicleInput,
-  ): Promise<Vehicle> {
-    await delay()
-    const now = new Date().toISOString()
-    const vehicle: Vehicle = {
-      id: uid("veh"),
-      customerId,
-      ...input,
-      createdAt: now,
-      updatedAt: now,
-    }
-    vehicles.push(vehicle)
-    return vehicle
-  },
-
-  async getHistory(customerId: string): Promise<CustomerHistory> {
-    await delay(200)
-    const owned = vehicles.filter((v) => v.customerId === customerId)
-    const ownedIds = new Set(owned.map((v) => v.id))
-    const base = initialHistoryByCustomer[customerId] ?? {
-      visits: [],
-      workItems: [],
-    }
-    return {
-      visits: base.visits.filter((v) => ownedIds.has(v.vehicleId)),
-      workItems: base.workItems,
-    }
+  async maintenanceHistory(id: string, params: MaintenanceHistoryParams): Promise<CustomerMaintenanceHistory> {
+    const response = await httpClient.get<ApiSuccessResponse<CustomerMaintenanceHistory>>(
+      API_ENDPOINTS.customers.history(id),
+      { params },
+    )
+    return response.data.data
   },
 }

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
-import { User, Phone, Mail, MapPin, StickyNote } from "lucide-react"
+import { User, Phone, Mail } from "lucide-react"
 import { Form } from "@/components/ui/form"
 import CustomFormField, {
   FormFieldType,
@@ -18,6 +18,7 @@ interface CustomerFormProps {
   isSubmitting?: boolean
   submitLabel?: string
   submitIcon?: React.ReactNode
+  serverError?: string
 }
 
 export const CustomerForm: React.FC<CustomerFormProps> = ({
@@ -26,6 +27,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
   isSubmitting,
   submitLabel,
   submitIcon,
+  serverError,
 }) => {
   const { t } = useTranslation("customers")
 
@@ -35,8 +37,6 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
       name: defaultValues?.name ?? "",
       phone: defaultValues?.phone ?? "",
       email: defaultValues?.email ?? "",
-      address: defaultValues?.address ?? "",
-      notes: defaultValues?.notes ?? "",
     },
   })
 
@@ -82,26 +82,11 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
           dir="ltr"
         />
 
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="address"
-          label={t("fields.address")}
-          placeholder={t("fields.address")}
-          leftIcon={MapPin}
-          iconPosition="left"
-          dir="rtl"
-        />
-
-        <CustomFormField
-          fieldType={FormFieldType.TEXTAREA}
-          control={form.control}
-          name="notes"
-          label={t("fields.notes")}
-          placeholder={t("fields.notes")}
-          rows={3}
-          dir="rtl"
-        />
+        {serverError && (
+          <div role="alert" className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-sm text-primary">
+            {serverError}
+          </div>
+        )}
 
         <SubmitButton
           isLoading={isSubmitting}

@@ -1,425 +1,65 @@
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { useState } from "react"
-import { User2, Car, ClipboardList, Wrench, BadgeCheck, Boxes, Fuel, History, Edit } from "lucide-react"
+import { History, Lock, Plus, RotateCcw, Save, Trash2, Wrench } from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import EmptyState from "@/components/shared/states/EmptyState"
 import ErrorState from "@/components/shared/states/ErrorState"
-import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
-import { useActivityTimeline } from "../hooks/useActivityTimeline"
-import { ReceiptHeader } from "../components/sections/receipt-header"
-import { ActivityTimeline } from "../components/activity-timeline"
-import { WorkItemEdit } from "../components/work-item-edit"
+import { useAuth } from "@/features/auth/context/AuthContext"
+import { canReopenMaintenanceCard } from "@/features/auth/utils/role.helpers"
+import { normalizeApiError } from "@/lib/api/api-error"
 import { formatCurrency, formatDateTime } from "@/lib/formatter"
+import { MaintenanceStatusBadge } from "../components/status-badge"
+import { MaintenanceMediaSection } from "../components/maintenance-media-section"
+import { useCloseMaintenanceCard, useCreateRequiredWork, useDeleteRequiredWork, useMaintenanceCard, useReopenMaintenanceCard, useUpdateMaintenanceCard, useUpdateRequiredWork } from "../hooks/useMaintenanceCard"
+import { useMaintenanceOptions } from "../hooks/useMaintenanceCards"
+import { FUEL_LEVELS, WORK_STATUSES, type FuelLevel, type MaintenanceOption, type MaintenanceWorkStatus, type RequiredWork } from "../types/maintenance.types"
 
-const ReceiptDetailsPage: React.FC = () => {
-  const { t } = useTranslation("maintenance")
-  const { cardId } = useParams<{ cardId: string }>()
-  const { data: card, isLoading, isError } = useMaintenanceCard(cardId)
-  const { data: activityEvents } = useActivityTimeline(cardId)
-  const [editingWorkItem, setEditingWorkItem] = useState<string | null>(null)
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">{t("saving")}</div>
-      </div>
-    )
-  }
-
-  if (isError) {
-    return <ErrorState variant="default" retry={() => window.location.reload()} />
-  }
-
-  if (!card) {
-    return <EmptyState title={t("empty")} description="" />
-  }
-
-  const workTotal = card.workItems.reduce((sum, item) => {
-    const cost = item.estimatedCost || 0
-    const qty = item.quantity || 1
-    return sum + cost * qty
-  }, 0)
-
-  return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title={t("details")}
-        description={`${t("receiptNumber")}: ${card.receiptNumber}`}
-        showBackButton
-        backButtonLabel={t("backToList")}
-      />
-
-      <Card>
-        <CardHeader>
-          <ReceiptHeader
-            receiptNumber={card.receiptNumber}
-            status={card.status}
-            createdAt={card.createdAt}
-          />
-        </CardHeader>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <User2 className="h-4 w-4 text-primary" />
-            {t("sections.customer")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs text-muted-foreground">{t("customer.name")}</label>
-              <p className="font-medium text-text-primary">{card.customerSnapshot.name}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">{t("customer.phone")}</label>
-              <p className="font-medium text-text-primary ltr" dir="ltr">
-                {card.customerSnapshot.phone}
-              </p>
-            </div>
-            {card.customerSnapshot.email && (
-              <div className="sm:col-span-2">
-                <label className="text-xs text-muted-foreground">{t("customer.email")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
-                  {card.customerSnapshot.email}
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Car className="h-4 w-4 text-primary" />
-            {t("sections.vehicle")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.make")}</label>
-              <p className="font-medium text-text-primary">{card.vehicleSnapshot.make}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.model")}</label>
-              <p className="font-medium text-text-primary">{card.vehicleSnapshot.model}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.plateNumber")}</label>
-              <p className="font-medium text-text-primary ltr" dir="ltr">
-                {card.vehicleSnapshot.plateNumber}
-              </p>
-            </div>
-            {card.vehicleSnapshot.year && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.year")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
-                  {card.vehicleSnapshot.year}
-                </p>
-              </div>
-            )}
-            {card.vehicleSnapshot.vin && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.vin")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
-                  {card.vehicleSnapshot.vin}
-                </p>
-              </div>
-            )}
-            {card.vehicleSnapshot.mileage && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.mileage")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
-                  {card.vehicleSnapshot.mileage} كم
-                </p>
-              </div>
-            )}
-            {card.vehicleSnapshot.fuelType && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.fuelType")}</label>
-                <p className="font-medium text-text-primary">
-                  {t(`vehicle.fuel_type.${card.vehicleSnapshot.fuelType}`)}
-                </p>
-              </div>
-            )}
-            {card.vehicleSnapshot.transmissionType && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.transmissionType")}</label>
-                <p className="font-medium text-text-primary">
-                  {t(`vehicle.transmission_type.${card.vehicleSnapshot.transmissionType}`)}
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <ClipboardList className="h-4 w-4 text-primary" />
-            {t("sections.reason")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="text-xs text-muted-foreground">{t("reason.title")}</label>
-            <p className="font-medium text-text-primary">
-              {card.isOtherReason
-                ? card.visitReason
-                : t(`reason.options.${card.visitReason}`) || card.visitReason}
-            </p>
-          </div>
-          {card.complaint && (
-            <div>
-              <label className="text-xs text-muted-foreground">{t("reason.complaint")}</label>
-              <p className="font-medium text-text-primary">{card.complaint}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Fuel className="h-4 w-4 text-primary" />
-            {t("sections.condition")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {card.condition ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {card.condition.fuelLevel && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.fuelLevel")}</label>
-                  <p className="font-medium text-text-primary">
-                    {t(`condition.fuelLevels.${card.condition.fuelLevel}`)}
-                  </p>
-                </div>
-              )}
-              {card.condition.externalCondition && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.externalCondition")}</label>
-                  <p className="font-medium text-text-primary">{card.condition.externalCondition}</p>
-                </div>
-              )}
-              {card.condition.warningLights !== undefined && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.warningLights")}</label>
-                  <p className="font-medium text-text-primary">
-                    {card.condition.warningLights ? t("condition.yes") : t("condition.no")}
-                  </p>
-                </div>
-              )}
-              {card.condition.tires && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.tires")}</label>
-                  <p className="font-medium text-text-primary">{card.condition.tires}</p>
-                </div>
-              )}
-              {card.condition.battery && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.battery")}</label>
-                  <p className="font-medium text-text-primary">{card.condition.battery}</p>
-                </div>
-              )}
-              {card.condition.glass && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.glass")}</label>
-                  <p className="font-medium text-text-primary">{card.condition.glass}</p>
-                </div>
-              )}
-              {card.condition.body && (
-                <div>
-                  <label className="text-xs text-muted-foreground">{t("condition.body")}</label>
-                  <p className="font-medium text-text-primary">{card.condition.body}</p>
-                </div>
-              )}
-              {card.condition.otherNotes && (
-                <div className="sm:col-span-2">
-                  <label className="text-xs text-muted-foreground">{t("condition.otherNotes")}</label>
-                  <p className="font-medium text-text-primary">{card.condition.otherNotes}</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{t("empty")}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      {card.itemsLeftInCar && card.itemsLeftInCar.length > 0 && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Boxes className="h-4 w-4 text-primary" />
-              {t("sections.itemsLeft")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {card.itemsLeftInCar.map((item, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center rounded-full border border-border bg-muted px-3 py-1 text-sm"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Wrench className="h-4 w-4 text-primary" />
-            {t("sections.work")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {card.workItems.length > 0 ? (
-            <div className="space-y-3">
-              {card.workItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid gap-3 rounded-lg border border-border bg-muted/20 p-3 sm:grid-cols-2 lg:grid-cols-4"
-                >
-                  <div className="lg:col-span-2 flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <label className="text-xs text-muted-foreground">{t("work.description")}</label>
-                      <p className="font-medium text-text-primary">{item.description}</p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 shrink-0"
-                      onClick={() => setEditingWorkItem(item.id)}
-                    >
-                      <Edit className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground">{t("work.estimate")}</label>
-                    <p className="font-medium text-text-primary ltr" dir="ltr">
-                      {formatCurrency(item.estimatedCost)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground">{t("work.status")}</label>
-                    <p className="font-medium text-text-primary">
-                      {t(`work.statuses.${item.status}`)}
-                    </p>
-                  </div>
-                  {item.quantity && (
-                    <div>
-                      <label className="text-xs text-muted-foreground">{t("work.quantity")}</label>
-                      <p className="font-medium text-text-primary ltr" dir="ltr">{item.quantity}</p>
-                    </div>
-                  )}
-                  {item.assignee && (
-                    <div>
-                      <label className="text-xs text-muted-foreground">{t("work.assignee")}</label>
-                      <p className="font-medium text-text-primary">{item.assignee}</p>
-                    </div>
-                  )}
-                  {item.isRequired && (
-                    <div>
-                      <label className="text-xs text-muted-foreground">{t("work.required")}</label>
-                      <p className="font-medium text-primary">{t("condition.yes")}</p>
-                    </div>
-                  )}
-                </div>
-              ))}
-              <div className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-3">
-                <span className="text-sm text-muted-foreground">{t("work.total")}</span>
-                <span className="text-base font-semibold text-text-primary">{formatCurrency(workTotal)}</span>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{t("work.noWork")}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <BadgeCheck className="h-4 w-4 text-primary" />
-            {t("sections.approval")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs text-muted-foreground">{t("approval.approved")}</label>
-              <p className="font-medium text-text-primary">
-                {card.approval?.approved ? t("approval.approved") : t("approval.notApproved")}
-              </p>
-            </div>
-            {card.approval?.amount && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.amount")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
-                  {formatCurrency(card.approval.amount)}
-                </p>
-              </div>
-            )}
-            {card.expectedDelivery?.date && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.deliveryDate")}</label>
-                <p className="font-medium text-text-primary">
-                  {formatDateTime(card.expectedDelivery.date)}
-                </p>
-              </div>
-            )}
-            {card.expectedDelivery?.time && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.deliveryTime")}</label>
-                <p className="font-medium text-text-primary">
-                  {formatDateTime(card.expectedDelivery.time)}
-                </p>
-              </div>
-            )}
-            {card.receiverName && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.receiver")}</label>
-                <p className="font-medium text-text-primary">{card.receiverName}</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <History className="h-4 w-4 text-primary" />
-            {t("activity.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ActivityTimeline events={activityEvents ?? []} />
-        </CardContent>
-      </Card>
-
-      {editingWorkItem && card && (
-        <WorkItemEdit
-          workItem={card.workItems.find((w) => w.id === editingWorkItem)!}
-          cardId={cardId!}
-          open={!!editingWorkItem}
-          onOpenChange={(open) => !open && setEditingWorkItem(null)}
-        />
-      )}
-    </div>
-  )
+export default function ReceiptDetailsPage() {
+  const { cardId } = useParams<{ cardId: string }>(); const { t, i18n } = useTranslation("maintenance"); const { user } = useAuth()
+  const query = useMaintenanceCard(cardId); const update = useUpdateMaintenanceCard(); const close = useCloseMaintenanceCard(); const reopen = useReopenMaintenanceCard(); const createWork = useCreateRequiredWork(); const updateWork = useUpdateRequiredWork(); const deleteWork = useDeleteRequiredWork()
+  const reasons = useMaintenanceOptions("visit-reasons"); const conditions = useMaintenanceOptions("vehicle-conditions"); const items = useMaintenanceOptions("vehicle-items")
+  const [mileage, setMileage] = useState(""); const [fuel, setFuel] = useState<FuelLevel>("EMPTY"); const [complaint, setComplaint] = useState(""); const [notes, setNotes] = useState(""); const [delivery, setDelivery] = useState(""); const [approved, setApproved] = useState(false); const [approvalName, setApprovalName] = useState(""); const [approvedAt, setApprovedAt] = useState(""); const [reasonIds, setReasonIds] = useState<string[]>([]); const [conditionIds, setConditionIds] = useState<string[]>([]); const [itemIds, setItemIds] = useState<string[]>([]); const [description, setDescription] = useState(""); const [cost, setCost] = useState(""); const [required, setRequired] = useState(true); const [error, setError] = useState("")
+  const card = query.data
+  useEffect(() => { if(card){ setMileage(String(card.mileage)); setFuel(card.fuelLevel); setComplaint(card.customerComplaint ?? ""); setNotes(card.inspectionNotes ?? ""); setDelivery(card.expectedDeliveryAt ? new Date(new Date(card.expectedDeliveryAt).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16) : ""); setApproved(card.customerApproved); setApprovalName(card.customerApprovalName ?? ""); setApprovedAt(card.customerApprovedAt ? new Date(new Date(card.customerApprovedAt).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0,16) : ""); setReasonIds(card.visitReasons.map(v => v.visitReason.id)); setConditionIds(card.conditionOptions.map(v => v.conditionOption.id)); setItemIds(card.itemOptions.map(v => v.itemOption.id)) } }, [card])
+  const run = async (action: () => Promise<unknown>) => { setError(""); try { await action() } catch(cause) { setError(normalizeApiError(cause).message) } }
+  if(query.isLoading) return <p className="py-12 text-center text-muted-foreground">{t("loading", "جارٍ التحميل...")}</p>
+  if(query.isError) return <ErrorState variant="default" retry={() => void query.refetch()}/>
+  if(!card || !cardId) return <EmptyState title={t("empty")} description=""/>
+  const open = card.status === "OPEN"; const vehicle = card.vehicleOwnership.vehicle; const total = card.requiredWorks.reduce((sum, work) => sum + (work.estimatedCost ?? 0), 0)
+  const actor = (event: typeof card.statusEvents[number]) => [event.changedBy?.firstName, event.changedBy?.lastName].filter(Boolean).join(" ") || event.changedBy?.email || "—"
+  const saveCard = () => run(() => update.mutateAsync({ id: cardId, input: {
+    mileage: Number(mileage), fuelLevel: fuel, customerComplaint: complaint, inspectionNotes: notes,
+    expectedDeliveryAt: delivery ? new Date(delivery).toISOString() : null,
+    customerApproved: approved,
+    ...(approved ? { customerApprovalName: approvalName.trim(), customerApprovedAt: new Date(approvedAt).toISOString() } : {}),
+    ...(card.visitReasons.every(value => value.visitReason.isActive) ? { visitReasonIds: reasonIds } : {}),
+    ...(card.conditionOptions.every(value => value.conditionOption.isActive) ? { vehicleConditionOptionIds: conditionIds } : {}),
+    ...(card.itemOptions.every(value => value.itemOption.isActive) ? { vehicleItemOptionIds: itemIds } : {}),
+  } }))
+  return <div className="flex flex-col gap-4">
+    <PageHeader title={t("details")} description={card.cardNumber} showBackButton backButtonLabel={t("backToList")} rightContent={<div className="flex gap-2">{open ? <Button variant="destructive" onClick={() => void run(() => close.mutateAsync(cardId))} disabled={close.isPending}><Lock className="me-2 h-4 w-4"/>{t("actions.close")}</Button> : canReopenMaintenanceCard(user) && <Button onClick={() => void run(() => reopen.mutateAsync(cardId))} disabled={reopen.isPending}><RotateCcw className="me-2 h-4 w-4"/>{t("actions.reopen")}</Button>}</div>}/>
+    {error && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
+    <Card><CardContent className="grid gap-4 pt-6 sm:grid-cols-2 lg:grid-cols-4"><div><span className="text-xs text-muted-foreground">{t("status")}</span><div className="mt-1"><MaintenanceStatusBadge status={card.status}/></div></div><Info label={t("customer.name")} value={card.customer.name}/><Info label={t("customer.phone")} value={card.customer.phone}/><Info label={t("createdAt")} value={formatDateTime(card.receivedAt, i18n.language === "ar" ? "ar-JO" : "en-GB")}/><Info label={t("list.vehicle")} value={`${vehicle.make} ${vehicle.model}`}/><Info label={t("vehicle.plateNumber")} value={vehicle.plateNumber}/><Info label={t("vehicle.vin")} value={vehicle.vin ?? "—"}/><Info label={t("vehicle.year")} value={String(vehicle.manufactureYear)}/></CardContent></Card>
+    <Card><CardHeader><CardTitle>{t("create.reception")}</CardTitle></CardHeader><CardContent className="grid gap-4 sm:grid-cols-2"><label className="space-y-1"><span>{t("vehicle.mileage")}</span><Input disabled={!open} type="number" min={0} value={mileage} onChange={e => setMileage(e.target.value)}/></label><label className="space-y-1"><span>{t("condition.fuelLevel")}</span><Select disabled={!open} value={fuel} onValueChange={v => setFuel(v as FuelLevel)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{FUEL_LEVELS.map(v => <SelectItem key={v} value={v}>{t(`fuelLevels.${v}`)}</SelectItem>)}</SelectContent></Select></label><label className="space-y-1"><span>{t("reason.complaint")}</span><Textarea disabled={!open} value={complaint} onChange={e => setComplaint(e.target.value)}/></label><label className="space-y-1"><span>{t("condition.otherNotes")}</span><Textarea disabled={!open} value={notes} onChange={e => setNotes(e.target.value)}/></label><label className="space-y-1"><span>{t("approval.deliveryDate")}</span><Input disabled={!open} type="datetime-local" value={delivery} onChange={e => setDelivery(e.target.value)}/></label></CardContent></Card>
+    <Card><CardHeader><CardTitle>{t("create.options")}</CardTitle></CardHeader><CardContent className="grid gap-4 md:grid-cols-3">{open ? <><EditableOptions title={t("reason.title")} active={reasons.data ?? []} historical={card.visitReasons.map(v => v.visitReason)} selected={reasonIds} setSelected={setReasonIds}/><EditableOptions title={t("sections.condition")} active={conditions.data ?? []} historical={card.conditionOptions.map(v => v.conditionOption)} selected={conditionIds} setSelected={setConditionIds}/><EditableOptions title={t("sections.itemsLeft")} active={items.data ?? []} historical={card.itemOptions.map(v => v.itemOption)} selected={itemIds} setSelected={setItemIds}/></> : <><OptionList title={t("reason.title")} values={card.visitReasons.map(v => v.visitReason)}/><OptionList title={t("sections.condition")} values={card.conditionOptions.map(v => v.conditionOption)}/><OptionList title={t("sections.itemsLeft")} values={card.itemOptions.map(v => v.itemOption)}/></>}</CardContent></Card>
+    <Card><CardHeader><CardTitle className="flex items-center gap-2"><Wrench className="h-4 w-4 text-primary"/>{t("sections.work")}</CardTitle></CardHeader><CardContent className="space-y-3">
+      {open && <div className="grid gap-2 rounded-md border p-3 sm:grid-cols-[1fr_160px_auto_auto]"><Input value={description} onChange={e => setDescription(e.target.value)} placeholder={t("work.description")}/><Input type="number" min={0} step="0.01" value={cost} onChange={e => setCost(e.target.value)} placeholder={t("work.estimate")}/><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={required} onChange={e => setRequired(e.target.checked)}/>{t("work.required")}</label><Button disabled={!description.trim() || createWork.isPending} onClick={() => void run(async () => { await createWork.mutateAsync({ cardId, input: { description: description.trim(), displayOrder: card.requiredWorks.length, isRequired: required, estimatedCost: cost ? Number(cost) : null } }); setDescription(""); setCost("") })}><Plus className="h-4 w-4"/></Button></div>}
+      {card.requiredWorks.map(work => <WorkRow key={work.id} work={work} open={open} pending={updateWork.isPending || deleteWork.isPending} onUpdate={input => run(() => updateWork.mutateAsync({ cardId, workId: work.id, input }))} onDelete={() => run(() => deleteWork.mutateAsync({ cardId, workId: work.id }))}/>)}
+      <div className="flex justify-between border-t pt-3"><span>{t("work.total")}</span><strong>{formatCurrency(total)}</strong></div>
+    </CardContent></Card>
+    <Card><CardHeader><CardTitle>{t("sections.approval")}</CardTitle></CardHeader><CardContent className="grid gap-3 sm:grid-cols-3">{open ? <><label className="flex items-center gap-2"><input type="checkbox" checked={approved} onChange={e => setApproved(e.target.checked)}/>{t("approval.approved")}</label>{approved && <><Input value={approvalName} onChange={e => setApprovalName(e.target.value)} placeholder={t("approval.name")}/><Input type="datetime-local" value={approvedAt} onChange={e => setApprovedAt(e.target.value)}/></>}</> : <><Info label={t("approval.approved")} value={card.customerApproved ? t("condition.yes") : t("condition.no")}/><Info label={t("approval.name")} value={card.customerApprovalName ?? "—"}/><Info label={t("approval.date")} value={card.customerApprovedAt ? formatDateTime(card.customerApprovedAt) : "—"}/></>}</CardContent></Card>
+    <MaintenanceMediaSection cardId={cardId} open={open} signaturePresent={Boolean(card.signatureStorageKey)}/>
+    {open && <Button className="self-start" disabled={update.isPending || (approved && (!approvalName.trim() || !approvedAt))} onClick={() => void saveCard()}><Save className="me-2 h-4 w-4"/>{t("save")}</Button>}
+    <Card><CardHeader><CardTitle className="flex items-center gap-2"><History className="h-4 w-4 text-primary"/>{t("activity.title")}</CardTitle></CardHeader><CardContent className="space-y-3">{card.statusEvents.map(event => <div key={event.id} className="flex flex-wrap justify-between gap-2 border-b pb-3 last:border-0"><span>{event.fromStatus ? `${t(`statuses.${event.fromStatus}`)} → ` : ""}{t(`statuses.${event.toStatus}`)}</span><span className="text-sm text-muted-foreground">{actor(event)} · {formatDateTime(event.createdAt)}</span></div>)}</CardContent></Card>
+  </div>
 }
-
-export default ReceiptDetailsPage
+function Info({ label, value }: { label: string; value: string }) { return <div><span className="text-xs text-muted-foreground">{label}</span><p className="font-medium">{value}</p></div> }
+function OptionList({ title, values }: { title: string; values: Array<{ id: string; label: string; isActive: boolean }> }) { const { t } = useTranslation("maintenance"); return <div><h3 className="mb-2 text-sm font-medium">{title}</h3><div className="flex flex-wrap gap-2">{values.length ? values.map(v => <span key={v.id} className="rounded-full border px-3 py-1 text-xs">{v.label}{!v.isActive && ` (${t("inactive", "غير نشط")})`}</span>) : <span className="text-sm text-muted-foreground">—</span>}</div></div> }
+function EditableOptions({ title, active, historical, selected, setSelected }: { title: string; active: MaintenanceOption[]; historical: MaintenanceOption[]; selected: string[]; setSelected: (ids: string[]) => void }) { const all = [...active, ...historical.filter(old => !active.some(current => current.id === old.id))]; return <fieldset><legend className="mb-2 text-sm font-medium">{title}</legend><div className="space-y-2">{all.map(v => <label key={v.id} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={selected.includes(v.id)} disabled={!v.isActive} onChange={e => setSelected(e.target.checked ? [...selected, v.id] : selected.filter(id => id !== v.id))}/>{v.label}</label>)}</div></fieldset> }
+function WorkRow({ work, open, pending, onUpdate, onDelete }: { work: RequiredWork; open: boolean; pending: boolean; onUpdate: (input: { description?: string; estimatedCost?: number | null; isRequired?: boolean; status?: MaintenanceWorkStatus }) => Promise<unknown>; onDelete: () => Promise<unknown> }) { const { t } = useTranslation("maintenance"); const [description, setDescription] = useState(work.description); const [cost, setCost] = useState(work.estimatedCost == null ? "" : String(work.estimatedCost)); const [required, setRequired] = useState(work.isRequired); return <div className="grid items-center gap-2 rounded-md border p-3 lg:grid-cols-[1fr_140px_auto_170px_auto_auto]">{open ? <><Input value={description} onChange={e => setDescription(e.target.value)}/><Input type="number" min={0} step="0.01" value={cost} onChange={e => setCost(e.target.value)}/><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={required} onChange={e => setRequired(e.target.checked)}/>{t("work.required")}</label></> : <><div><p className="font-medium">{work.description}</p><p className="text-xs text-muted-foreground">{work.isRequired ? t("work.required") : t("work.optional")}</p></div><span>{work.estimatedCost == null ? "—" : formatCurrency(work.estimatedCost)}</span><span/> </>}<Select disabled={!open || pending} value={work.status} onValueChange={value => void onUpdate({ status: value as MaintenanceWorkStatus })}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{WORK_STATUSES.map(value => <SelectItem key={value} value={value}>{t(`work.statuses.${value}`)}</SelectItem>)}</SelectContent></Select>{open && <Button variant="outline" size="sm" disabled={pending || !description.trim()} onClick={() => void onUpdate({ description: description.trim(), estimatedCost: cost ? Number(cost) : null, isRequired: required })}><Save className="h-4 w-4"/></Button>}{open && <Button variant="ghost" size="icon" disabled={pending} aria-label={t("work.delete")} onClick={() => void onDelete()}><Trash2 className="h-4 w-4 text-destructive"/></Button>}</div> }

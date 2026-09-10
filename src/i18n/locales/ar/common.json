@@ -7,6 +7,7 @@
     "menu": {
       "home": "الرئيسية",
       "customers": "الزبائن",
+      "vehicles": "المركبات",
       "maintenance": "الصيانة",
       "profile": "الملف الشخصي",
       "settings": "الإعدادات",
@@ -23,6 +24,7 @@
     "passwordPlaceholder": "••••••••••",
     "loggingIn": "جاري تسجيل الدخول...",
     "loginError": "فشل تسجيل الدخول. تحقق من بيانات الاعتماد الخاصة بك.",
+    "initializing": "جاري التحقق من الجلسة...",
     "logout": "تسجيل الخروج"
   },
   "header": {

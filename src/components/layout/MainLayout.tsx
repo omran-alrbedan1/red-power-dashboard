@@ -9,9 +9,12 @@ const MainLayout: React.FC = () => {
   const { logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  const handleLogout = () => {
-    logout()
-    navigate("/login", { replace: true })
+  const handleLogout = async () => {
+    try {
+      await logout()
+    } finally {
+      navigate("/login", { replace: true })
+    }
   }
 
   const handleMenuToggle = () => {
@@ -23,7 +26,7 @@ const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
+    <div className="rp-grid-surface flex h-screen w-full overflow-hidden bg-background">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <Sidebar isMobile={false} />
@@ -37,7 +40,7 @@ const MainLayout: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* Header */}
         <Header
           onLogout={handleLogout}
@@ -46,8 +49,10 @@ const MainLayout: React.FC = () => {
         />
 
         {/* Page Content */}
-        <main className="flex-1 bg-background p-4 sm:p-6 overflow-auto">
-          <Outlet />
+        <main className="relative flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-[1600px]">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

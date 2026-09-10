@@ -1,266 +1,69 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import {
-  User2,
-  Car,
-  ClipboardList,
-  Wrench,
-  BadgeCheck,
-  Plus,
-} from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import ErrorState from "@/components/shared/states/ErrorState"
-import { SubmitButton } from "@/components/shared/buttons/SubmitButton"
-import { useAuth } from "@/features/auth/context/AuthContext"
-import { useCreateMaintenanceCard } from "../hooks/useMaintenanceCards"
-import {
-  createReceiptFormSchema,
-  type ReceiptFormValues,
-  type WorkItemRowValues,
-} from "../validation/maintenance.validation"
-import { CustomerVehicleSelector } from "../components/customer-vehicle-selector"
-import type { SelectorValue } from "../components/customer-vehicle-selector"
-import { CustomerVehicleSection } from "../components/sections/customer-vehicle-section"
-import { VisitSection } from "../components/sections/visit-section"
-import { WorkSection } from "../components/sections/work-section"
-import { DeliverySection } from "../components/sections/delivery-section"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { normalizeApiError } from "@/lib/api/api-error"
+import { CustomerVehicleSelector, type SelectorValue } from "../components/customer-vehicle-selector"
+import { useCreateMaintenanceCard, useMaintenanceOptions } from "../hooks/useMaintenanceCards"
+import { FUEL_LEVELS, type FuelLevel, type MaintenanceOption } from "../types/maintenance.types"
 
-const emptyWorkItem = (): WorkItemRowValues => ({
-  description: "",
-  estimatedCost: "",
-  quantity: "",
-  progress: 0,
-  assignee: "",
-  status: "pending",
-  isRequired: false,
-})
-
-const ReceiptCreatePage: React.FC = () => {
-  const { t } = useTranslation("maintenance")
-  const navigate = useNavigate()
-  const createCard = useCreateMaintenanceCard()
-  const { user } = useAuth()
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | undefined>()
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>()
-
-  const form = useForm<ReceiptFormValues>({
-    resolver: zodResolver(createReceiptFormSchema(t)),
-    defaultValues: {
-      customerName: "",
-      customerPhone: "",
-      customerEmail: "",
-      vehicleMake: "",
-      vehicleModel: "",
-      vehiclePlate: "",
-      vehicleYear: "",
-      vehicleVin: "",
-      vehicleMileage: "",
-      vehicleFuel: "",
-      vehicleTransmission: "",
-      visitReason: "",
-      otherReason: "",
-      complaint: "",
-      fuelLevel: "",
-      externalCondition: "",
-      warningLights: false,
-      tires: "",
-      battery: "",
-      glass: "",
-      body: "",
-      otherNotes: "",
-      itemsLeft: [],
-      workItems: [emptyWorkItem()],
-      approved: false,
-      approvalAmount: "",
-      deliveryDate: undefined,
-      deliveryTime: undefined,
-      receiverName: user?.name ?? "",
-    },
-  })
-
-  const handleSelector = (value: SelectorValue) => {
-    form.setValue("customerName", value.customerName ?? form.getValues("customerName"))
-    form.setValue("customerPhone", value.customerPhone ?? form.getValues("customerPhone"))
-    if (value.customerEmail !== undefined)
-      form.setValue("customerEmail", value.customerEmail)
-    if (value.vehicleMake !== undefined)
-      form.setValue("vehicleMake", value.vehicleMake)
-    if (value.vehicleModel !== undefined)
-      form.setValue("vehicleModel", value.vehicleModel)
-    if (value.vehiclePlate !== undefined)
-      form.setValue("vehiclePlate", value.vehiclePlate)
-    if (value.vehicleYear !== undefined)
-      form.setValue("vehicleYear", value.vehicleYear)
-    if (value.vehicleVin !== undefined)
-      form.setValue("vehicleVin", value.vehicleVin)
-    if (value.vehicleMileage !== undefined)
-      form.setValue("vehicleMileage", value.vehicleMileage)
-    
-    if (value.customerId !== undefined) {
-      setSelectedCustomerId(value.customerId)
-    }
-    if (value.vehicleId !== undefined) {
-      setSelectedVehicleId(value.vehicleId)
-    }
-  }
-
-  const handleSubmit = (values: ReceiptFormValues) => {
-    const workItems = values.workItems
-      .filter((w) => w.description.trim() !== "")
-      .map((w) => ({
-        id: "",
-        description: w.description,
-        estimatedCost: Number(w.estimatedCost) || 0,
-        quantity: w.quantity ? Number(w.quantity) : undefined,
-        progress: Number(w.progress) || 0,
-        assignee: w.assignee || undefined,
-        status: w.status,
-        isRequired: Boolean(w.isRequired),
-      }))
-
-    createCard.mutate(
-      {
-        status: "open",
-        customerId: selectedCustomerId,
-        customerSnapshot: {
-          name: values.customerName,
-          phone: values.customerPhone,
-          email: values.customerEmail || undefined,
-        },
-        vehicleId: selectedVehicleId,
-        vehicleSnapshot: {
-          make: values.vehicleMake,
-          model: values.vehicleModel,
-          plateNumber: values.vehiclePlate,
-          year: values.vehicleYear ? Number(values.vehicleYear) : undefined,
-          vin: values.vehicleVin || undefined,
-          mileage: values.vehicleMileage ? Number(values.vehicleMileage) : undefined,
-          fuelType: values.vehicleFuel || undefined,
-          transmissionType: values.vehicleTransmission || undefined,
-        },
-        visitReason:
-          values.visitReason === "other" && values.otherReason
-            ? values.otherReason
-            : values.visitReason,
-        isOtherReason: values.visitReason === "other",
-        complaint: values.complaint || undefined,
-        condition: {
-          fuelLevel: (values.fuelLevel as any) || undefined,
-          externalCondition: values.externalCondition || undefined,
-          warningLights: values.warningLights || undefined,
-          tires: values.tires || undefined,
-          battery: values.battery || undefined,
-          glass: values.glass || undefined,
-          body: values.body || undefined,
-          otherNotes: values.otherNotes || undefined,
-        },
-        itemsLeftInCar: values.itemsLeft,
-        workItems,
-        approval: {
-          approved: Boolean(values.approved),
-          approvedAt: values.approved ? new Date().toISOString() : undefined,
-          approvedByName: values.approved ? values.customerName : undefined,
-          amount: values.approvalAmount ? Number(values.approvalAmount) : undefined,
-        },
-        expectedDelivery: {
-          date: values.deliveryDate
-            ? new Date(values.deliveryDate).toISOString()
-            : undefined,
-          time: values.deliveryTime
-            ? new Date(values.deliveryTime).toISOString()
-            : undefined,
-        },
-        receiverName: values.receiverName || undefined,
-      },
-      {
-        onSuccess: (card) => navigate(`/maintenance/${card.id}`, { replace: true }),
-      },
-    )
-  }
-
-  if (createCard.isError) {
-    return <ErrorState variant="default" retry={() => createCard.reset()} />
-  }
-
-  return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title={t("newCard")}
-        description={t("subtitle")}
-        showBackButton
-        backButtonLabel={t("backToList")}
-      />
-
-      <CustomerVehicleSelector
-        onSelect={handleSelector}
-        onNewCustomer={() => navigate("/customers/new")}
-      />
-
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-4 relative overflow-visible"
-        noValidate
-      >
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <User2 className="h-4 w-4 text-primary" />
-              {t("sections.header")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CustomerVehicleSection control={form.control} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <ClipboardList className="h-4 w-4 text-primary" />
-              {t("reason.title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <VisitSection control={form.control} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Wrench className="h-4 w-4 text-primary" />
-              {t("work.title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <WorkSection control={form.control} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <BadgeCheck className="h-4 w-4 text-primary" />
-              {t("approval.title")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <DeliverySection control={form.control} />
-          </CardContent>
-        </Card>
-
-        <SubmitButton
-          isLoading={createCard.isPending}
-          text={t("save")}
-          icon={<Plus className="h-4 w-4" />}
-        />
-      </form>
-    </div>
-  )
+function OptionPicker({ title, options, selected, onChange }: { title: string; options: MaintenanceOption[]; selected: string[]; onChange: (ids: string[]) => void }) {
+  return <fieldset className="space-y-2"><legend className="text-sm font-medium">{title}</legend><div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{options.map(option => <label key={option.id} className="flex items-center gap-2 rounded-md border p-3 text-sm"><input type="checkbox" checked={selected.includes(option.id)} onChange={e => onChange(e.target.checked ? [...selected, option.id] : selected.filter(id => id !== option.id))}/>{option.label}</label>)}</div></fieldset>
 }
 
-export default ReceiptCreatePage
+export default function ReceiptCreatePage() {
+  const { t } = useTranslation("maintenance")
+  const navigate = useNavigate()
+  const mutation = useCreateMaintenanceCard()
+  const reasons = useMaintenanceOptions("visit-reasons")
+  const conditions = useMaintenanceOptions("vehicle-conditions")
+  const items = useMaintenanceOptions("vehicle-items")
+  const [selection, setSelection] = useState<SelectorValue | null>(null)
+  const [mileage, setMileage] = useState("")
+  const [fuelLevel, setFuelLevel] = useState<FuelLevel | "">("")
+  const [receivedAt, setReceivedAt] = useState(() => new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16))
+  const [expectedDeliveryAt, setExpectedDeliveryAt] = useState("")
+  const [complaint, setComplaint] = useState("")
+  const [notes, setNotes] = useState("")
+  const [reasonIds, setReasonIds] = useState<string[]>([])
+  const [conditionIds, setConditionIds] = useState<string[]>([])
+  const [itemIds, setItemIds] = useState<string[]>([])
+  const [approved, setApproved] = useState(false)
+  const [approvalName, setApprovalName] = useState("")
+  const [approvedAt, setApprovedAt] = useState("")
+  const [error, setError] = useState("")
+  const optionsError = reasons.isError || conditions.isError || items.isError
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault(); setError("")
+    if (!selection?.customerId || !selection.vehicleOwnershipId || !mileage || !fuelLevel) { setError(t("validation.liveRequired")); return }
+    if (approved && (!approvalName.trim() || !approvedAt)) { setError(t("validation.approvalRequired")); return }
+    try {
+      const card = await mutation.mutateAsync({ customerId: selection.customerId, vehicleOwnershipId: selection.vehicleOwnershipId, receivedAt: new Date(receivedAt).toISOString(), ...(expectedDeliveryAt && { expectedDeliveryAt: new Date(expectedDeliveryAt).toISOString() }), mileage: Number(mileage), fuelLevel, customerComplaint: complaint.trim() || undefined, inspectionNotes: notes.trim() || undefined, customerApproved: approved, ...(approved && { customerApprovalName: approvalName.trim(), customerApprovedAt: new Date(approvedAt).toISOString() }), visitReasonIds: reasonIds, vehicleConditionOptionIds: conditionIds, vehicleItemOptionIds: itemIds })
+      navigate(`/maintenance/${card.id}`, { replace: true })
+    } catch (cause) { setError(normalizeApiError(cause).message) }
+  }
+
+  return <div className="flex flex-col gap-4"><PageHeader title={t("newCard")} description={t("create.backendNumber")} showBackButton backButtonLabel={t("backToList")}/>
+    <CustomerVehicleSelector onSelect={setSelection} onNewCustomer={() => navigate("/customers/new")}/>
+    <form onSubmit={submit} className="space-y-4">
+      <Card><CardHeader><CardTitle>{t("create.reception")}</CardTitle></CardHeader><CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <label className="space-y-1"><span>{t("vehicle.mileage")} *</span><Input type="number" min={0} step={1} value={mileage} onChange={e => setMileage(e.target.value)}/></label>
+        <label className="space-y-1"><span>{t("condition.fuelLevel")} *</span><Select value={fuelLevel} onValueChange={v => setFuelLevel(v as FuelLevel)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{FUEL_LEVELS.map(level => <SelectItem key={level} value={level}>{t(`fuelLevels.${level}`)}</SelectItem>)}</SelectContent></Select></label>
+        <label className="space-y-1"><span>{t("create.receivedAt")} *</span><Input type="datetime-local" value={receivedAt} onChange={e => setReceivedAt(e.target.value)}/></label>
+        <label className="space-y-1"><span>{t("approval.deliveryDate")}</span><Input type="datetime-local" value={expectedDeliveryAt} onChange={e => setExpectedDeliveryAt(e.target.value)}/></label>
+        <label className="space-y-1 sm:col-span-2"><span>{t("reason.complaint")}</span><Textarea value={complaint} onChange={e => setComplaint(e.target.value)}/></label>
+        <label className="space-y-1 sm:col-span-2"><span>{t("condition.otherNotes")}</span><Textarea value={notes} onChange={e => setNotes(e.target.value)}/></label>
+      </CardContent></Card>
+      <Card><CardHeader><CardTitle>{t("create.options")}</CardTitle></CardHeader><CardContent className="space-y-5">{optionsError && <p className="text-sm text-destructive">{t("errors.options")}</p>}<OptionPicker title={t("reason.title")} options={reasons.data ?? []} selected={reasonIds} onChange={setReasonIds}/><OptionPicker title={t("sections.condition")} options={conditions.data ?? []} selected={conditionIds} onChange={setConditionIds}/><OptionPicker title={t("sections.itemsLeft")} options={items.data ?? []} selected={itemIds} onChange={setItemIds}/></CardContent></Card>
+      <Card><CardHeader><CardTitle>{t("sections.approval")}</CardTitle></CardHeader><CardContent className="grid gap-4 sm:grid-cols-3"><label className="flex items-center gap-2"><input type="checkbox" checked={approved} onChange={e => setApproved(e.target.checked)}/>{t("approval.approved")}</label>{approved && <><label className="space-y-1"><span>{t("approval.name")}</span><Input value={approvalName} onChange={e => setApprovalName(e.target.value)}/></label><label className="space-y-1"><span>{t("approval.date")}</span><Input type="datetime-local" value={approvedAt} onChange={e => setApprovedAt(e.target.value)}/></label></>}</CardContent></Card>
+      {error && <p role="alert" className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
+      <Button type="submit" disabled={mutation.isPending || optionsError}>{mutation.isPending ? t("saving") : t("save")}</Button>
+    </form>
+  </div>
+}

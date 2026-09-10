@@ -1,156 +1,18 @@
 {
-  "title": "الصيانة",
-  "subtitle": "بطاقات الاستلام والعمل",
-  "addCard": "بطاقة جديدة",
-  "empty": "لا توجد بطاقات صيانة حالياً",
-  "newCard": "بطاقة جديدة",
-  "details": "تفاصيل البطاقة",
-  "backToList": "العودة للقائمة",
-  "receiptNumber": "رقم الاستلام",
-  "createdAt": "تاريخ الإنشاء",
-  "status": "الحالة",
-  "totalCost": "الإجمالي",
-  "save": "حفظ البطاقة",
-  "saving": "جاري الحفظ...",
-  "statuses": {
-    "draft": "مسودة",
-    "open": "مفتوحة",
-    "in_progress": "قيد التنفيذ",
-    "waiting_parts": "بانتظار القطع",
-    "ready_for_delivery": "جاهزة للتسليم",
-    "closed": "مغلقة",
-    "cancelled": "ملغاة"
-  },
-  "sections": {
-    "header": "معلومات البطاقة",
-    "customer": "الزبون",
-    "vehicle": "المركبة",
-    "reason": "سبب الزيارة",
-    "condition": "الحالة عند الاستلام",
-    "itemsLeft": "الأغراض داخل السيارة",
-    "work": "الأعمال والتقدير",
-    "approval": "الموافقة والتسليم"
-  },
-  "customer": {
-    "title": "الزبون",
-    "select": "اختيار زبون",
-    "create": "زبون جديد",
-    "name": "اسم الزبون",
-    "phone": "رقم الهاتف",
-    "email": "البريد الإلكتروني",
-    "noSelection": "اختر زبوناً"
-  },
-  "vehicle": {
-    "title": "المركبة",
-    "select": "اختيار مركبة",
-    "create": "مركبة جديدة",
-    "make": "الصنّ",
-    "model": "الموديل",
-    "plateNumber": "رقم اللوحة",
-    "year": "السنة",
-    "vin": "رقم الشاصي (VIN)",
-    "mileage": "العداد (كم)",
-    "fuelType": "نوع الوقود",
-    "transmissionType": "ناقل الحركة",
-    "noSelection": "اختر مركبة",
-    "fuel_type": {
-      "petrol": "بنزين",
-      "diesel": "ديزل",
-      "hybrid": "هايبرد",
-      "electric": "كهربائية",
-      "other": "أخرى"
-    },
-    "transmission_type": {
-      "automatic": "أوتوماتيك",
-      "manual": "يدوي"
-    }
-  },
-  "reason": {
-    "title": "سبب الزيارة",
-    "options": {
-      "oil_change": "تغيير زيت",
-      "diagnostics": "فحص وتشخيص",
-      "periodic_service": "صيانة دورية",
-      "repair": "إصلاح",
-      "tires": "عجلات وإطارات",
-      "brakes": "فرامل",
-      "other": "أخرى"
-    },
-    "otherReason": "السبب (أخرى)",
-    "complaint": "شكوى الزبون / ملاحظات"
-  },
-  "condition": {
-    "title": "الحالة عند الاستلام",
-    "fuelLevel": "مستوى الوقود",
-    "fuelLevels": {
-      "empty": "فارغ",
-      "quarter": "ربع",
-      "half": "نصف",
-      "three_quarters": "ثلاثة أرباع",
-      "full": "ممتلئ"
-    },
-    "externalCondition": "الحالة الخارجية",
-    "warningLights": "أضواء تحذير مضاءة",
-    "tires": "العجلات / الإطارات",
-    "battery": "البطارية",
-    "glass": "الزجاج",
-    "body": "الهيكل / الجسم",
-    "otherNotes": "ملاحظات أخرى",
-    "yes": "نعم",
-    "no": "لا"
-  },
-  "itemsLeft": {
-    "title": "الأغراض داخل السيارة",
-    "add": "إضافة غرض",
-    "placeholder": "اكتب غرضاً ثم أضفه"
-  },
-  "work": {
-    "title": "الأعمال والتقدير",
-    "description": "وصف العمل",
-    "estimate": "التكلفة التقديرية",
-    "quantity": "الكمية",
-    "progress": "نسبة الإنجاز",
-    "assignee": "المنفذ",
-    "status": "الحالة",
-    "required": "مطلوب",
-    "total": "الإجمالي",
-    "addRow": "إضافة عمل",
-    "noWork": "لا توجد أعمال بعد",
-    "statuses": {
-      "pending": "قيد الانتظار",
-      "in_progress": "قيد التنفيذ",
-      "completed": "مكتمل",
-      "cancelled": "ملغي"
-    }
-  },
-  "approval": {
-    "title": "الموافقة والتسليم",
-    "approved": "موافقة الزبون",
-    "notApproved": "بانتظار الموافقة",
-    "amount": "المبلغ المعتمد",
-    "deliveryDate": "تاريخ التسليم المتوقع",
-    "deliveryTime": "وقت التسليم",
-    "receiver": "المستلم / الفني"
-  },
-  "validation": {
-    "customerNameRequired": "اسم الزبون مطلوب",
-    "customerPhoneRequired": "رقم هاتف الزبون مطلوب",
-    "plateRequired": "رقم لوحة المركبة مطلوب",
-    "makeRequired": "صنّ المركبة مطلوب",
-    "modelRequired": "موديل المركبة مطلوب",
-    "reasonRequired": "سبب الزيارة مطلوب",
-    "workDescriptionRequired": "وصف العمل مطلوب",
-    "estimateNegative": "التكلفة يجب أن تكون موجباً",
-    "emailInvalid": "البريد الإلكتروني غير صالح"
-  },
-  "list": {
-    "noResults": "لا توجد بطاقات مطابقة",
-    "customer": "الزبون",
-    "vehicle": "المركبة"
-  },
-  "filter": {
-    "title": "تصفية البطاقات",
-    "status": "الحالة",
-    "createdAt": "تاريخ الإنشاء"
-  }
+  "title":"الصيانة","subtitle":"بطاقات استلام المركبات والأعمال المطلوبة","addCard":"بطاقة جديدة","empty":"لا توجد بطاقات صيانة","newCard":"بطاقة صيانة جديدة","details":"تفاصيل بطاقة الصيانة","backToList":"العودة للقائمة","receiptNumber":"رقم البطاقة","createdAt":"تاريخ الاستلام","status":"الحالة","save":"حفظ","saving":"جارٍ الحفظ...","loading":"جارٍ التحميل...","inactive":"غير نشط",
+  "statuses":{"OPEN":"مفتوحة","CLOSED":"مغلقة"},
+  "fuelLevels":{"EMPTY":"فارغ","QUARTER":"ربع","HALF":"نصف","THREE_QUARTERS":"ثلاثة أرباع","FULL":"ممتلئ"},
+  "sections":{"customer":"الزبون","vehicle":"المركبة","condition":"حالة المركبة عند الاستلام","itemsLeft":"الأغراض داخل المركبة","work":"الأعمال المطلوبة","approval":"موافقة الزبون"},
+  "customer":{"select":"اختر زبونًا","create":"زبون جديد","name":"اسم الزبون","phone":"رقم الهاتف","email":"البريد الإلكتروني","noSelection":"اختر زبونًا"},
+  "vehicle":{"select":"اختر مركبة","noSelection":"اختر مركبة","make":"الصنع","model":"الموديل","plateNumber":"رقم اللوحة","year":"السنة","vin":"رقم الشاصي","mileage":"العداد (كم)"},
+  "reason":{"title":"أسباب الزيارة","complaint":"شكوى الزبون"},
+  "condition":{"fuelLevel":"مستوى الوقود","otherNotes":"ملاحظات الفحص","yes":"نعم","no":"لا"},
+  "work":{"description":"وصف العمل","estimate":"التكلفة التقديرية","status":"الحالة","required":"مطلوب","optional":"اختياري","total":"الإجمالي","delete":"حذف العمل","statuses":{"PENDING":"بانتظار البدء","IN_PROGRESS":"قيد التنفيذ","COMPLETED":"مكتمل","CANCELLED":"ملغي"}},
+  "approval":{"approved":"تمت الموافقة","name":"اسم الموافق","date":"وقت الموافقة","deliveryDate":"موعد التسليم المتوقع"},
+  "actions":{"close":"إغلاق البطاقة","reopen":"إعادة فتح البطاقة"},
+  "create":{"backendNumber":"سيتم إنشاء رقم البطاقة تلقائيًا من النظام","reception":"بيانات الاستلام","receivedAt":"وقت الاستلام","options":"تفاصيل الزيارة والفحص"},
+  "validation":{"liveRequired":"اختر مركبة حالية وأدخل العداد ومستوى الوقود.","approvalRequired":"اسم الموافق ووقت الموافقة مطلوبان."},
+  "errors":{"options":"تعذر تحميل خيارات الصيانة. حاول مرة أخرى."},
+  "list":{"customer":"الزبون","vehicle":"المركبة"},
+  "filter":{"search":"ابحث برقم البطاقة أو الزبون أو المركبة","all":"كل الحالات","from":"من تاريخ","to":"إلى تاريخ","apply":"تطبيق"}
 }

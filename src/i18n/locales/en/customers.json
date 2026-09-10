@@ -10,6 +10,19 @@
   "empty": "No customers registered yet",
   "details": "Customer Details",
   "backToList": "Back to List",
+  "backToDetails": "Back to customer",
+  "saveChanges": "Save changes",
+  "notFound": "Customer not found",
+  "loadError": "Unable to load customer",
+  "listError": "Unable to load customers",
+  "activate": "Activate",
+  "deactivate": "Deactivate",
+  "active": "Active",
+  "inactive": "Inactive",
+  "all": "All",
+  "confirmActivate": "Activate this customer?",
+  "confirmDeactivate": "Deactivate this customer?",
+  "pagination": { "previous": "Previous", "next": "Next" },
   "fields": {
     "name": "Name",
     "phone": "Phone",
@@ -19,12 +32,16 @@
   },
   "validation": {
     "nameRequired": "Name is required",
-    "nameMin": "Name must be at least 3 characters",
+    "nameMax": "Name must be 150 characters or fewer",
     "phoneRequired": "Phone number is required",
     "phoneInvalid": "Invalid phone number",
-    "emailInvalid": "Invalid email address"
+    "phoneMax": "Phone must be 30 characters or fewer",
+    "emailInvalid": "Invalid email address",
+    "emailMax": "Email must be 254 characters or fewer"
   },
   "filter": {
+    "status": "Status",
+    "search": "Name, phone, or email",
     "name": "Name",
     "phone": "Phone",
     "plateNumber": "Plate Number",
@@ -38,6 +55,7 @@
     "vehicles": "Vehicles",
     "createdAt": "Created At",
     "actions": "Actions"
+    ,"status": "Status"
   },
   "vehicles": {
     "title": "Vehicles",

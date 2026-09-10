@@ -1,37 +1,23 @@
 import { useTranslation } from "react-i18next"
-import { Car, Plus, Gauge, CalendarDays, Palette, Fuel, Settings2 } from "lucide-react"
+import { Car, CalendarDays, Palette, Settings2 } from "lucide-react"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import type { Vehicle, FuelType, TransmissionType } from "../types/vehicle.types"
-
-const FUEL_KEYS: Record<FuelType, string> = {
-  petrol: "vehicles.fuelTypes.petrol",
-  diesel: "vehicles.fuelTypes.diesel",
-  hybrid: "vehicles.fuelTypes.hybrid",
-  electric: "vehicles.fuelTypes.electric",
-  other: "vehicles.fuelTypes.other",
-}
-
-const TRANSMISSION_KEYS: Record<TransmissionType, string> = {
-  automatic: "vehicles.transmissionTypes.automatic",
-  manual: "vehicles.transmissionTypes.manual",
-}
+import type { CustomerVehicleSummary } from "../types/customer.types"
 
 interface CustomerVehiclesProps {
-  vehicles: Vehicle[]
-  onAddClick: () => void
+  vehicles: CustomerVehicleSummary[]
+  onVehicleClick?: (vehicleId: string) => void
 }
 
 const DetailItem: React.FC<{
   icon: React.ElementType
   label: string
-  value?: string
+  value?: string | null
 }> = ({ icon: Icon, label, value }) => {
   if (!value) return null
   return (
@@ -45,7 +31,7 @@ const DetailItem: React.FC<{
 
 export const CustomerVehicles: React.FC<CustomerVehiclesProps> = ({
   vehicles,
-  onAddClick,
+  onVehicleClick,
 }) => {
   const { t } = useTranslation("customers")
 
@@ -55,10 +41,6 @@ export const CustomerVehicles: React.FC<CustomerVehiclesProps> = ({
         <CardTitle className="text-lg text-text-primary">
           {t("vehicles.title")}
         </CardTitle>
-        <Button onClick={onAddClick} size="sm" className="gap-1.5">
-          <Plus className="h-4 w-4" />
-          {t("vehicles.addVehicle")}
-        </Button>
       </CardHeader>
       <CardContent>
         {vehicles.length === 0 ? (
@@ -68,7 +50,7 @@ export const CustomerVehicles: React.FC<CustomerVehiclesProps> = ({
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
             {vehicles.map((vehicle) => (
-              <Card key={vehicle.id} className="border-border/60 bg-card/50">
+              <Card key={vehicle.id} onClick={() => onVehicleClick?.(vehicle.id)} className={`border-border/60 bg-card/50 ${onVehicleClick ? "cursor-pointer transition-colors hover:bg-muted/30" : ""}`}>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
@@ -95,34 +77,18 @@ export const CustomerVehicles: React.FC<CustomerVehiclesProps> = ({
                     <DetailItem
                       icon={CalendarDays}
                       label={t("vehicles.fields.year")}
-                      value={vehicle.year ? String(vehicle.year) : undefined}
-                    />
-                    <DetailItem
-                      icon={Gauge}
-                      label={t("vehicles.fields.mileage")}
-                      value={
-                        vehicle.mileage != null
-                          ? `${vehicle.mileage.toLocaleString("ar-SA")}`
-                          : undefined
-                      }
+                      value={vehicle.manufactureYear ? String(vehicle.manufactureYear) : undefined}
                     />
                     <DetailItem
                       icon={Palette}
                       label={t("vehicles.fields.color")}
                       value={vehicle.color}
                     />
-                    {vehicle.fuelType && (
-                      <DetailItem
-                        icon={Fuel}
-                        label={t("vehicles.fields.fuelType")}
-                        value={t(FUEL_KEYS[vehicle.fuelType])}
-                      />
-                    )}
-                    {vehicle.transmissionType && (
+                    {vehicle.transmission && (
                       <DetailItem
                         icon={Settings2}
                         label={t("vehicles.fields.transmissionType")}
-                        value={t(TRANSMISSION_KEYS[vehicle.transmissionType])}
+                        value={vehicle.transmission}
                       />
                     )}
                   </div>

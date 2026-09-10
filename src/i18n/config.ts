@@ -10,6 +10,12 @@ import enCustomers from "./locales/en/customers.json"
 
 import arMaintenance from "./locales/ar/maintenance.json"
 import enMaintenance from "./locales/en/maintenance.json"
+import arMaintenanceMedia from "./locales/ar/maintenance-media.json"
+import enMaintenanceMedia from "./locales/en/maintenance-media.json"
+import arAdmin from "./locales/ar/admin.json"
+import enAdmin from "./locales/en/admin.json"
+import arVehicles from "./locales/ar/vehicles.json"
+import enVehicles from "./locales/en/vehicles.json"
 
 i18n
   .use(LanguageDetector)
@@ -19,17 +25,21 @@ i18n
       ar: {
         common: arCommon,
         customers: arCustomers,
-        maintenance: arMaintenance,
+        maintenance: { ...arMaintenance, media: arMaintenanceMedia },
+        vehicles: arVehicles,
+        admin: arAdmin,
       },
       en: {
         common: enCommon,
         customers: enCustomers,
-        maintenance: enMaintenance,
+        maintenance: { ...enMaintenance, media: enMaintenanceMedia },
+        vehicles: enVehicles,
+        admin: enAdmin,
       },
     },
     fallbackLng: "ar",
     defaultNS: "common",
-    ns: ["common", "customers", "maintenance"],
+    ns: ["common", "customers", "maintenance", "vehicles", "admin"],
     interpolation: {
       escapeValue: false,
     },

@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Form } from "@/components/ui/form"
 import CustomFormField, { FormFieldType } from "@/components/shared/inputs/CustomFormField"
-import { LogIn, Mail, Lock, Wrench } from "lucide-react"
+import { LogIn, Mail, Lock } from "lucide-react"
 import { SubmitButton } from "@/components/shared/buttons/SubmitButton"
 import { loginFormSchema, LoginFormValues } from "@/features/auth/validation/auth.validation"
 import { useAuth } from "@/features/auth/context/AuthContext"
 import LanguageSwitcher from "@/components/shared/buttons/language-switcher"
+import { RedPowerLogo } from "@/components/brand/RedPowerLogo"
+import { normalizeApiError } from "@/lib/api/api-error"
 
 const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -30,9 +32,9 @@ const Login: React.FC = () => {
     try {
       await login(data)
       navigate("/", { replace: true })
-    } catch (err) {
+    } catch (error) {
       form.setError("root", {
-        message: t("auth.loginError"),
+        message: normalizeApiError(error).message || t("auth.loginError"),
       })
     } finally {
       setIsLoading(false)
@@ -40,18 +42,14 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background md:flex-row">
+    <div className="rp-grid-surface relative flex min-h-screen w-full flex-col overflow-hidden bg-background md:flex-row">
+      <div className="pointer-events-none absolute -start-40 -top-40 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
       {/* Left Panel: Form */}
-      <div className="flex w-full flex-col items-center justify-center bg-background p-8 md:w-1/2">
-        <div className="w-full max-w-md">
+      <div className="relative z-10 flex w-full flex-col items-center justify-center p-6 sm:p-8 md:w-1/2">
+        <div className="w-full max-w-md rounded-2xl border border-border/80 bg-background-card/75 p-6 shadow-[0_28px_80px_rgba(0,0,0,0.4)] backdrop-blur-xl sm:p-8">
           <div className="flex flex-col gap-6">
             <div className="mx-auto mb-4 flex flex-col items-center gap-3">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-primary shadow-[0_0_42px_rgba(225,6,19,0.35)]">
-                <Wrench className="h-8 w-8 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-                Red Power
-              </h1>
+              <RedPowerLogo className="h-24 w-64" />
             </div>
 
             <div>
@@ -122,10 +120,8 @@ const Login: React.FC = () => {
             style={{ display: 'none' }}
           />
         </div>
-        <div className="relative flex h-full w-full flex-col items-center justify-center gap-6 bg-background-secondary p-12">
-          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary shadow-[0_0_42px_rgba(225,6,19,0.35)]">
-            <Wrench className="h-12 w-12 text-white" />
-          </div>
+        <div className="relative flex h-full w-full flex-col items-center justify-center gap-6 border-s border-border/70 bg-[radial-gradient(circle_at_center,rgba(225,6,19,0.12),transparent_48%)] p-12">
+          <RedPowerLogo className="h-40 w-full max-w-md" />
           <h2 className="text-4xl font-bold text-text-primary">Red Power Garage</h2>
           <p className="max-w-sm text-center text-lg text-text-secondary">
             لوحة تحكم إدارة ورشة Red Power

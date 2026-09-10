@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { CustomerForm } from "../components/customer-form"
 import { useCreateCustomer } from "../hooks/useCustomers"
 import type { CustomerFormValues } from "../validation/customer.validation"
+import { normalizeApiError } from "@/lib/api/api-error"
 
 const CustomerCreatePage: React.FC = () => {
   const { t } = useTranslation("customers")
@@ -13,7 +14,11 @@ const CustomerCreatePage: React.FC = () => {
   const createCustomer = useCreateCustomer()
 
   const handleSubmit = (values: CustomerFormValues) => {
-    createCustomer.mutate(values, {
+    createCustomer.mutate({
+      name: values.name,
+      phone: values.phone,
+      email: values.email || undefined,
+    }, {
       onSuccess: (customer) =>
         navigate(`/customers/${customer.id}`, { replace: true }),
     })
@@ -35,6 +40,7 @@ const CustomerCreatePage: React.FC = () => {
             isSubmitting={createCustomer.isPending}
             submitLabel={t("addCustomer")}
             submitIcon={<Plus className="h-4 w-4" />}
+            serverError={createCustomer.error ? normalizeApiError(createCustomer.error).message : undefined}
           />
         </CardContent>
       </Card>

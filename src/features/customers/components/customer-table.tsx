@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { User, Phone, Car, CalendarDays, ChevronLeft } from "lucide-react"
+import { User, Phone, CalendarDays, ChevronLeft } from "lucide-react"
 import { DataTable, type Column } from "@/components/shared/custom/DataTable"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/formatter"
@@ -8,23 +8,25 @@ import type { Customer } from "../types/customer.types"
 interface CustomerTableProps {
   customers: Customer[]
   loading?: boolean
-  vehicleCount: (customerId: string) => number
   onRowClick: (customer: Customer) => void
   emptyMessage?: string
+  page: number
+  total: number
+  totalPages: number
+  perPage: number
+  onPageChange: (page: number) => void
 }
 
 interface MobileCardProps {
   item: Customer
   onViewDetails: () => void
-  vehicleCount: (customerId: string) => number
 }
 
 const CustomerMobileCard: React.FC<MobileCardProps> = ({
   item,
   onViewDetails,
-  vehicleCount,
 }) => {
-  const { t, i18n } = useTranslation("customers")
+  const { i18n } = useTranslation("customers")
   const isAr = i18n.language === "ar"
 
   return (
@@ -54,10 +56,6 @@ const CustomerMobileCard: React.FC<MobileCardProps> = ({
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
         <span className="flex items-center gap-1">
-          <Car className="h-3.5 w-3.5 text-primary" />
-          {vehicleCount(item.id)} {t("table.vehicles")}
-        </span>
-        <span className="flex items-center gap-1">
           <CalendarDays className="h-3.5 w-3.5 text-primary" />
           {formatDate(item.createdAt, isAr ? "ar-SA" : "en-GB")}
         </span>
@@ -69,13 +67,22 @@ const CustomerMobileCard: React.FC<MobileCardProps> = ({
 export const CustomerTable: React.FC<CustomerTableProps> = ({
   customers,
   loading,
-  vehicleCount,
   onRowClick,
   emptyMessage,
+  page,
+  total,
+  totalPages,
+  perPage,
+  onPageChange,
 }) => {
   const { t } = useTranslation("customers")
 
   const columns: Column<Customer>[] = [
+    {
+      key: "status",
+      header: t("table.status"),
+      cell: (customer) => <Badge variant={customer.isActive ? "default" : "secondary"}>{t(customer.isActive ? "active" : "inactive")}</Badge>,
+    },
     {
       key: "name",
       header: t("table.name"),
@@ -95,16 +102,6 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       ),
     },
     {
-      key: "vehicles",
-      header: t("table.vehicles"),
-      headerIcon: Car,
-      cell: (customer) => (
-        <Badge variant="secondary" className="bg-primary/10 text-primary">
-          {vehicleCount(customer.id)}
-        </Badge>
-      ),
-    },
-    {
       key: "createdAt",
       header: t("table.createdAt"),
       headerIcon: CalendarDays,
@@ -116,18 +113,14 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
     },
   ]
 
-  const pagination = {
-    total: customers.length,
-    page: 1,
-    lastPage: 1,
-  }
+  const pagination = { total, page, lastPage: totalPages, perPage }
 
   const MobileCard = (props: {
     item: Customer
     onViewDetails: () => void
     t: (key: string, options?: any) => string
     isAr: boolean
-  }) => <CustomerMobileCard item={props.item} onViewDetails={props.onViewDetails} vehicleCount={vehicleCount} />
+  }) => <CustomerMobileCard item={props.item} onViewDetails={props.onViewDetails} />
 
   return (
     <DataTable<Customer>
@@ -135,7 +128,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       columns={columns}
       loading={loading}
       pagination={pagination}
-      onPageChange={() => {}}
+      onPageChange={onPageChange}
       getRowId={(customer) => customer.id}
       onRowClick={onRowClick}
       mobileCardComponent={MobileCard}

@@ -1,156 +1,18 @@
 {
-  "title": "Maintenance",
-  "subtitle": "Receipt cards and work items",
-  "addCard": "New Card",
-  "empty": "No maintenance cards yet",
-  "newCard": "New Card",
-  "details": "Card Details",
-  "backToList": "Back to List",
-  "receiptNumber": "Receipt Number",
-  "createdAt": "Created At",
-  "status": "Status",
-  "totalCost": "Total",
-  "save": "Save Card",
-  "saving": "Saving...",
-  "statuses": {
-    "draft": "Draft",
-    "open": "Open",
-    "in_progress": "In Progress",
-    "waiting_parts": "Waiting Parts",
-    "ready_for_delivery": "Ready for Delivery",
-    "closed": "Closed",
-    "cancelled": "Cancelled"
-  },
-  "sections": {
-    "header": "Card Information",
-    "customer": "Customer",
-    "vehicle": "Vehicle",
-    "reason": "Visit Reason",
-    "condition": "Condition at Receipt",
-    "itemsLeft": "Items Left in the Car",
-    "work": "Work & Estimate",
-    "approval": "Approval & Delivery"
-  },
-  "customer": {
-    "title": "Customer",
-    "select": "Select Customer",
-    "create": "New Customer",
-    "name": "Customer Name",
-    "phone": "Phone",
-    "email": "Email",
-    "noSelection": "Select a customer"
-  },
-  "vehicle": {
-    "title": "Vehicle",
-    "select": "Select Vehicle",
-    "create": "New Vehicle",
-    "make": "Make",
-    "model": "Model",
-    "plateNumber": "Plate Number",
-    "year": "Year",
-    "vin": "VIN",
-    "mileage": "Mileage (km)",
-    "fuelType": "Fuel Type",
-    "transmissionType": "Transmission",
-    "noSelection": "Select a vehicle",
-    "fuel_type": {
-      "petrol": "Petrol",
-      "diesel": "Diesel",
-      "hybrid": "Hybrid",
-      "electric": "Electric",
-      "other": "Other"
-    },
-    "transmission_type": {
-      "automatic": "Automatic",
-      "manual": "Manual"
-    }
-  },
-  "reason": {
-    "title": "Visit Reason",
-    "options": {
-      "oil_change": "Oil Change",
-      "diagnostics": "Diagnostics",
-      "periodic_service": "Periodic Service",
-      "repair": "Repair",
-      "tires": "Tires",
-      "brakes": "Brakes",
-      "other": "Other"
-    },
-    "otherReason": "Reason (Other)",
-    "complaint": "Customer Complaint / Notes"
-  },
-  "condition": {
-    "title": "Condition at Receipt",
-    "fuelLevel": "Fuel Level",
-    "fuelLevels": {
-      "empty": "Empty",
-      "quarter": "Quarter",
-      "half": "Half",
-      "three_quarters": "Three Quarters",
-      "full": "Full"
-    },
-    "externalCondition": "External Condition",
-    "warningLights": "Warning Lights On",
-    "tires": "Tires",
-    "battery": "Battery",
-    "glass": "Glass",
-    "body": "Body",
-    "otherNotes": "Other Notes",
-    "yes": "Yes",
-    "no": "No"
-  },
-  "itemsLeft": {
-    "title": "Items Left in the Car",
-    "add": "Add Item",
-    "placeholder": "Type an item then add it"
-  },
-  "work": {
-    "title": "Work & Estimate",
-    "description": "Work Description",
-    "estimate": "Estimated Cost",
-    "quantity": "Quantity",
-    "progress": "Progress",
-    "assignee": "Assignee",
-    "status": "Status",
-    "required": "Required",
-    "total": "Total",
-    "addRow": "Add Work Item",
-    "noWork": "No work items yet",
-    "statuses": {
-      "pending": "Pending",
-      "in_progress": "In Progress",
-      "completed": "Completed",
-      "cancelled": "Cancelled"
-    }
-  },
-  "approval": {
-    "title": "Approval & Delivery",
-    "approved": "Customer Approval",
-    "notApproved": "Awaiting Approval",
-    "amount": "Approved Amount",
-    "deliveryDate": "Expected Delivery Date",
-    "deliveryTime": "Delivery Time",
-    "receiver": "Receiver / Technician"
-  },
-  "validation": {
-    "customerNameRequired": "Customer name is required",
-    "customerPhoneRequired": "Customer phone is required",
-    "plateRequired": "Vehicle plate is required",
-    "makeRequired": "Vehicle make is required",
-    "modelRequired": "Vehicle model is required",
-    "reasonRequired": "Visit reason is required",
-    "workDescriptionRequired": "Work description is required",
-    "estimateNegative": "Estimated cost must be positive",
-    "emailInvalid": "Invalid email address"
-  },
-  "list": {
-    "noResults": "No matching cards",
-    "customer": "Customer",
-    "vehicle": "Vehicle"
-  },
-  "filter": {
-    "title": "Filter Cards",
-    "status": "Status",
-    "createdAt": "Created At"
-  }
+  "title":"Maintenance","subtitle":"Vehicle reception cards and required work","addCard":"New card","empty":"No maintenance cards","newCard":"New maintenance card","details":"Maintenance card details","backToList":"Back to list","receiptNumber":"Card number","createdAt":"Received at","status":"Status","save":"Save","saving":"Saving...","loading":"Loading...","inactive":"Inactive",
+  "statuses":{"OPEN":"Open","CLOSED":"Closed"},
+  "fuelLevels":{"EMPTY":"Empty","QUARTER":"Quarter","HALF":"Half","THREE_QUARTERS":"Three quarters","FULL":"Full"},
+  "sections":{"customer":"Customer","vehicle":"Vehicle","condition":"Vehicle condition at reception","itemsLeft":"Items left in vehicle","work":"Required work","approval":"Customer approval"},
+  "customer":{"select":"Select customer","create":"New customer","name":"Customer name","phone":"Phone","email":"Email","noSelection":"Select a customer"},
+  "vehicle":{"select":"Select vehicle","noSelection":"Select a vehicle","make":"Make","model":"Model","plateNumber":"Plate number","year":"Year","vin":"VIN","mileage":"Mileage (km)"},
+  "reason":{"title":"Visit reasons","complaint":"Customer complaint"},
+  "condition":{"fuelLevel":"Fuel level","otherNotes":"Inspection notes","yes":"Yes","no":"No"},
+  "work":{"description":"Work description","estimate":"Estimated cost","status":"Status","required":"Required","optional":"Optional","total":"Total","delete":"Delete work","statuses":{"PENDING":"Pending","IN_PROGRESS":"In progress","COMPLETED":"Completed","CANCELLED":"Cancelled"}},
+  "approval":{"approved":"Approved","name":"Approver name","date":"Approval time","deliveryDate":"Expected delivery"},
+  "actions":{"close":"Close card","reopen":"Reopen card"},
+  "create":{"backendNumber":"The system will generate the card number automatically","reception":"Reception details","receivedAt":"Received at","options":"Visit and inspection details"},
+  "validation":{"liveRequired":"Select a current vehicle and enter mileage and fuel level.","approvalRequired":"Approver name and approval time are required."},
+  "errors":{"options":"Maintenance options could not be loaded. Try again."},
+  "list":{"customer":"Customer","vehicle":"Vehicle"},
+  "filter":{"search":"Search card, customer, or vehicle","all":"All statuses","from":"From","to":"To","apply":"Apply"}
 }

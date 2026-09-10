@@ -23,6 +23,7 @@ export interface SelectorValue {
   vehicleMileage?: number | ""
   customerId?: string
   vehicleId?: string
+  vehicleOwnershipId?: string
 }
 
 interface CustomerVehicleSelectorProps {
@@ -59,15 +60,19 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
   const handleVehicleChange = (vehicleId: string) => {
     const vehicle = vehicles.find((v) => v.id === vehicleId)
     if (!vehicle) return
+    const customer = customers.find((c) => c.id === vehicle.customerId)
     onSelect({
       customerId: vehicle.customerId,
       vehicleId: vehicle.id,
+      vehicleOwnershipId: vehicle.vehicleOwnershipId,
       vehicleMake: vehicle.make,
       vehicleModel: vehicle.model,
       vehiclePlate: vehicle.plateNumber,
-      customerName: "",
-      customerPhone: "",
-      vehicleYear: "",
+      customerName: customer?.name ?? "",
+      customerPhone: customer?.phone ?? "",
+      customerEmail: customer?.email ?? undefined,
+      vehicleYear: vehicle.manufactureYear,
+      vehicleVin: vehicle.vin ?? undefined,
     })
   }
 

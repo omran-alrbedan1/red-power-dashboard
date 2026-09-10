@@ -5,12 +5,24 @@
   --color-primary: #E10613;
   --color-primary-dark: #C00510;
   --color-primary-light: #FF2331;
+  --color-primary-foreground: #FFFFFF;
 
   /* Background Colors */
   --color-background: #08090A;
   --color-background-secondary: #111315;
   --color-background-sidebar: #08090A;
   --color-background-card: #151719;
+  --color-foreground: #F5F5F5;
+  --color-card: #151719;
+  --color-card-foreground: #F5F5F5;
+  --color-muted: #202326;
+  --color-muted-foreground: #9DA2A8;
+  --color-accent: #24272B;
+  --color-accent-foreground: #FFFFFF;
+  --color-input: #34383D;
+  --color-destructive: #E10613;
+  --color-destructive-foreground: #FFFFFF;
+  --color-steel: #8A9097;
 
   --color-popover: #151719;
   --color-popover-foreground: #F5F5F5;
@@ -38,8 +50,9 @@
 
   /* Shadows */
   --shadow-soft: 0 20px 45px rgba(0, 0, 0, 0.5);
-  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 18px 45px rgba(0, 0, 0, 0.28);
   --shadow-dark-card: 0 4px 16px rgba(0, 0, 0, 0.55);
+  --shadow-brand: 0 0 42px rgba(225, 6, 19, 0.28);
 
   /* Border Radius */
   --radius-xl: 0.75rem;
@@ -60,6 +73,8 @@
   --color-background-secondary: #111315;
   --color-background-sidebar: #08090A;
   --color-background-card: #151719;
+  --color-surface-raised: #1A1D20;
+  --color-surface-glass: rgba(21, 23, 25, 0.88);
 
   --color-popover: #151719;
   --color-popover-foreground: #F5F5F5;
@@ -85,6 +100,8 @@
   /* Border Colors */
   --color-border: #2B2F33;
   --color-border-light: #1E2226;
+  --color-metal: #8A9097;
+  --color-brand-glow: rgba(225, 6, 19, 0.22);
 
   /* Focus Ring Colors */
   --color-ring: #E10613;
@@ -98,10 +115,12 @@
 }
 
 .light {
-  --color-background: #F5F5F5;
-  --color-background-secondary: #FFFFFF;
-  --color-background-sidebar: #08090A;
-  --color-background-card: #FFFFFF;
+  --color-background: #F2F3F4;
+  --color-background-secondary: #E8EAEC;
+  --color-background-sidebar: #F8F9FA;
+  --color-background-card: #FAFAFA;
+  --color-surface-raised: #FFFFFF;
+  --color-surface-glass: rgba(250, 250, 250, 0.9);
 
   --color-popover: #FFFFFF;
   --color-popover-foreground: #1A1A1A;
@@ -121,8 +140,10 @@
   --color-text-on-primary: #FFFFFF;
   --color-text-subtitle: rgba(0, 0, 0, 0.4);
 
-  --color-border: #E5E7EB;
-  --color-border-light: #F3F4F6;
+  --color-border: #CED1D4;
+  --color-border-light: #E2E4E6;
+  --color-metal: #73777C;
+  --color-brand-glow: rgba(225, 6, 19, 0.14);
 
   --color-ring: #E10613;
   --color-ring-offset: #FFFFFF;
@@ -139,8 +160,20 @@
   }
 
   body {
-    background-color: var(--color-background);
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 10% -10%, var(--color-brand-glow), transparent 30rem),
+      linear-gradient(145deg, var(--color-background) 0%, var(--color-background-secondary) 140%);
+    background-attachment: fixed;
     color: var(--color-text-primary);
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: rgba(225, 6, 19, 0.78);
+    color: #fff;
   }
 
   h1, h2, h3, h4, h5, h6,
@@ -210,6 +243,16 @@
 }
 
 @layer utilities {
+  .rp-grid-surface {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .rp-metal-line {
+    background: linear-gradient(90deg, transparent, var(--color-metal), transparent);
+  }
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }

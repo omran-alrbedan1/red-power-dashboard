@@ -4,12 +4,13 @@ import { useTranslation } from "react-i18next"
 import {
   LayoutDashboard,
   Users,
+  Car,
   Wrench,
   UserCircle,
   Settings,
   X,
-  Wrench as WrenchIcon,
 } from "lucide-react"
+import { RedPowerLogo } from "@/components/brand/RedPowerLogo"
 
 interface MenuItem {
   titleKey: string
@@ -22,6 +23,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { titleKey: "sidebar.menu.home", path: "/", icon: LayoutDashboard },
   { titleKey: "sidebar.menu.customers", path: "/customers", icon: Users },
+  { titleKey: "sidebar.menu.vehicles", path: "/vehicles", icon: Car },
   { titleKey: "sidebar.menu.maintenance", path: "/maintenance", icon: Wrench, notifs: 3 },
 ]
 
@@ -132,8 +134,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ open, isMobile, onClose
 
   return (
     <nav
-      className={`relative flex h-screen flex-col shrink-0 w-64 bg-background-card shadow-lg ${
-        isMobile ? "shadow-xl" : "border-e border-border"
+      className={`relative flex h-screen w-64 shrink-0 flex-col overflow-hidden bg-background-sidebar shadow-2xl transition-colors duration-300 ${
+        isMobile ? "shadow-xl" : "border-e border-border/80"
       }`}
     >
       {/* Close button for mobile */}
@@ -149,7 +151,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ open, isMobile, onClose
 
       <TitleSection isMobile={isMobile} onClose={onClose} />
 
-      <div className="flex-grow overflow-y-auto overflow-x-hidden pb-20 px-2">
+      <div className="flex-grow overflow-y-auto overflow-x-hidden px-3 pb-20">
         <div className="space-y-1 mb-6">
           <div className="px-3 py-2 text-xs font-medium text-text-muted uppercase tracking-wide">
             {t("sidebar.sections.main")}
@@ -220,10 +222,10 @@ const Option: React.FC<OptionProps> = ({ Icon, titleKey, path, currentPath, noti
       tabIndex={0}
       onClick={handleClick}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleClick()}
-      className={`cursor-pointer relative flex h-11 w-full items-center rounded-md transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+      className={`relative flex h-11 w-full cursor-pointer items-center overflow-hidden rounded-md border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
         isSelected
-          ? "bg-primary text-white shadow-[0_0_18px_rgba(225,6,19,0.25)]"
-          : "text-text-secondary hover:bg-background-secondary hover:text-text-primary"
+          ? "border-primary-light/25 bg-[linear-gradient(90deg,rgba(225,6,19,0.98),rgba(180,0,12,0.92))] text-white shadow-[0_8px_24px_rgba(225,6,19,0.2)]"
+          : "border-transparent text-text-secondary hover:border-border/70 hover:bg-background-secondary/70 hover:text-text-primary"
       }`}
     >
       <div className="grid h-full w-12 place-content-center">
@@ -261,18 +263,13 @@ const TitleSection: React.FC<TitleSectionProps> = ({ isMobile, onClose }) => {
   }
 
   return (
-    <div className="mb-6 border-b border-border pb-4 px-2">
+    <div className="relative mb-6 border-b border-border/80 px-2 pb-4 pt-2">
+      <div className="rp-metal-line absolute inset-x-8 bottom-0 h-px opacity-40" />
       <div
         onClick={handleClick}
         className="flex cursor-pointer items-center justify-center gap-2 rounded-md p-2 transition-colors hover:bg-background-secondary"
       >
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary shadow-[0_0_26px_rgba(225,6,19,0.3)]">
-          <WrenchIcon className="h-5 w-5 text-white" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-lg font-bold text-text-primary leading-tight">Red Power</span>
-          <span className="text-xs text-text-muted">لوحة التحكم</span>
-        </div>
+        <RedPowerLogo className="h-24 w-52" />
       </div>
     </div>
   )

@@ -120,7 +120,7 @@ Each feature owns its `pages`, `components`, `types`, `services`, `hooks`, `vali
 ### Phase 0 — Foundation audit and safety
 
 - [ ] Inventory reusable components and establish migration/reuse owners.
-- [ ] Add Red Power color, typography, spacing, status, and RTL tokens without embedding brand logic in generic primitives.
+- [x] Add Red Power color, typography, spacing, status, and RTL tokens without embedding brand logic in generic primitives.
 - [ ] Create a dashboard theme adapter from the approved Red Power tokens; keep shared primitives neutral.
 - [ ] Decide the initial approved logo and image set from the website repository, including destination and Arabic alt text.
 - [ ] Record build/lint baseline and known pre-existing failures.
@@ -157,10 +157,10 @@ Detailed execution plan: [`docs/PHASE_1_PLAN.md`](./PHASE_1_PLAN.md).
 
 Detailed execution plan: [`docs/PHASE_3_PLAN.md`](./PHASE_3_PLAN.md).
 
-- [x] Model statuses: `draft`, `open`, `in_progress`, `waiting_parts`, `ready_for_delivery`, `closed`, `cancelled`.
+- [x] Model backend-authoritative card statuses: `OPEN`, `CLOSED`; work statuses: `PENDING`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`.
 - [x] Build sectioned receipt form from the supplied card.
 - [x] Enforce required receipt validation and record inspection selections.
-- [x] Create work items: description, estimate, progress, assignee, completion state.
+- [x] Create work items: description, estimate, required flag, and backend-authoritative completion state.
 - [x] Add customer approval and expected delivery fields.
 
 **Exit condition:** a complete vehicle receipt can be created and appears in customer and vehicle history.
@@ -168,8 +168,8 @@ Detailed execution plan: [`docs/PHASE_3_PLAN.md`](./PHASE_3_PLAN.md).
 
 ### Phase 4 — Open-to-close workflow
 
-- [ ] Add activity timeline, work updates, and audit events.
-- [ ] Prevent closure while any required work item remains open; explain what remains.
+- [x] Add the persisted status-event timeline and live work updates.
+- [x] Prevent closure while any required work item remains open; surface the backend conflict message.
 - [ ] Add close-card confirmation and final status.
 - [ ] Add dashboard counters for card stages.
 
@@ -193,3 +193,13 @@ Customer 1 ── * Vehicle 1 ── * MaintenanceCard 1 ── * WorkItem
                                   └── * ActivityEvent
 StaffMember 1 ── * WorkItem / ActivityEvent
 ```
+
+## Decision log
+
+- **2026-09-04 — Maintenance media integration:** Private maintenance photos and the optional customer-signature file use authenticated multipart and blob requests through the shared Axios client. The card details page supports server-authoritative multi-upload, preview/delete, signature upload/replace/delete, OPEN/CLOSED controls, and object-URL cleanup; storage keys remain non-editable and tokens never enter media URLs.
+
+- **2026-09-04 — Authentication integration:** The frontend uses the live `/api/v1/auth/login`, `/api/v1/auth/refresh`, `/api/v1/auth/logout`, and `/api/v1/users/me` contracts. Access and rotating refresh tokens are returned in the JSON success envelope and are isolated behind centralized browser storage; refresh is sent as a Bearer token. Runtime database-backed login verification is blocked because the live API currently returns `database.errors.operation_failed` after valid login input reaches Prisma.
+- **2026-09-04 — Customer API integration:** Customer list, detail, create, and update now use the shared authenticated Axios client and React Query with backend UUIDs. The verified backend has no customer delete endpoint; vehicle creation and maintenance history remain deferred. Runtime authenticated CRUD verification still requires a working backend user session; unauthenticated access correctly returns `401`.
+- **2026-09-04 — Vehicle and ownership integration:** Vehicles now use a dedicated live API domain for list, search, create, detail, update, activation, ownership history/transfer, and maintenance-history reads. Customer activation/history and maintenance customer/vehicle selectors use backend IDs. Legacy vehicle and selector fixtures were removed; maintenance-card fixtures remain isolated until the maintenance contract task.
+- **2026-09-04 — Maintenance contract alignment:** The authoritative card lifecycle is `OPEN`/`CLOSED`; work items carry `PENDING`, `IN_PROGRESS`, `COMPLETED`, or `CANCELLED`. The backend generates atomic `RP-YYYY-NNNNNN` card numbers and blocks closure while a required work item is non-terminal. Customer and current ownership IDs remain paired for historical identity, mileage/fuel remain reception fields on the card, signature files remain separate from approval metadata, and Task 5 must replace the legacy multi-status/mock maintenance model with this live contract.
+- **2026-09-04 — Maintenance core integration:** Maintenance list, create, details, editable open-card fields/options, work-item CRUD/status, close, SUPER_ADMIN reopen, and status history now use the live API through the shared client and hierarchical React Query keys. Decimal estimates are normalized at the API boundary; all local maintenance records, generated IDs/numbers, fake activity, and legacy workflow states were removed. Media and signature UI remain Task 6.

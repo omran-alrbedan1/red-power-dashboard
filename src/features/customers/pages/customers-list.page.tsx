@@ -8,17 +8,19 @@ import { EmptyState } from "@/components/shared/states"
 import ErrorState from "@/components/shared/states/ErrorState"
 import { CustomerFilter } from "../components/customer-filter"
 import { CustomerTable } from "../components/customer-table"
-import { useCustomers, useVehicleCounts } from "../hooks/useCustomers"
+import { useCustomers } from "../hooks/useCustomers"
 import type { CustomerFilterValues } from "../configs/customer-filter.config"
 import type { Customer } from "../types/customer.types"
 
 const isEmptyFilter = (filters: CustomerFilterValues) =>
-  !Object.values(filters).some((v) => v.trim() !== "")
+  filters.search.trim() === "" && filters.isActive === "true"
 
 const CustomersListPage: React.FC = () => {
   const { t } = useTranslation("customers")
   const navigate = useNavigate()
   const [activeFilters, setActiveFilters] = useState<CustomerFilterValues>()
+  const [page, setPage] = useState(1)
+  const limit = 10
 
   const appliedFilters = useMemo(
     () =>
@@ -28,27 +30,37 @@ const CustomersListPage: React.FC = () => {
     [activeFilters],
   )
 
-  const customersQuery = useCustomers(appliedFilters)
-  const countsQuery = useVehicleCounts()
+  const customersQuery = useCustomers({
+    page,
+    limit,
+    isActive: activeFilters?.isActive === "all" ? undefined : activeFilters?.isActive !== "false",
+    search: appliedFilters?.search.trim() || undefined,
+  })
 
-  const customers = customersQuery.data ?? []
-  const vehicleCounts = countsQuery.data ?? {}
+  const customers = customersQuery.data?.items ?? []
+  const meta = customersQuery.data?.meta
 
   const handleRowClick = (customer: Customer) =>
     navigate(`/customers/${customer.id}`)
 
-  const handleApply = (values: CustomerFilterValues) =>
+  const handleApply = (values: CustomerFilterValues) => {
+    setPage(1)
     setActiveFilters(values)
+  }
 
-  const handleReset = () => setActiveFilters(undefined)
+  const handleReset = () => {
+    setPage(1)
+    setActiveFilters(undefined)
+  }
 
-  if (customersQuery.isError || countsQuery.isError) {
+  if (customersQuery.isError) {
     return (
       <ErrorState
         variant="default"
+        title={t("listError")}
+        description={customersQuery.error.message}
         retry={() => {
           customersQuery.refetch()
-          countsQuery.refetch()
         }}
       />
     )
@@ -73,7 +85,7 @@ const CustomersListPage: React.FC = () => {
         isLoading={customersQuery.isFetching}
       />
 
-      {customers.length === 0 ? (
+      {!customersQuery.isLoading && customers.length === 0 ? (
         <EmptyState
           icon={Users}
           title={
@@ -94,7 +106,11 @@ const CustomersListPage: React.FC = () => {
         <CustomerTable
           customers={customers}
           loading={customersQuery.isLoading}
-          vehicleCount={(id) => vehicleCounts[id] ?? 0}
+          page={meta?.page ?? page}
+          total={meta?.total ?? 0}
+          totalPages={meta?.totalPages ?? 0}
+          perPage={meta?.limit ?? limit}
+          onPageChange={setPage}
           onRowClick={handleRowClick}
           emptyMessage={t("noResults")}
         />

@@ -1,287 +1,55 @@
-import type { MaintenanceCard } from "../types/maintenance.types"
-import type { WorkItem } from "../types/work-item.types"
-import type { MaintenanceCardSummary } from "../types/summary.types"
-import type { ActivityEvent, ActivityType } from "../types/activity.types"
-import {
-  initialCards,
-  selectorCustomers,
-  selectorVehicles,
-  type CustomerOption,
-  type VehicleOption,
-} from "../data/maintenance.data"
+import { API_ENDPOINTS } from "@/lib/api/api.endpoints"
+import { httpClient } from "@/lib/api/http-client"
+import type { ApiSuccessResponse, PaginatedResponse } from "@/lib/api/api.types"
+import type { CreateMaintenanceCardInput, MaintenanceCard, MaintenanceCardListItem, MaintenanceListParams, MaintenanceOption, MaintenanceOptionKind, RequiredWork, RequiredWorkInput, UpdateMaintenanceCardInput, UpdateRequiredWorkInput } from "../types/maintenance.types"
 
-export type MaintenanceCardInput = Omit<
-  MaintenanceCard,
-  "id" | "receiptNumber" | "createdAt" | "updatedAt"
->
+type RawWork = Omit<RequiredWork, "estimatedCost"> & { estimatedCost: string | number | null }
+type RawCard = Omit<MaintenanceCard, "requiredWorks"> & { requiredWorks: RawWork[] }
 
-let cards: MaintenanceCard[] = [...initialCards]
-
-const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const uid = (prefix: string) =>
-  `${prefix}-${Math.random().toString(36).slice(2, 10)}`
-
-const receiptNumberFor = (): string => {
-  const year = new Date().getFullYear()
-  const next = cards.length + 1
-  return `RC-${year}-${String(next).padStart(4, "0")}`
-}
-
-const createActivityEvent = (
-  cardId: string,
-  type: ActivityType,
-  description: string,
-  actor?: string,
-  metadata?: Record<string, unknown>
-): ActivityEvent => ({
-  id: uid("act"),
-  cardId,
-  type,
-  timestamp: new Date().toISOString(),
-  actor,
-  description,
-  metadata,
+const mapWork = (work: RawWork): RequiredWork => ({
+  ...work,
+  estimatedCost: work.estimatedCost == null ? null : Number(work.estimatedCost),
 })
-
-const canCloseCard = (card: MaintenanceCard): { allowed: boolean; reason?: string } => {
-  const openRequiredWork = card.workItems.filter(
-    (w) => w.isRequired && w.status !== "completed" && w.status !== "cancelled"
-  )
-  if (openRequiredWork.length > 0) {
-    return {
-      allowed: false,
-      reason: `${openRequiredWork.length} required work items remain open`,
-    }
-  }
-  return { allowed: true }
-}
+const mapCard = (card: RawCard): MaintenanceCard => ({ ...card, requiredWorks: card.requiredWorks.map(mapWork) })
 
 export const maintenanceService = {
-  async list(): Promise<MaintenanceCard[]> {
-    await delay()
-    return [...cards].sort((a, b) =>
-      b.createdAt.localeCompare(a.createdAt),
-    )
+  async list(params: MaintenanceListParams): Promise<PaginatedResponse<MaintenanceCardListItem>> {
+    const response = await httpClient.get<ApiSuccessResponse<PaginatedResponse<MaintenanceCardListItem>>>(API_ENDPOINTS.maintenance.list, { params })
+    return response.data.data
   },
-
-  async getById(id: string): Promise<MaintenanceCard | undefined> {
-    await delay()
-    return cards.find((c) => c.id === id)
+  async getById(id: string): Promise<MaintenanceCard> {
+    const response = await httpClient.get<ApiSuccessResponse<RawCard>>(API_ENDPOINTS.maintenance.detail(id))
+    return mapCard(response.data.data)
   },
-
-  async create(input: MaintenanceCardInput): Promise<MaintenanceCard> {
-    await delay()
-    const now = new Date().toISOString()
-    const cardId = uid("mnt")
-    const card: MaintenanceCard = {
-      id: cardId,
-      receiptNumber: receiptNumberFor(),
-      ...input,
-      workItems: (input.workItems ?? []).map((w) =>
-        w.id ? w : { ...w, id: uid("mwi") },
-      ),
-      activityEvents: [],
-      createdAt: now,
-      updatedAt: now,
-    }
-    const createdEvent = createActivityEvent(
-      cardId,
-      "card_created",
-      "Card created",
-      input.receiverName
-    )
-    card.activityEvents.push(createdEvent)
-    cards.push(card)
-    return card
+  async create(input: CreateMaintenanceCardInput): Promise<MaintenanceCard> {
+    const response = await httpClient.post<ApiSuccessResponse<RawCard>>(API_ENDPOINTS.maintenance.create, input)
+    return mapCard(response.data.data)
   },
-
-  async update(
-    id: string,
-    patch: Partial<MaintenanceCard>,
-  ): Promise<MaintenanceCard | undefined> {
-    await delay()
-    const index = cards.findIndex((c) => c.id === id)
-    if (index === -1) return undefined
-    cards[index] = {
-      ...cards[index],
-      ...patch,
-      updatedAt: new Date().toISOString(),
-    }
-    return cards[index]
+  async update(id: string, input: UpdateMaintenanceCardInput): Promise<MaintenanceCard> {
+    const response = await httpClient.patch<ApiSuccessResponse<RawCard>>(API_ENDPOINTS.maintenance.update(id), input)
+    return mapCard(response.data.data)
   },
-
-  async addWorkItem(
-    cardId: string,
-    item: Omit<WorkItem, "id">,
-  ): Promise<MaintenanceCard | undefined> {
-    await delay(150)
-    const index = cards.findIndex((c) => c.id === cardId)
-    if (index === -1) return undefined
-    const workItem: WorkItem = { ...item, id: uid("mwi") }
-    cards[index] = {
-      ...cards[index],
-      workItems: [...cards[index].workItems, workItem],
-      updatedAt: new Date().toISOString(),
-    }
-    return cards[index]
+  async close(id: string): Promise<MaintenanceCard> {
+    const response = await httpClient.post<ApiSuccessResponse<RawCard>>(API_ENDPOINTS.maintenance.close(id))
+    return mapCard(response.data.data)
   },
-
-  async removeWorkItem(
-    cardId: string,
-    workItemId: string,
-  ): Promise<MaintenanceCard | undefined> {
-    await delay(150)
-    const index = cards.findIndex((c) => c.id === cardId)
-    if (index === -1) return undefined
-    cards[index] = {
-      ...cards[index],
-      workItems: cards[index].workItems.filter((w) => w.id !== workItemId),
-      updatedAt: new Date().toISOString(),
-    }
-    return cards[index]
+  async reopen(id: string): Promise<MaintenanceCard> {
+    const response = await httpClient.post<ApiSuccessResponse<RawCard>>(API_ENDPOINTS.maintenance.reopen(id))
+    return mapCard(response.data.data)
   },
-
-  async getCardsByCustomer(
-    customerId: string,
-  ): Promise<MaintenanceCardSummary[]> {
-    await delay(200)
-    return cards
-      .filter((c) => c.customerId === customerId)
-      .map((c) => ({
-        id: c.id,
-        receiptNumber: c.receiptNumber,
-        status: c.status,
-        createdAt: c.createdAt,
-        workCount: c.workItems.length,
-        pendingWork: c.workItems.filter(
-          (w) => w.status === "pending" || w.status === "in_progress",
-        ).length,
-        totalCost: c.workItems.reduce(
-          (sum, w) => sum + (w.estimatedCost || 0),
-          0,
-        ),
-      }))
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  async createWork(cardId: string, input: RequiredWorkInput): Promise<RequiredWork> {
+    const response = await httpClient.post<ApiSuccessResponse<RawWork>>(API_ENDPOINTS.maintenance.works(cardId), input)
+    return mapWork(response.data.data)
   },
-
-  async getSelectorData(): Promise<{
-    customers: CustomerOption[]
-    vehicles: VehicleOption[]
-  }> {
-    await delay(150)
-    return { customers: selectorCustomers, vehicles: selectorVehicles }
+  async updateWork(cardId: string, workId: string, input: UpdateRequiredWorkInput): Promise<RequiredWork> {
+    const response = await httpClient.patch<ApiSuccessResponse<RawWork>>(API_ENDPOINTS.maintenance.work(cardId, workId), input)
+    return mapWork(response.data.data)
   },
-
-  async updateWorkItem(
-    cardId: string,
-    workItemId: string,
-    updates: Partial<WorkItem>,
-    actor?: string
-  ): Promise<MaintenanceCard | undefined> {
-    await delay(150)
-    const index = cards.findIndex((c) => c.id === cardId)
-    if (index === -1) return undefined
-
-    const workItem = cards[index].workItems.find((w) => w.id === workItemId)
-    if (!workItem) return undefined
-
-    const oldStatus = workItem.status
-    const newStatus = updates.status
-
-    cards[index] = {
-      ...cards[index],
-      workItems: cards[index].workItems.map((w) =>
-        w.id === workItemId ? { ...w, ...updates } : w
-      ),
-      updatedAt: new Date().toISOString(),
-    }
-
-    // Create activity event
-    const eventType: ActivityType =
-      newStatus && newStatus !== oldStatus
-        ? "work_status_changed"
-        : "work_updated"
-    const description =
-      newStatus && newStatus !== oldStatus
-        ? `Work status changed to ${newStatus}`
-        : "Work updated"
-
-    const event = createActivityEvent(
-      cardId,
-      eventType,
-      description,
-      actor,
-      { workItemId, oldStatus, newStatus }
-    )
-    cards[index].activityEvents.push(event)
-
-    return cards[index]
+  async deleteWork(cardId: string, workId: string): Promise<void> {
+    await httpClient.delete(API_ENDPOINTS.maintenance.work(cardId, workId))
   },
-
-  async updateCardStatus(
-    cardId: string,
-    status: string,
-    actor?: string
-  ): Promise<MaintenanceCard | undefined> {
-    await delay(150)
-    const index = cards.findIndex((c) => c.id === cardId)
-    if (index === -1) return undefined
-
-    const card = cards[index]
-
-    // Closure guard
-    if (status === "closed") {
-      const guard = canCloseCard(card)
-      if (!guard.allowed) {
-        throw new Error(guard.reason)
-      }
-    }
-
-    const oldStatus = card.status
-    cards[index] = {
-      ...cards[index],
-      status: status as any,
-      updatedAt: new Date().toISOString(),
-    }
-
-    const event = createActivityEvent(
-      cardId,
-      "card_status_changed",
-      `Status changed to ${status}`,
-      actor,
-      { oldStatus, newStatus: status }
-    )
-    cards[index].activityEvents.push(event)
-
-    return cards[index]
-  },
-
-  async closeCard(cardId: string, actor?: string): Promise<MaintenanceCard | undefined> {
-    await delay(150)
-    const index = cards.findIndex((c) => c.id === cardId)
-    if (index === -1) return undefined
-
-    const card = cards[index]
-    const guard = canCloseCard(card)
-    if (!guard.allowed) {
-      throw new Error(guard.reason)
-    }
-
-    cards[index] = {
-      ...cards[index],
-      status: "closed",
-      updatedAt: new Date().toISOString(),
-    }
-
-    const event = createActivityEvent(
-      cardId,
-      "card_closed",
-      "Card closed",
-      actor
-    )
-    cards[index].activityEvents.push(event)
-
-    return cards[index]
+  async options(kind: MaintenanceOptionKind): Promise<MaintenanceOption[]> {
+    const response = await httpClient.get<ApiSuccessResponse<MaintenanceOption[]>>(API_ENDPOINTS.maintenance.options(kind), { params: { isActive: true } })
+    return response.data.data
   },
 }

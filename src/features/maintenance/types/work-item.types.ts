@@ -1,19 +1,2 @@
-export type WorkStatus = "pending" | "in_progress" | "completed" | "cancelled"
-
-export interface WorkItem {
-  id: string
-  description: string
-  estimatedCost: number
-  quantity?: number
-  progress: number
-  assignee?: string
-  status: WorkStatus
-  isRequired: boolean
-}
-
-export const WORK_STATUSES: WorkStatus[] = [
-  "pending",
-  "in_progress",
-  "completed",
-  "cancelled",
-]
+export type { RequiredWork as WorkItem, MaintenanceWorkStatus as WorkStatus } from "./maintenance.types"
+export { WORK_STATUSES } from "./maintenance.types"

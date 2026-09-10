@@ -120,6 +120,7 @@ interface DataTablePaginationProps {
   page: number;
   lastPage: number;
   total: number;
+  perPage?: number;
   onPageChange: (page: number) => void;
   t: (key: string, options?: any) => string;
 }
@@ -128,6 +129,7 @@ function DataTablePagination({
   page,
   lastPage,
   total,
+  perPage = 10,
   onPageChange,
   t,
 }: DataTablePaginationProps) {
@@ -143,8 +145,8 @@ function DataTablePagination({
       <div className="text-sm text-muted-foreground order-2 sm:order-1">
         {t('table.showing', {
           defaultValue: `Showing {{from}} to {{to}} of {{total}} results`,
-          from: (page - 1) * 10 + 1,
-          to: Math.min(page * 10, total),
+          from: (page - 1) * perPage + 1,
+          to: Math.min(page * perPage, total),
           total: total.toLocaleString(),
         })}
       </div>
@@ -247,6 +249,7 @@ export function DataTable<T = any>({
           page={pagination.page}
           lastPage={pagination.lastPage}
           total={pagination.total}
+          perPage={pagination.perPage}
           onPageChange={onPageChange}
           t={t}
         />
@@ -314,6 +317,7 @@ export function DataTable<T = any>({
         page={pagination.page}
         lastPage={pagination.lastPage}
         total={pagination.total}
+        perPage={pagination.perPage}
         onPageChange={onPageChange}
         t={t}
       />

@@ -50,7 +50,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     const formattedDate = currentDate.toLocaleDateString(undefined, dateOptions)
 
     return (
-        <div className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${gradient} border border-border/50 ${className}`}>
+        <div className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${gradient} border border-border/80 bg-background-card/70 shadow-card backdrop-blur-sm ${className}`}>
+            <div className="absolute inset-y-0 start-0 w-1 bg-primary shadow-[0_0_18px_rgba(225,6,19,0.5)]" />
             {/* Top-right corner absolute positioned element for three dots */}
             {rightContent && (
                 <div className="absolute top-4 rtl:left-4 ltr:right-4 z-20">
