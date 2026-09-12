@@ -4,6 +4,27 @@
   "addCustomer": "إضافة زبون",
   "addCustomerDescription": "أضف ملف زبون جديد إلى سجلات الورشة الخاصة بك.",
   "editCustomer": "تعديل الزبون",
+  "editCustomerDescription": "حدّث معلومات التواصل الخاصة بالزبون.",
+  "actions": {
+    "edit": "تعديل",
+    "cancel": "إلغاء"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "موقوف"
+  },
+  "dialogs": {
+    "activate": {
+      "title": "تفعيل الزبون",
+      "description": "هل أنت متأكد من إعادة تفعيل الزبون «{{name}}»؟",
+      "confirm": "تفعيل"
+    },
+    "deactivate": {
+      "title": "تعطيل الزبون",
+      "description": "هل أنت متأكد من تعطيل الزبون «{{name}}»؟ سيتوقف عن الظهور في القوائم النشطة.",
+      "confirm": "تعطيل"
+    }
+  },
   "searchPlaceholder": "ابحث بالاسم، الهاتف، اللوحة، رقم الشاصي...",
   "noResults": "لم يتم العثور على زبائن مطابقين",
   "createdAt": "تاريخ التسجيل",
@@ -17,13 +38,17 @@
     "created": "تم إنشاء الزبون بنجاح",
     "updated": "تم تحديث بيانات الزبون بنجاح",
     "vehicleAdded": "تم إضافة المركبة بنجاح",
-    "ownershipTransferred": "تم نقل ملكية المركبة بنجاح"
+    "ownershipTransferred": "تم نقل ملكية المركبة بنجاح",
+    "customerDeactivated": "تم تعطيل الزبون بنجاح",
+    "customerActivated": "تم تفعيل الزبون بنجاح"
   },
   "errors": {
     "createFailed": "فشل إنشاء الزبون",
     "updateFailed": "فشل تحديث بيانات الزبون",
     "vehicleAddFailed": "فشل إضافة المركبة",
-    "ownershipTransferFailed": "فشل نقل ملكية المركبة"
+    "ownershipTransferFailed": "فشل نقل ملكية المركبة",
+    "deactivateFailed": "فشل تعطيل الزبون",
+    "activateFailed": "فشل تفعيل الزبون"
   },
   "fields": {
     "name": "الاسم",
@@ -41,10 +66,11 @@
   },
   "validation": {
     "nameRequired": "الاسم مطلوب",
-    "nameMin": "الاسم يجب أن يكون 3 أحرف على الأقل",
+    "nameMax": "الاسم يجب ألا يتجاوز 150 حرفاً",
     "phoneRequired": "رقم الهاتف مطلوب",
-    "phoneInvalid": "رقم الهاتف غير صالح",
-    "emailInvalid": "البريد الإلكتروني غير صالح"
+    "phoneMax": "رقم الهاتف يجب ألا يتجاوز 30 حرفاً",
+    "emailInvalid": "البريد الإلكتروني غير صالح",
+    "emailMax": "البريد الإلكتروني يجب ألا يتجاوز 254 حرفاً"
   },
   "filter": {
     "search": "بحث الزبائن",

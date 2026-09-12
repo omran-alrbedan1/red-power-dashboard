@@ -1,23 +1,32 @@
 import React, { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { Mail, Phone, User } from "lucide-react"
 
 import PageHeader from "@/components/shared/headers/PageHeader"
 import ErrorState from "@/components/shared/states/ErrorState"
 import { images } from "@/constants/images"
 
 import { useCustomer } from "../hooks/useCustomer"
-import { useAddVehicle } from "../hooks/useCustomers"
+import {
+  useAddVehicle,
+  useActivateCustomer,
+  useDeactivateCustomer,
+  useUpdateCustomer,
+} from "../hooks/useCustomers"
 
 import { AddVehicleDialog } from "../components/AddVehicleDialog"
 import { CustomerVehicles } from "../components/CustomerVehicles"
 import { CustomerHistoryView } from "../components/CustomerHistory"
+import { CustomerContactCard } from "../components/CustomerContactCard"
+import { CustomerStatusDialog } from "../components/CustomerStatusDialog"
+import { EditCustomerDialog } from "../components/EditCustomerDialog"
 import CustomerDetailsSkeleton from "../components/CustomerDetailsSkeleton"
 
 import type { VehicleFormValues } from "../validation/customer.validation"
+import type { CustomerFormValues } from "../validation/customer.validation"
 import type { VehicleInput } from "../services/customer.service"
-import DetailItem from "@/components/shared/custom/DetailItem"
+
+type StatusDialogMode = "activate" | "deactivate" | null
 
 const CustomerDetailsPage: React.FC = () => {
   const { t } = useTranslation("customers")
@@ -25,6 +34,9 @@ const CustomerDetailsPage: React.FC = () => {
   const navigate = useNavigate()
 
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [statusDialogMode, setStatusDialogMode] =
+    useState<StatusDialogMode>(null)
 
   const {
     customer,
@@ -36,6 +48,9 @@ const CustomerDetailsPage: React.FC = () => {
   } = useCustomer(customerId)
 
   const addVehicle = useAddVehicle()
+  const updateCustomer = useUpdateCustomer()
+  const deactivateCustomer = useDeactivateCustomer()
+  const activateCustomer = useActivateCustomer()
 
   if (isError) {
     return <ErrorState variant="default" retry={refetch} />
@@ -67,6 +82,41 @@ const CustomerDetailsPage: React.FC = () => {
     )
   }
 
+  const handleEditCustomer = (values: CustomerFormValues) => {
+    updateCustomer.mutate(
+      {
+        id: customer.id,
+        input: {
+          name: values.name,
+          phone: values.phone,
+          email: values.email || undefined,
+        },
+      },
+      {
+        onSuccess: () => setEditDialogOpen(false),
+      },
+    )
+  }
+
+  const handleToggleStatus = () => {
+    if (!statusDialogMode) return
+
+    const isActivating = statusDialogMode === "activate"
+    const mutation = isActivating
+      ? activateCustomer
+      : deactivateCustomer
+
+    mutation.mutate(customer.id, {
+      onSettled: () => setStatusDialogMode(null),
+    })
+  }
+
+  const openStatusDialog = () => {
+    setStatusDialogMode(
+      customer.isActive ? "deactivate" : "activate",
+    )
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -85,53 +135,13 @@ const CustomerDetailsPage: React.FC = () => {
         showDateTime
       />
 
-      <section className="overflow-hidden rounded-2xl border border-border/60 bg-background-card shadow-[0_8px_30px_rgba(15,23,42,0.045)]">
-        <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <User className="h-5 w-5" />
-            </div>
-
-            <div>
-              <h2 className="text-base font-bold text-text-primary">
-                {t("details", "Customer Details")}
-              </h2>
-
-              <p className="mt-0.5 text-xs text-text-muted">
-                {t(
-                  "detailsSubtitle",
-                  "Customer contact information",
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid gap-4 p-5 md:grid-cols-2">
-          <DetailItem
-            icon={Phone}
-            label={t(
-              "fields.phone",
-              "Phone number",
-            )}
-            value={customer.phone}
-            ltr
-          />
-
-          <DetailItem
-            icon={Mail}
-            label={t(
-              "fields.email",
-              "Email address",
-            )}
-            value={customer.email}
-            ltr
-          />
-        </div>
-      </section>
+      <CustomerContactCard
+        customer={customer}
+        onEdit={() => setEditDialogOpen(true)}
+        onToggleStatus={openStatusDialog}
+      />
 
       <CustomerVehicles
-      //@ts-ignore
         vehicles={vehicles}
         onAddClick={() => setVehicleDialogOpen(true)}
       />
@@ -146,6 +156,25 @@ const CustomerDetailsPage: React.FC = () => {
         onOpenChange={setVehicleDialogOpen}
         onSubmit={handleAddVehicle}
         isSubmitting={addVehicle.isPending}
+      />
+
+      <EditCustomerDialog
+        open={editDialogOpen}
+        customer={customer}
+        onOpenChange={setEditDialogOpen}
+        onSubmit={handleEditCustomer}
+        isSubmitting={updateCustomer.isPending}
+      />
+
+      <CustomerStatusDialog
+        open={statusDialogMode !== null}
+        mode={statusDialogMode ?? "deactivate"}
+        customerName={customer.name}
+        onConfirm={handleToggleStatus}
+        onClose={() => setStatusDialogMode(null)}
+        isSubmitting={
+          deactivateCustomer.isPending || activateCustomer.isPending
+        }
       />
     </div>
   )

@@ -4,12 +4,19 @@ export const createCustomerFormSchema = (t: (key: string) => string) =>
   z.object({
     name: z
       .string()
+      .trim()
       .min(1, { message: t("validation.nameRequired") })
-      .min(3, { message: t("validation.nameMin") }),
-    phone: z.string().min(9, { message: t("validation.phoneInvalid") }),
+      .max(150, { message: t("validation.nameMax") }),
+    phone: z
+      .string()
+      .trim()
+      .min(1, { message: t("validation.phoneRequired") })
+      .max(30, { message: t("validation.phoneMax") }),
     email: z
       .string()
+      .trim()
       .email({ message: t("validation.emailInvalid") })
+      .max(254, { message: t("validation.emailMax") })
       .optional()
       .or(z.literal("")),
   })

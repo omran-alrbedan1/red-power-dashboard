@@ -54,6 +54,38 @@ export function useUpdateCustomer() {
   })
 }
 
+export function useDeactivateCustomer() {
+  const { t } = useTranslation("customers")
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => customerService.deactivate(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.all })
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.detail(id) })
+      toast.success(t("messages.customerDeactivated", "Customer deactivated"))
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : t("errors.deactivateFailed", "Failed to deactivate customer"))
+    },
+  })
+}
+
+export function useActivateCustomer() {
+  const { t } = useTranslation("customers")
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => customerService.activate(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.all })
+      queryClient.invalidateQueries({ queryKey: customerQueryKeys.detail(id) })
+      toast.success(t("messages.customerActivated", "Customer activated"))
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : t("errors.activateFailed", "Failed to activate customer"))
+    },
+  })
+}
+
 export function useAddVehicle() {
   const { t } = useTranslation("customers")
   const queryClient = useQueryClient()

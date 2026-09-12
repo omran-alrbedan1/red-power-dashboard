@@ -50,6 +50,8 @@ export const customerService = {
   },
   create: (input: CustomerInput) => apiRequest<Customer>({ method: "POST", url: "/customers", data: customerPayload(input) }),
   update: (id: number, input: CustomerInput) => apiRequest<Customer>({ method: "PATCH", url: `/customers/${id}`, data: customerPayload(input) }),
+  deactivate: (id: number) => apiRequest<Customer>({ method: "PATCH", url: `/customers/${id}/deactivate` }),
+  activate: (id: number) => apiRequest<Customer>({ method: "PATCH", url: `/customers/${id}/activate` }),
   async addVehicle(customerId: number, input: VehicleInput): Promise<Vehicle> {
     return mapVehicle(await apiRequest<ApiVehicle>({ method: "POST", url: "/vehicles", data: { customerId, ...vehiclePayload(input) } }))
   },

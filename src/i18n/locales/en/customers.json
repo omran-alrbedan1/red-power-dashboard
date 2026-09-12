@@ -4,6 +4,27 @@
   "addCustomer": "Add Customer",
   "addCustomerDescription": "Add a new customer profile to your workshop records.",
   "editCustomer": "Edit Customer",
+  "editCustomerDescription": "Update the customer's contact information.",
+  "actions": {
+    "edit": "Edit",
+    "cancel": "Cancel"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "dialogs": {
+    "activate": {
+      "title": "Activate Customer",
+      "description": "Are you sure you want to reactivate the customer \u201c{{name}}\u201d?",
+      "confirm": "Activate"
+    },
+    "deactivate": {
+      "title": "Deactivate Customer",
+      "description": "Are you sure you want to deactivate the customer \u201c{{name}}\u201d? They will stop appearing in active lists.",
+      "confirm": "Deactivate"
+    }
+  },
   "searchPlaceholder": "Search by name, phone, plate, VIN...",
   "noResults": "No matching customers found",
   "createdAt": "Created At",
@@ -17,13 +38,17 @@
     "created": "Customer created successfully",
     "updated": "Customer updated successfully",
     "vehicleAdded": "Vehicle added successfully",
-    "ownershipTransferred": "Vehicle ownership transferred successfully"
+    "ownershipTransferred": "Vehicle ownership transferred successfully",
+    "customerDeactivated": "Customer deactivated",
+    "customerActivated": "Customer activated"
   },
   "errors": {
     "createFailed": "Failed to create customer",
     "updateFailed": "Failed to update customer",
     "vehicleAddFailed": "Failed to add vehicle",
-    "ownershipTransferFailed": "Failed to transfer vehicle ownership"
+    "ownershipTransferFailed": "Failed to transfer vehicle ownership",
+    "deactivateFailed": "Failed to deactivate customer",
+    "activateFailed": "Failed to activate customer"
   },
   "fields": {
     "name": "Name",
@@ -41,10 +66,11 @@
   },
   "validation": {
     "nameRequired": "Name is required",
-    "nameMin": "Name must be at least 3 characters",
+    "nameMax": "Name must not exceed 150 characters",
     "phoneRequired": "Phone number is required",
-    "phoneInvalid": "Invalid phone number",
-    "emailInvalid": "Invalid email address"
+    "phoneMax": "Phone number must not exceed 30 characters",
+    "emailInvalid": "Invalid email address",
+    "emailMax": "Email must not exceed 254 characters"
   },
   "filter": {
     "search": "Search customers",
