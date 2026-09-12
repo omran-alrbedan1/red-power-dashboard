@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { Toaster } from "sonner"
 
 import MainLayout from "./components/layout/MainLayout"
 import Dashboard from "./features/dashboard/pages/Dashboard"
@@ -19,7 +20,9 @@ interface PrivateRouteProps {
 }
 
 function PrivateRoute({ children }: PrivateRouteProps) {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, status } = useAuth()
+
+  if (status === "initializing") return null
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
@@ -59,6 +62,7 @@ function App() {
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Toaster position="top-right" richColors dir="rtl" />
     </BrowserRouter>
   )
 }

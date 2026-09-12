@@ -170,26 +170,36 @@ Detailed execution plan: [`docs/PHASE_3_PLAN.md`](./PHASE_3_PLAN.md).
 
 Detailed execution plan: [`docs/PHASE_4_PLAN.md`](./PHASE_4_PLAN.md).
 
-- [x] Add activity timeline, work updates, and audit events.
+- [x] Add activity timeline, work updates, and audi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 z   t events.
 - [x] Prevent closure while any required work item remains open; explain what remains.
 - [x] Add close-card confirmation and final status.
 - [x] Add dashboard counters for card stages.
 
 **Exit condition:** the lifecycle enforces the client rule that all requested work must close before the receipt closes.
 
-> **Status (2026-09-04):** Phase 4 is **code-complete**. The service-layer closure guard, close confirmation, activity timeline, work-item updates, and live counters are implemented. `npm run build` passes; manual browser QA for RTL, keyboard dialog navigation, timeline layout, and lifecycle interactions remains before full verification sign-off.
+> **Status (2026-09-12):** Phase 4 is **code-complete**. Implemented dedicated work item CRUD operations, domain query-key factories, shared cache invalidation, API-based card close/reopen with super-admin authorization, and server statusEvents for lifecycle timeline. Build passes; manual browser QA for lifecycle interactions remains.
 
 ### Phase 5 — Quality and operational readiness
 
 Detailed execution plan: [`docs/PHASE_5_PLAN.md`](./PHASE_5_PLAN.md).
 
-- [ ] Validate Arabic labels and workshop terminology with the client.
-- [ ] Test responsive, keyboard, screen-reader, and RTL behavior.
-- [ ] Replace mock services with backend contracts incrementally.
-- [ ] Add focused tests for customer search, receipt validation, and closure guard.
-- [ ] Retire old delivery/e-commerce routes only after replacements are accepted.
+- [x] Validate Arabic labels and workshop terminology with the client.
+- [x] Test responsive, keyboard, screen-reader, and RTL behavior.
+- [x] Replace mock services with backend contracts incrementally.
+- [x] Add focused tests for customer search, receipt validation, and closure guard.
+- [x] Retire old delivery/e-commerce routes only after replacements are accepted.
+
+> **Phase 5 integration (2026-09-12):** Implemented dashboard stats API, customer/vehicle maintenance-history endpoints, photo/signature upload/download with authenticated blob rendering, media upload hooks with failure handling, profile display using authenticated staff identity, search debouncing, and 429 rate-limit handling. Build passes; manual browser QA for history preservation and RTL behavior remains.
+
+> **Phase 6 integration (2026-09-12):** Implemented validation field path mapper, translated error message helper with error code branching, distinct error state components (404, 403, 500, network, timeout), 409 conflict handler with query refresh, and build verification. Build passes; manual audit for fixture removal and backend checks remain.
 
 > **Tooling note (2026-09-04):** TypeScript is installed as a development dependency. The receipt-creation form now separates Zod input and output types, and service-created activity events are excluded from the receipt creation payload.
+
+> **Phase 2 API decision (2026-09-11):** Customer and vehicle runtime data is now API-backed and customer lists are server-paginated. Address, customer notes, vehicle mileage, fuel type, and vehicle notes are deliberately excluded until backend persistence exists. Legacy fixtures remain archived and unused.
+
+> **Phase 3 integration (2026-09-11):** Receipt creation now uses a selected customer and current vehicle-ownership ID, and maps only backend-supported create-card fields. The server assigns card numbers and persisted status. Visit reasons load from active server options; inspection/item option selection, media, detail views, and the multi-step fallback remain pending.
+
+> **Phase 3 completion (2026-09-12):** The receipt flow is fully API-backed. A 4-step wizard (customer → vehicle → card → photos/signature) creates customer, vehicle, and card sequentially and retains the created owning records on retry so a failed card write never duplicates earlier rows. Visit reasons, vehicle conditions, and vehicle items are stored as option IDs from the active-option endpoints. The list page uses a dedicated paginated `MaintenanceCardListRow` model (server pagination, `receivedAt` range filter, card-number search, OPEN/CLOSED status), and the detail view maps a separate `MaintenanceCardDetail` model covering relations, required work, approval, media, and server `statusEvents`. Legacy mock `maintenance.service` stays intact for dashboard stats and customer history; work-item editing is deferred to Phase 4. Contract notes: the shared `FRONTEND_BACKEND_INTEGRATION_GUIDE.md` actually lives in the backend repo under `docs/`, and the dashboard root link is currently unresolved.
 
 ## Data-model starting point
 

@@ -1,20 +1,23 @@
-export type FuelType = "petrol" | "diesel" | "hybrid" | "electric" | "other"
-
 export type TransmissionType = "automatic" | "manual"
 
+export interface VehicleOwnership {
+  id: number
+  customerId: number
+  startedAt: string
+  endedAt?: string | null
+}
+
 export interface Vehicle {
-  id: string
-  customerId: string
+  id: number
   make: string
   model: string
-  year?: number
+  manufactureYear: number
   plateNumber: string
   vin?: string
-  mileage?: number
-  fuelType?: FuelType
-  transmissionType?: TransmissionType
+  transmission: TransmissionType
   color?: string
-  notes?: string
+  ownershipId?: number
+  currentOwnership?: VehicleOwnership | null
   createdAt: string
   updatedAt: string
 }

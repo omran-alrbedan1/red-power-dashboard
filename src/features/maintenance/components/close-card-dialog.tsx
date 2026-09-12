@@ -2,13 +2,13 @@ import { useTranslation } from "react-i18next"
 import { CheckCircle2, LockKeyhole } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import type { MaintenanceCard } from "../types/maintenance.types"
-import { getClosureStatus } from "../services/maintenance.service"
+import type { MaintenanceCardDetail } from "../types/maintenance-detail.types"
+import { getClosureStatus } from "../utils/closure-guard"
 import { useCloseCard } from "../hooks/useCloseCard"
 import { ClosureGuardBadge } from "./closure-guard-badge"
 
 interface CloseCardDialogProps {
-  card: MaintenanceCard
+  card: MaintenanceCardDetail
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -16,7 +16,7 @@ interface CloseCardDialogProps {
 export function CloseCardDialog({ card, open, onOpenChange }: CloseCardDialogProps) {
   const { t } = useTranslation("maintenance")
   const closeCard = useCloseCard()
-  const closure = getClosureStatus(card)
+  const closure = getClosureStatus(card.requiredWorks)
 
   const handleClose = () => {
     closeCard.mutate(card.id, { onSuccess: () => onOpenChange(false) })
@@ -39,7 +39,7 @@ export function CloseCardDialog({ card, open, onOpenChange }: CloseCardDialogPro
             <p>{t("closeCard.ready")}</p>
           </div>
         ) : (
-          <ClosureGuardBadge card={card} />
+          <ClosureGuardBadge requiredWorks={card.requiredWorks} />
         )}
 
         {closeCard.isError && (

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
-import { User, Phone, Mail, MapPin, StickyNote } from "lucide-react"
+import { User, Phone, Mail } from "lucide-react"
 import { Form } from "@/components/ui/form"
 import CustomFormField, {
   FormFieldType,
@@ -35,8 +35,6 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
       name: defaultValues?.name ?? "",
       phone: defaultValues?.phone ?? "",
       email: defaultValues?.email ?? "",
-      address: defaultValues?.address ?? "",
-      notes: defaultValues?.notes ?? "",
     },
   })
 
@@ -80,27 +78,6 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
           leftIcon={Mail}
           iconPosition="left"
           dir="ltr"
-        />
-
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={form.control}
-          name="address"
-          label={t("fields.address")}
-          placeholder={t("fields.address")}
-          leftIcon={MapPin}
-          iconPosition="left"
-          dir="rtl"
-        />
-
-        <CustomFormField
-          fieldType={FormFieldType.TEXTAREA}
-          control={form.control}
-          name="notes"
-          label={t("fields.notes")}
-          placeholder={t("fields.notes")}
-          rows={3}
-          dir="rtl"
         />
 
         <SubmitButton

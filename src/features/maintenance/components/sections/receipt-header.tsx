@@ -2,10 +2,11 @@ import { useTranslation } from "react-i18next"
 import { Hash, Calendar } from "lucide-react"
 import { MaintenanceStatusBadge } from "../status-badge"
 import { formatDateTime } from "@/lib/formatter"
+import type { MaintenanceCardStatus } from "../../types/maintenance-detail.types"
 
 interface ReceiptHeaderProps {
   receiptNumber: string
-  status: string
+  status: MaintenanceCardStatus
   createdAt: string
 }
 
@@ -26,11 +27,11 @@ export const ReceiptHeader = ({
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="h-4 w-4 text-primary" />
-          <span className="text-muted-foreground">{t("createdAt")}:</span>
+          <span className="text-muted-foreground">{t("receivedAt")}:</span>
           <span className="font-medium text-text-primary">{formatDateTime(createdAt)}</span>
         </div>
       </div>
-      <MaintenanceStatusBadge status={status as any} />
+      <MaintenanceStatusBadge status={status} />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { User, Phone, Mail, MapPin, FileText } from "lucide-react"
+import { User, Phone, Mail } from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -44,12 +44,14 @@ const CustomerDetailsPage: React.FC = () => {
   const navigate = useNavigate()
   const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false)
 
-  const { customer, vehicles, history, isLoading, isError, refetch } =
+  const { customer, vehicles, history, isLoading, isError, error, refetch } =
     useCustomer(customerId)
   const addVehicle = useAddVehicle()
   const { data: maintenanceCards } = useHistorySource(customerId)
+  const maintenanceCardsList = maintenanceCards?.data
 
   if (isError) {
+    console.error("Error loading customer:", error)
     return <ErrorState variant="default" retry={refetch} />
   }
 
@@ -69,12 +71,9 @@ const CustomerDetailsPage: React.FC = () => {
       model: values.model,
       plateNumber: values.plateNumber,
       vin: values.vin || undefined,
-      year: values.year === "" ? undefined : values.year,
-      mileage: values.mileage === "" ? undefined : values.mileage,
-      fuelType: values.fuelType ?? undefined,
-      transmissionType: values.transmissionType ?? undefined,
+      manufactureYear: values.manufactureYear,
+      transmission: values.transmission,
       color: values.color || undefined,
-      notes: values.notes || undefined,
     }
     addVehicle.mutate(
       { customerId: customer.id, input },
@@ -113,16 +112,6 @@ const CustomerDetailsPage: React.FC = () => {
               label={t("fields.email")}
               value={customer.email}
             />
-            <DetailItem
-              icon={MapPin}
-              label={t("fields.address")}
-              value={customer.address}
-            />
-            <DetailItem
-              icon={FileText}
-              label={t("fields.notes")}
-              value={customer.notes}
-            />
           </div>
         </CardContent>
       </Card>
@@ -132,7 +121,7 @@ const CustomerDetailsPage: React.FC = () => {
         onAddClick={() => setVehicleDialogOpen(true)}
       />
 
-      <CustomerHistoryView history={history} isLoading={isLoading} maintenanceCards={maintenanceCards} />
+      <CustomerHistoryView history={history} isLoading={isLoading} maintenanceCards={maintenanceCardsList} />
 
       <Dialog open={vehicleDialogOpen} onOpenChange={setVehicleDialogOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">

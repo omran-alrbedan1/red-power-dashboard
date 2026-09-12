@@ -1,50 +1,91 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import type { ReactNode } from "react"
-import type { LoginCredentials, User } from "../types/auth.types"
+import { configureApiSession } from "@/lib/api/client"
+import type { LoginCredentials, UpdatePasswordPayload, User } from "../types/auth.types"
 import { authService } from "../services/auth.service"
+import { authTokenStorage } from "../services/session-storage"
 
 interface AuthContextState {
   user: User | null
   isAuthenticated: boolean
+  status: "initializing" | "authenticated" | "anonymous"
   login: (credentials: LoginCredentials) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
+  updatePassword: (payload: UpdatePasswordPayload) => Promise<void>
 }
-
-const STORAGE_KEY = "red-power-user"
 
 const AuthContext = createContext<AuthContextState | undefined>(undefined)
 
-function readStoredUser(): User | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as User) : null
-  } catch {
-    return null
-  }
-}
+const LEGACY_USER_KEY = "red-power-user"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => readStoredUser())
+  const queryClient = useQueryClient()
+  const [user, setUser] = useState<User | null>(null)
+  const [status, setStatus] = useState<AuthContextState["status"]>("initializing")
+
+  const clearSession = useCallback(() => {
+    authTokenStorage.clear()
+    localStorage.removeItem(LEGACY_USER_KEY)
+    queryClient.clear()
+    setUser(null)
+    setStatus("anonymous")
+  }, [queryClient])
+
+  useEffect(() => {
+    configureApiSession({
+      getAccessToken: () => authTokenStorage.read()?.accessToken ?? null,
+      refresh: async () => {
+        const tokens = await authService.refresh()
+        authTokenStorage.write(tokens)
+        return tokens
+      },
+      clear: clearSession,
+    })
+
+    const restoreSession = async () => {
+      localStorage.removeItem(LEGACY_USER_KEY)
+      if (!authTokenStorage.read()) {
+        setStatus("anonymous")
+        return
+      }
+      try {
+        setUser(await authService.getCurrentUser())
+        setStatus("authenticated")
+      } catch {
+        clearSession()
+      }
+    }
+    void restoreSession()
+    return () => configureApiSession(null)
+  }, [clearSession])
 
   const login = useCallback(async (credentials: LoginCredentials) => {
-    const authenticatedUser = await authService.login(credentials)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(authenticatedUser))
+    const { user: authenticatedUser, tokens } = await authService.login(credentials)
+    authTokenStorage.write(tokens)
     setUser(authenticatedUser)
+    setStatus("authenticated")
   }, [])
 
-  const logout = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY)
-    setUser(null)
-  }, [])
+  const logout = useCallback(async () => {
+    try { await authService.logout() } finally { clearSession() }
+  }, [clearSession])
+
+  const updatePassword = useCallback(async (payload: UpdatePasswordPayload) => {
+    await authService.updatePassword(payload)
+    clearSession()
+  }, [clearSession])
 
   const value = useMemo<AuthContextState>(
     () => ({
       user,
-      isAuthenticated: user !== null,
+      isAuthenticated: status === "authenticated",
+      status,
       login,
       logout,
+      updatePassword,
     }),
-    [user, login, logout]
+    [user, status, login, logout, updatePassword]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

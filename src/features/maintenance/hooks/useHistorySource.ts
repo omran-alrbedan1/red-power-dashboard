@@ -5,7 +5,7 @@ export function useHistorySource(customerId: string | undefined) {
   const id = customerId ?? ""
   return useQuery({
     queryKey: ["history", "cards", id],
-    queryFn: () => maintenanceService.getCardsByCustomer(id),
+    queryFn: () => maintenanceService.getCardsByCustomer(Number(id)),
     enabled: Boolean(id),
   })
 }

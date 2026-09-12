@@ -25,6 +25,7 @@
     "emailInvalid": "Invalid email address"
   },
   "filter": {
+    "search": "Search customers",
     "name": "Name",
     "phone": "Phone",
     "plateNumber": "Plate Number",
@@ -69,7 +70,9 @@
     "validation": {
       "makeRequired": "Make is required",
       "modelRequired": "Model is required",
-      "plateRequired": "Plate number is required"
+      "plateRequired": "Plate number is required",
+      "vinInvalid": "VIN must contain exactly 17 characters",
+      "transmissionRequired": "Transmission type is required"
     }
   },
   "history": {

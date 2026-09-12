@@ -25,11 +25,11 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <React.Suspense fallback="Loading...">
       <ThemeProvider defaultTheme="dark">
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
             <App />
-          </QueryClientProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </ThemeProvider>
     </React.Suspense>
   </StrictMode>,

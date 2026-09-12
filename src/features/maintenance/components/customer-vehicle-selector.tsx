@@ -21,8 +21,9 @@ export interface SelectorValue {
   vehicleYear?: number | ""
   vehicleVin?: string
   vehicleMileage?: number | ""
-  customerId?: string
-  vehicleId?: string
+  customerId?: number
+  vehicleId?: number
+  vehicleOwnershipId?: number
 }
 
 interface CustomerVehicleSelectorProps {
@@ -42,7 +43,7 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
   const vehicles = data?.vehicles ?? []
 
   const handleCustomerChange = (customerId: string) => {
-    const customer = customers.find((c) => c.id === customerId)
+    const customer = customers.find((c) => c.id === Number(customerId))
     if (!customer) return
     onSelect({
       customerName: customer.name,
@@ -57,17 +58,19 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
   }
 
   const handleVehicleChange = (vehicleId: string) => {
-    const vehicle = vehicles.find((v) => v.id === vehicleId)
+    const vehicle = vehicles.find((v) => v.id === Number(vehicleId))
     if (!vehicle) return
     onSelect({
-      customerId: vehicle.customerId,
+      customerId: vehicle.currentOwnership?.customerId,
       vehicleId: vehicle.id,
+      vehicleOwnershipId: vehicle.currentOwnership?.id,
       vehicleMake: vehicle.make,
       vehicleModel: vehicle.model,
       vehiclePlate: vehicle.plateNumber,
       customerName: "",
       customerPhone: "",
-      vehicleYear: "",
+      vehicleYear: vehicle.manufactureYear,
+      vehicleVin: vehicle.vin,
     })
   }
 
@@ -94,7 +97,7 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
             </SelectTrigger>
             <SelectContent>
               {customers.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
+                <SelectItem key={c.id} value={String(c.id)}>
                   {c.name} — {c.phone}
                 </SelectItem>
               ))}
@@ -116,7 +119,7 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
             </SelectTrigger>
             <SelectContent>
               {vehicles.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
+                <SelectItem key={v.id} value={String(v.id)}>
                   {v.make} {v.model} ({v.plateNumber})
                 </SelectItem>
               ))}

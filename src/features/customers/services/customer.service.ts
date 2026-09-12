@@ -1,148 +1,65 @@
+import { apiRequest } from "@/lib/api/client"
+import type { ApiPaginated } from "@/lib/api/contracts"
 import type { Customer } from "../types/customer.types"
-import type { Vehicle } from "../types/vehicle.types"
+import type { Vehicle, TransmissionType, VehicleOwnership } from "../types/vehicle.types"
 import type { CustomerHistory } from "../types/visit-summary.types"
-import type { CustomerFilterValues } from "../configs/customer-filter.config"
-import {
-  initialCustomers,
-  initialVehicles,
-  initialHistoryByCustomer,
-} from "../data/customers.data"
 
-export type CustomerInput = Omit<Customer, "id" | "createdAt" | "updatedAt">
-export type VehicleInput = Omit<
-  Vehicle,
-  "id" | "customerId" | "createdAt" | "updatedAt"
->
+export interface CustomerInput { name: string; phone: string; email?: string }
+export interface VehicleInput {
+  make: string; model: string; manufactureYear: number; plateNumber: string
+  vin?: string; color?: string; transmission: TransmissionType
+}
+export interface CustomerListParams { page: number; limit: number; search?: string }
 
-let customers: Customer[] = [...initialCustomers]
-let vehicles: Vehicle[] = [...initialVehicles]
-
-const delay = (ms = 300) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const uid = (prefix: string) =>
-  `${prefix}-${Math.random().toString(36).slice(2, 10)}`
-
-const normalizeFilter = (value: string | undefined) =>
-  (value ?? "").trim().toLowerCase()
-
-function vehicleMatches(v: Vehicle, f: CustomerFilterValues): boolean {
-  return (
-    (f.plateNumber &&
-      normalizeFilter(v.plateNumber).includes(normalizeFilter(f.plateNumber))) ||
-    (f.vin &&
-      v.vin &&
-      normalizeFilter(v.vin).includes(normalizeFilter(f.vin))) ||
-    (f.make && normalizeFilter(v.make).includes(normalizeFilter(f.make))) ||
-    (f.model && normalizeFilter(v.model).includes(normalizeFilter(f.model)))
-  )
+interface ApiOwnership { id: number; customerId: number; startedAt: string; endedAt?: string | null }
+interface ApiVehicle {
+  id: number; make: string; model: string; manufactureYear: number; plateNumber: string
+  vin?: string | null; color?: string | null; transmission: "AUTOMATIC" | "MANUAL"
+  isActive: boolean; createdAt: string; updatedAt: string; currentOwnership?: ApiOwnership | null
+  ownershipId?: number
 }
 
+const mapOwnership = (value: ApiOwnership): VehicleOwnership => ({ ...value })
+const mapVehicle = (value: ApiVehicle): Vehicle => ({
+  ...value,
+  vin: value.vin ?? undefined,
+  color: value.color ?? undefined,
+  transmission: value.transmission === "AUTOMATIC" ? "automatic" : "manual",
+  ownershipId: value.ownershipId ?? value.currentOwnership?.id,
+  currentOwnership: value.currentOwnership ? mapOwnership(value.currentOwnership) : null,
+})
+const customerPayload = (input: CustomerInput): CustomerInput => ({
+  name: input.name.trim(), phone: input.phone.trim(),
+  ...(input.email?.trim() ? { email: input.email.trim() } : {}),
+})
+const vehiclePayload = (input: VehicleInput) => ({
+  ...input, make: input.make.trim(), model: input.model.trim(), plateNumber: input.plateNumber.trim(),
+  ...(input.vin?.trim() ? { vin: input.vin.trim() } : {}),
+  ...(input.color?.trim() ? { color: input.color.trim() } : {}),
+  transmission: input.transmission.toUpperCase(),
+})
+
 export const customerService = {
-  async list(): Promise<Customer[]> {
-    await delay()
-    return [...customers].sort((a, b) =>
-      b.createdAt.localeCompare(a.createdAt),
-    )
+  list: (params: CustomerListParams) => apiRequest<ApiPaginated<Customer>>({ url: "/customers", params }),
+  getById: (id: number) => apiRequest<Customer & { currentVehicles: ApiVehicle[] }>({ url: `/customers/${id}` }),
+  async listVehicles(customerId: number): Promise<Vehicle[]> {
+    return (await this.getById(customerId)).currentVehicles.map(mapVehicle)
   },
-
-  async search(filters: CustomerFilterValues): Promise<Customer[]> {
-    await delay()
-    const name = normalizeFilter(filters.name)
-    const phone = normalizeFilter(filters.phone)
-    const hasVehicleFilter = Boolean(
-      filters.plateNumber || filters.vin || filters.make || filters.model,
-    )
-
-    return customers
-      .filter((customer) => {
-        const matchCustomer =
-          (name === "" || normalizeFilter(customer.name).includes(name)) &&
-          (phone === "" || normalizeFilter(customer.phone).includes(phone))
-
-        if (!hasVehicleFilter) return matchCustomer
-
-        const owned = vehicles.filter(
-          (v) => v.customerId === customer.id,
-        )
-        const matchVehicle = owned.some((v) => vehicleMatches(v, filters))
-        return matchCustomer || matchVehicle
-      })
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+  create: (input: CustomerInput) => apiRequest<Customer>({ method: "POST", url: "/customers", data: customerPayload(input) }),
+  update: (id: number, input: CustomerInput) => apiRequest<Customer>({ method: "PATCH", url: `/customers/${id}`, data: customerPayload(input) }),
+  async addVehicle(customerId: number, input: VehicleInput): Promise<Vehicle> {
+    return mapVehicle(await apiRequest<ApiVehicle>({ method: "POST", url: "/vehicles", data: { customerId, ...vehiclePayload(input) } }))
   },
-
-  async getById(id: string): Promise<Customer | undefined> {
-    await delay()
-    return customers.find((c) => c.id === id)
-  },
-
-  async create(input: CustomerInput): Promise<Customer> {
-    await delay()
-    const now = new Date().toISOString()
-    const customer: Customer = {
-      id: uid("cus"),
-      ...input,
-      createdAt: now,
-      updatedAt: now,
-    }
-    customers.push(customer)
-    return customer
-  },
-
-  async update(id: string, input: CustomerInput): Promise<Customer | undefined> {
-    await delay()
-    const index = customers.findIndex((c) => c.id === id)
-    if (index === -1) return undefined
-    customers[index] = {
-      ...customers[index],
-      ...input,
-      updatedAt: new Date().toISOString(),
-    }
-    return customers[index]
-  },
-
-  async listVehicles(customerId: string): Promise<Vehicle[]> {
-    await delay(200)
-    return vehicles
-      .filter((v) => v.customerId === customerId)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
-  },
-
-  async getVehicleCounts(): Promise<Record<string, number>> {
-    await delay(150)
-    return vehicles.reduce<Record<string, number>>((acc, v) => {
-      acc[v.customerId] = (acc[v.customerId] ?? 0) + 1
-      return acc
-    }, {})
-  },
-
-  async addVehicle(
-    customerId: string,
-    input: VehicleInput,
-  ): Promise<Vehicle> {
-    await delay()
-    const now = new Date().toISOString()
-    const vehicle: Vehicle = {
-      id: uid("veh"),
-      customerId,
-      ...input,
-      createdAt: now,
-      updatedAt: now,
-    }
-    vehicles.push(vehicle)
-    return vehicle
-  },
-
-  async getHistory(customerId: string): Promise<CustomerHistory> {
-    await delay(200)
-    const owned = vehicles.filter((v) => v.customerId === customerId)
-    const ownedIds = new Set(owned.map((v) => v.id))
-    const base = initialHistoryByCustomer[customerId] ?? {
-      visits: [],
-      workItems: [],
-    }
+  transferOwnership: (vehicleId: number, customerId: number) => apiRequest<VehicleOwnership>({ method: "POST", url: `/vehicles/${vehicleId}/transfer-ownership`, data: { customerId } }),
+  async getHistory(customerId: number): Promise<CustomerHistory> {
+    const response = await apiRequest<{ history: ApiPaginated<{ id: number; cardNumber: string; receivedAt: string; status: string; vehicleOwnership: { vehicle: { id: number } } }> }>({
+      url: `/customers/${customerId}/maintenance-history`, params: { page: 1, limit: 20 },
+    })
     return {
-      visits: base.visits.filter((v) => ownedIds.has(v.vehicleId)),
-      workItems: base.workItems,
+      visits: response.history.items.map((card) => ({
+        id: String(card.id), vehicleId: String(card.vehicleOwnership.vehicle.id), receiptNumber: card.cardNumber,
+        date: card.receivedAt, reason: "", status: card.status.toLowerCase() as CustomerHistory["visits"][number]["status"],
+      })), workItems: [],
     }
   },
 }

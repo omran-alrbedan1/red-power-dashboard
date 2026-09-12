@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Wrench, Plus, FileText, User, Car, CalendarDays } from "lucide-react"
@@ -8,7 +8,7 @@ import { DataTable, type Column } from "@/components/shared/custom/DataTable"
 import { CustomFilter } from "@/components/shared/custom/CustomFilter"
 import { EmptyState } from "@/components/shared/states"
 import ErrorState from "@/components/shared/states/ErrorState"
-import { formatDate, formatCurrency } from "@/lib/formatter"
+import { formatDate } from "@/lib/formatter"
 import { useMaintenanceCards } from "../hooks/useMaintenanceCards"
 import { MaintenanceStatusBadge } from "../components/status-badge"
 import {
@@ -16,10 +16,12 @@ import {
   maintenanceFilterFields,
   type MaintenanceFilterValues,
 } from "../configs/maintenance-filter.config"
-import type { MaintenanceCard } from "../types/maintenance.types"
+import type { MaintenanceCardListRow } from "../types/maintenance-detail.types"
+
+const PAGE_LIMIT = 10
 
 interface MobileCardProps {
-  item: MaintenanceCard
+  item: MaintenanceCardListRow
   onViewDetails: () => void
 }
 
@@ -27,7 +29,7 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
   item,
   onViewDetails,
 }) => {
-  const { t, i18n } = useTranslation("maintenance")
+  const { i18n } = useTranslation("maintenance")
   const isAr = i18n.language === "ar"
 
   return (
@@ -40,7 +42,7 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
         <div className="flex items-center gap-2">
           <FileText className="h-4 w-4 text-primary" />
           <span className="text-sm font-semibold text-text-primary" dir="ltr">
-            {item.receiptNumber}
+            {item.cardNumber}
           </span>
         </div>
         <MaintenanceStatusBadge status={item.status} />
@@ -49,16 +51,16 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
       <div className="mt-3 space-y-1 text-xs text-muted-foreground">
         <p className="flex items-center gap-1.5">
           <User className="h-3.5 w-3.5 text-primary" />
-          {item.customerSnapshot.name}
+          {item.customer.name}
         </p>
         <p className="flex items-center gap-1.5">
           <Car className="h-3.5 w-3.5 text-primary" />
-          {item.vehicleSnapshot.make} {item.vehicleSnapshot.model}
-          <span dir="ltr">({item.vehicleSnapshot.plateNumber})</span>
+          {item.vehicle.make} {item.vehicle.model}
+          <span dir="ltr">({item.vehicle.plateNumber})</span>
         </p>
         <p className="flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5 text-primary" />
-          {formatDate(item.createdAt, isAr ? "ar-SA" : "en-GB")}
+          {formatDate(item.receivedAt, isAr ? "ar-SA" : "en-GB")}
         </p>
       </div>
     </button>
@@ -68,43 +70,40 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
 const MaintenanceListPage: React.FC = () => {
   const { t, i18n } = useTranslation("maintenance")
   const navigate = useNavigate()
+  const [page, setPage] = useState(1)
   const [activeFilters, setActiveFilters] = useState<MaintenanceFilterValues>()
 
-  const cardsQuery = useMaintenanceCards()
-  const cards = cardsQuery.data ?? []
+  const range = activeFilters?.receivedAt
+  const cardsQuery = useMaintenanceCards({
+    page,
+    limit: PAGE_LIMIT,
+    ...(activeFilters?.search?.trim() ? { search: activeFilters.search.trim() } : {}),
+    ...(activeFilters?.status ? { status: activeFilters.status as MaintenanceCardListRow["status"] } : {}),
+    ...(range?.from ? { receivedFrom: range.from.toISOString() } : {}),
+    ...(range?.to ? { receivedTo: new Date(range.to.getTime() + 86400000).toISOString() } : {}),
+  })
 
-  const filtered = useMemo(() => {
-    if (!activeFilters) return cards
-    const status = activeFilters.status
-    const range = activeFilters.createdAt
-    return cards.filter((c) => {
-      const matchStatus = !status || c.status === status
-      let matchDate = true
-      if (range?.from) {
-        const created = new Date(c.createdAt)
-        if (range.to) {
-          matchDate =
-            created >= range.from &&
-            created <= new Date(range.to.getTime() + 86400000)
-        } else {
-          matchDate = created >= range.from
-        }
-      }
-      return matchStatus && matchDate
-    })
-  }, [cards, activeFilters])
+  const cards = cardsQuery.data?.items ?? []
+  const meta = cardsQuery.data?.meta
 
-  const totalCost = (card: MaintenanceCard) =>
-    card.workItems.reduce((sum, w) => sum + (w.estimatedCost || 0), 0)
+  const applyFilters = (filters: MaintenanceFilterValues) => {
+    setActiveFilters(filters)
+    setPage(1)
+  }
 
-  const columns: Column<MaintenanceCard>[] = [
+  const resetFilters = () => {
+    setActiveFilters(undefined)
+    setPage(1)
+  }
+
+  const columns: Column<MaintenanceCardListRow>[] = [
     {
-      key: "receiptNumber",
+      key: "cardNumber",
       header: t("receiptNumber"),
       headerIcon: FileText,
       cell: (c) => (
         <span className="font-medium text-text-primary" dir="ltr">
-          {c.receiptNumber}
+          {c.cardNumber}
         </span>
       ),
     },
@@ -112,7 +111,7 @@ const MaintenanceListPage: React.FC = () => {
       key: "customer",
       header: t("list.customer"),
       headerIcon: User,
-      cell: (c) => c.customerSnapshot.name,
+      cell: (c) => c.customer.name,
     },
     {
       key: "vehicle",
@@ -120,9 +119,9 @@ const MaintenanceListPage: React.FC = () => {
       headerIcon: Car,
       cell: (c) => (
         <span>
-          {c.vehicleSnapshot.make} {c.vehicleSnapshot.model}
+          {c.vehicle.make} {c.vehicle.model}
           <span className="text-muted-foreground" dir="ltr">
-            {" "}({c.vehicleSnapshot.plateNumber})
+            {" "}({c.vehicle.plateNumber})
           </span>
         </span>
       ),
@@ -134,30 +133,26 @@ const MaintenanceListPage: React.FC = () => {
       cell: (c) => <MaintenanceStatusBadge status={c.status} />,
     },
     {
-      key: "createdAt",
-      header: t("createdAt"),
+      key: "receivedAt",
+      header: t("receivedAt"),
       headerIcon: CalendarDays,
       cell: (c) => (
         <span className="text-muted-foreground">
-          {formatDate(c.createdAt, i18n.language === "ar" ? "ar-SA" : "en-GB")}
-        </span>
-      ),
-    },
-    {
-      key: "total",
-      header: t("totalCost"),
-      cell: (c) => (
-        <span className="font-medium text-text-primary">
-          {formatCurrency(totalCost(c))}
+          {formatDate(c.receivedAt, i18n.language === "ar" ? "ar-SA" : "en-GB")}
         </span>
       ),
     },
   ]
 
-  const pagination = { total: filtered.length, page: 1, lastPage: 1 }
+  const pagination = {
+    total: meta?.total ?? 0,
+    page: meta?.page ?? 1,
+    lastPage: meta?.totalPages ?? 1,
+    perPage: meta?.limit ?? PAGE_LIMIT,
+  }
 
   const MobileCard = (props: {
-    item: MaintenanceCard
+    item: MaintenanceCardListRow
     onViewDetails: () => void
     t: (key: string, options?: any) => string
     isAr: boolean
@@ -172,9 +167,7 @@ const MaintenanceListPage: React.FC = () => {
     return <ErrorState variant="default" retry={() => cardsQuery.refetch()} />
   }
 
-  const hasActiveFilter = !!activeFilters && Object.values(activeFilters).some(
-    (v) => (v as string) !== "",
-  )
+  const hasActiveFilter = activeFilters !== undefined
 
   return (
     <div className="flex flex-col gap-4">
@@ -191,14 +184,14 @@ const MaintenanceListPage: React.FC = () => {
 
       <CustomFilter<MaintenanceFilterValues>
         filters={maintenanceFilterFields(t)}
-        onApplyFilters={setActiveFilters}
-        onResetFilters={() => setActiveFilters(undefined)}
+        onApplyFilters={applyFilters}
+        onResetFilters={resetFilters}
         defaultValues={maintenanceFilterDefaultValues}
         isLoading={cardsQuery.isFetching}
         title={t("filter.title")}
       />
 
-      {filtered.length === 0 ? (
+      {cards.length === 0 && !cardsQuery.isLoading ? (
         <EmptyState
           icon={Wrench}
           title={hasActiveFilter ? t("list.noResults") : t("empty")}
@@ -210,12 +203,12 @@ const MaintenanceListPage: React.FC = () => {
           }
         />
       ) : (
-        <DataTable<MaintenanceCard>
-          data={filtered}
+        <DataTable<MaintenanceCardListRow>
+          data={cards}
           columns={columns}
           loading={cardsQuery.isLoading}
           pagination={pagination}
-          onPageChange={() => {}}
+          onPageChange={setPage}
           getRowId={(c) => c.id}
           onRowClick={(c) => navigate(`/maintenance/${c.id}`)}
           mobileCardComponent={MobileCard}

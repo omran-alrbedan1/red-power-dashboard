@@ -1,10 +1,9 @@
 export interface Customer {
-  id: string
+  id: number
   name: string
   phone: string
   email?: string
-  address?: string
-  notes?: string
+  isActive: boolean
   createdAt: string
   updatedAt: string
 }

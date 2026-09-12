@@ -29,9 +29,11 @@ const ProfilePage: React.FC = () => {
   const roleLabel =
     user?.role === "super_admin"
       ? "Super Admin"
-      : "Admin"
+      : user?.role === "admin"
+      ? "Admin"
+      : "-"
 
-  const name = user?.name || "شام"
+  const name = user?.name || "-"
 
   return (
     <div className="flex flex-col gap-4">
@@ -70,7 +72,7 @@ const ProfilePage: React.FC = () => {
             <DetailRow
               icon={Mail}
               label={t("common.email")}
-              value={user?.email || "sham@redpower.com"}
+              value={user?.email || "-"}
             />
             <DetailRow
               icon={Shield}
@@ -80,7 +82,7 @@ const ProfilePage: React.FC = () => {
             <DetailRow
               icon={Briefcase}
               label="الوظيفة"
-              value="فني صيانة"
+              value="-"
             />
           </CardContent>
         </Card>

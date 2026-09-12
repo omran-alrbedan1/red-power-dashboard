@@ -1,19 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useAuth } from "@/features/auth/context/AuthContext"
-import { maintenanceService } from "../services/maintenance.service"
+import { maintenanceApi } from "../services/maintenance-api.service"
+import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
 
 export function useCloseCard() {
   const queryClient = useQueryClient()
-  const { user } = useAuth()
 
   return useMutation({
-    mutationFn: (cardId: string) => maintenanceService.closeCard(cardId, user?.name),
-    onSuccess: (card) => {
-      if (!card) return
-      queryClient.invalidateQueries({ queryKey: ["maintenance", "card", card.id] })
-      queryClient.invalidateQueries({ queryKey: ["maintenance", "list"] })
-      queryClient.invalidateQueries({ queryKey: ["activity", "timeline", card.id] })
-      queryClient.invalidateQueries({ queryKey: ["dashboard", "maintenance-status-counts"] })
+    mutationFn: (cardId: number) => maintenanceApi.closeCard(cardId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(String(variables)) })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.timeline(String(variables)) })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.dashboardStats() })
     },
   })
 }

@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
-import { Factory, Car, Hash, Fingerprint, Gauge } from "lucide-react"
+import { Factory, Car, Hash, Fingerprint } from "lucide-react"
 import { Form } from "@/components/ui/form"
 import CustomFormField, {
   FormFieldType,
@@ -13,15 +13,7 @@ import {
   createVehicleFormSchema,
   type VehicleFormValues,
 } from "../validation/customer.validation"
-import type { FuelType, TransmissionType } from "../types/vehicle.types"
-
-const FUEL_KEYS: Record<FuelType, string> = {
-  petrol: "vehicles.fuelTypes.petrol",
-  diesel: "vehicles.fuelTypes.diesel",
-  hybrid: "vehicles.fuelTypes.hybrid",
-  electric: "vehicles.fuelTypes.electric",
-  other: "vehicles.fuelTypes.other",
-}
+import type { TransmissionType } from "../types/vehicle.types"
 
 const TRANSMISSION_KEYS: Record<TransmissionType, string> = {
   automatic: "vehicles.transmissionTypes.automatic",
@@ -52,23 +44,11 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
       model: defaultValues?.model ?? "",
       plateNumber: defaultValues?.plateNumber ?? "",
       vin: defaultValues?.vin ?? "",
-      year: defaultValues?.year ?? "",
-      mileage: defaultValues?.mileage ?? "",
-      fuelType: defaultValues?.fuelType ?? undefined,
-      transmissionType: defaultValues?.transmissionType ?? undefined,
+      manufactureYear: defaultValues?.manufactureYear ?? new Date().getUTCFullYear(),
+      transmission: defaultValues?.transmission ?? undefined,
       color: defaultValues?.color ?? "",
-      notes: defaultValues?.notes ?? "",
     },
   })
-
-  const fuelOptions = useMemo<Option[]>(
-    () =>
-      (Object.keys(FUEL_KEYS) as FuelType[]).map((key) => ({
-        value: key,
-        label: t(FUEL_KEYS[key]),
-      })),
-    [t],
-  )
 
   const transmissionOptions = useMemo<Option[]>(
     () =>
@@ -139,7 +119,7 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
           <CustomFormField
             fieldType={FormFieldType.NUMBER}
             control={form.control}
-            name="year"
+            name="manufactureYear"
             label={t("vehicles.fields.year")}
             placeholder={t("vehicles.fields.year")}
             min={1900}
@@ -147,35 +127,13 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
             dir="ltr"
           />
           <CustomFormField
-            fieldType={FormFieldType.NUMBER}
-            control={form.control}
-            name="mileage"
-            label={t("vehicles.fields.mileage")}
-            placeholder={t("vehicles.fields.mileage")}
-            min={0}
-            leftIcon={Gauge}
-            iconPosition="left"
-            dir="ltr"
-          />
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2">
-          <CustomFormField
             fieldType={FormFieldType.SELECT}
             control={form.control}
-            name="fuelType"
-            label={t("vehicles.fields.fuelType")}
-            placeholder={t("vehicles.fields.fuelType")}
-            options={fuelOptions}
-            dir="rtl"
-          />
-          <CustomFormField
-            fieldType={FormFieldType.SELECT}
-            control={form.control}
-            name="transmissionType"
+            name="transmission"
             label={t("vehicles.fields.transmissionType")}
             placeholder={t("vehicles.fields.transmissionType")}
             options={transmissionOptions}
+            required
             dir="rtl"
           />
         </div>
@@ -186,16 +144,6 @@ export const VehicleForm: React.FC<VehicleFormProps> = ({
           name="color"
           label={t("vehicles.fields.color")}
           placeholder={t("vehicles.fields.color")}
-          dir="rtl"
-        />
-
-        <CustomFormField
-          fieldType={FormFieldType.TEXTAREA}
-          control={form.control}
-          name="notes"
-          label={t("vehicles.fields.notes")}
-          placeholder={t("vehicles.fields.notes")}
-          rows={3}
           dir="rtl"
         />
 

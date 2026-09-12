@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query"
-import { maintenanceService } from "@/features/maintenance/services/maintenance.service"
+import { maintenanceApi } from "@/features/maintenance/services/maintenance-api.service"
+import { maintenanceQueryKeys } from "@/features/maintenance/services/maintenance-query-keys"
 
 export function useDashboardStats() {
   return useQuery({
-    queryKey: ["dashboard", "maintenance-status-counts"],
-    queryFn: () => maintenanceService.getStatusCounts(),
+    queryKey: maintenanceQueryKeys.dashboardStats(),
+    queryFn: () => maintenanceApi.dashboardStats(),
   })
 }

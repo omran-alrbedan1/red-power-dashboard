@@ -20,3 +20,15 @@ export interface ActivityEvent {
   description: string
   metadata?: Record<string, unknown>
 }
+
+/**
+ * Server-provided status events for lifecycle timeline.
+ * Shape matches the maintenance-card statusEvents relation from the API.
+ */
+export interface StatusEvent {
+  id: number
+  fromStatus?: string | null
+  toStatus: string
+  createdAt: string
+  changedBy?: { id: number; name?: string } | null
+}

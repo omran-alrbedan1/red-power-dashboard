@@ -3,7 +3,8 @@ export type WorkStatus = "pending" | "in_progress" | "completed" | "cancelled"
 export interface WorkItem {
   id: string
   description: string
-  estimatedCost: number
+  estimatedCost: number | null
+  displayOrder: number
   quantity?: number
   progress: number
   assignee?: string

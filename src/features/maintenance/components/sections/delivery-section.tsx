@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { User, CircleDollarSign, BadgeCheck } from "lucide-react"
+import { BadgeCheck, User, CalendarClock } from "lucide-react"
 import type { Control, FieldValues, Path } from "react-hook-form"
 import CustomFormField, {
   FormFieldType,
@@ -22,24 +22,22 @@ export const DeliverySection = <T extends FieldValues>({
       </h3>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <CustomFormField
-            fieldType={FormFieldType.SWITCH}
-            control={control}
-            name={"approved" as Path<T>}
-            label={t("approval.approved")}
-          />
-        </div>
+        <CustomFormField
+          fieldType={FormFieldType.SWITCH}
+          control={control}
+          name={"approved" as Path<T>}
+          label={t("approval.approved")}
+        />
 
         <CustomFormField
-          fieldType={FormFieldType.NUMBER}
+          fieldType={FormFieldType.INPUT}
           control={control}
-          name={"approvalAmount" as Path<T>}
-          label={t("approval.amount")}
-          min={0}
-          leftIcon={CircleDollarSign}
+          name={"approvalName" as Path<T>}
+          label={t("approval.customerName")}
+          placeholder={t("approval.customerName")}
+          leftIcon={User}
           iconPosition="left"
-          dir="ltr"
+          dir="rtl"
         />
 
         <CustomFormField
@@ -60,16 +58,12 @@ export const DeliverySection = <T extends FieldValues>({
           dir="rtl"
         />
 
-        <CustomFormField
-          fieldType={FormFieldType.INPUT}
-          control={control}
-          name={"receiverName" as Path<T>}
-          label={t("approval.receiver")}
-          placeholder={t("approval.receiver")}
-          leftIcon={User}
-          iconPosition="left"
-          dir="rtl"
-        />
+        <div className="sm:col-span-2">
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <CalendarClock className="h-4 w-4 text-primary" />
+            {t("approval.hint")}
+          </p>
+        </div>
       </div>
     </div>
   )

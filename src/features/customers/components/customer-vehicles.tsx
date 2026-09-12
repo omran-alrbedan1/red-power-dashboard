@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { Car, Plus, Gauge, CalendarDays, Palette, Fuel, Settings2 } from "lucide-react"
+import { Car, Plus, CalendarDays, Palette, Settings2 } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -8,15 +8,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import type { Vehicle, FuelType, TransmissionType } from "../types/vehicle.types"
-
-const FUEL_KEYS: Record<FuelType, string> = {
-  petrol: "vehicles.fuelTypes.petrol",
-  diesel: "vehicles.fuelTypes.diesel",
-  hybrid: "vehicles.fuelTypes.hybrid",
-  electric: "vehicles.fuelTypes.electric",
-  other: "vehicles.fuelTypes.other",
-}
+import type { Vehicle, TransmissionType } from "../types/vehicle.types"
 
 const TRANSMISSION_KEYS: Record<TransmissionType, string> = {
   automatic: "vehicles.transmissionTypes.automatic",
@@ -95,34 +87,18 @@ export const CustomerVehicles: React.FC<CustomerVehiclesProps> = ({
                     <DetailItem
                       icon={CalendarDays}
                       label={t("vehicles.fields.year")}
-                      value={vehicle.year ? String(vehicle.year) : undefined}
-                    />
-                    <DetailItem
-                      icon={Gauge}
-                      label={t("vehicles.fields.mileage")}
-                      value={
-                        vehicle.mileage != null
-                          ? `${vehicle.mileage.toLocaleString("ar-SA")}`
-                          : undefined
-                      }
+                      value={String(vehicle.manufactureYear)}
                     />
                     <DetailItem
                       icon={Palette}
                       label={t("vehicles.fields.color")}
                       value={vehicle.color}
                     />
-                    {vehicle.fuelType && (
-                      <DetailItem
-                        icon={Fuel}
-                        label={t("vehicles.fields.fuelType")}
-                        value={t(FUEL_KEYS[vehicle.fuelType])}
-                      />
-                    )}
-                    {vehicle.transmissionType && (
+                    {vehicle.transmission && (
                       <DetailItem
                         icon={Settings2}
                         label={t("vehicles.fields.transmissionType")}
-                        value={t(TRANSMISSION_KEYS[vehicle.transmissionType])}
+                        value={t(TRANSMISSION_KEYS[vehicle.transmission])}
                       />
                     )}
                   </div>

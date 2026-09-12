@@ -8,10 +8,14 @@
   "backToList": "Back to List",
   "receiptNumber": "Receipt Number",
   "createdAt": "Created At",
+  "receivedAt": "Received At",
   "status": "Status",
   "totalCost": "Total",
   "save": "Save Card",
   "saving": "Saving...",
+  "units": {
+    "km": "km"
+  },
   "statuses": {
     "draft": "Draft",
     "open": "Open",
@@ -38,7 +42,8 @@
     "name": "Customer Name",
     "phone": "Phone",
     "email": "Email",
-    "noSelection": "Select a customer"
+    "noSelection": "Select a customer",
+    "createHint": "Pick an existing customer or enter details below to create a new one."
   },
   "vehicle": {
     "title": "Vehicle",
@@ -53,6 +58,7 @@
     "fuelType": "Fuel Type",
     "transmissionType": "Transmission",
     "noSelection": "Select a vehicle",
+    "createHint": "Pick an existing vehicle or enter details below to register a new one.",
     "fuel_type": {
       "petrol": "Petrol",
       "diesel": "Diesel",
@@ -82,6 +88,7 @@
   "condition": {
     "title": "Condition at Receipt",
     "fuelLevel": "Fuel Level",
+    "options": "Received Condition",
     "fuelLevels": {
       "empty": "Empty",
       "quarter": "Quarter",
@@ -115,6 +122,7 @@
     "required": "Required",
     "total": "Total",
     "addRow": "Add Work Item",
+    "removeRow": "Remove Work Item",
     "noWork": "No work items yet",
     "editWork": "Update Work Item",
     "assigneePlaceholder": "Technician or assignee name",
@@ -131,9 +139,12 @@
     "approved": "Customer Approval",
     "notApproved": "Awaiting Approval",
     "amount": "Approved Amount",
-    "deliveryDate": "Expected Delivery Date",
+    "customerName": "Approval Name",
+    "approvedAt": "Approved At",
+    "deliveryDate": "Expected Delivery",
     "deliveryTime": "Delivery Time",
-    "receiver": "Receiver / Technician"
+    "receiver": "Receiver / Technician",
+    "hint": "The card will be saved with the customer approval and expected delivery when available."
   },
   "validation": {
     "customerNameRequired": "Customer name is required",
@@ -153,12 +164,39 @@
   },
   "filter": {
     "title": "Filter Cards",
+    "search": "Search by receipt number",
     "status": "Status",
-    "createdAt": "Created At"
+    "receivedAt": "Received At"
+  },
+  "wizard": {
+    "step1": "Customer",
+    "step2": "Vehicle",
+    "step3": "Card Details",
+    "step4": "Photos & Signature",
+    "back": "Back",
+    "next": "Next",
+    "saveCard": "Save Card"
+  },
+  "media": {
+    "title": "Photos & Signature",
+    "createdSummary": "Card {{cardNumber}} was created. You can attach photos and a customer signature before finishing.",
+    "photos": "Receipt Photos",
+    "uploadPhotos": "Upload Photos",
+    "photosUploaded": "Photos uploaded successfully.",
+    "signature": "Customer Signature",
+    "uploadSignature": "Upload Signature",
+    "signatureUploaded": "Signature uploaded successfully.",
+    "skip": "Skip for now",
+    "done": "View Card",
+    "error": "Unable to upload the attached files. Try again."
   },
   "activity": {
     "title": "Activity Timeline",
     "noActivity": "No activity recorded yet",
+    "status": {
+      "open": "Card opened",
+      "closed": "Card closed"
+    },
     "card_created": "Card created",
     "card_status_changed": "Card status changed",
     "work_added": "Work item added",

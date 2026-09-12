@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { maintenanceService } from "../services/maintenance.service"
 import { useAuth } from "@/features/auth/context/AuthContext"
+import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
 import type { WorkStatus } from "../types/work-item.types"
 
 export function useUpdateWorkItem() {
@@ -17,11 +18,13 @@ export function useUpdateWorkItem() {
       workItemId: string
       updates: Partial<{
         description: string
-        estimatedCost: number
+        estimatedCost: number | null
+        displayOrder: number
         quantity: number
         progress: number
         assignee: string
         status: WorkStatus
+        isRequired: boolean
       }>
     }) => {
       return maintenanceService.updateWorkItem(
@@ -31,10 +34,12 @@ export function useUpdateWorkItem() {
         user?.name
       )
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance", "card", data?.id] })
-      queryClient.invalidateQueries({ queryKey: ["activity", "timeline", data?.id] })
-      queryClient.invalidateQueries({ queryKey: ["maintenance", "list"] })
+    onSuccess: (_data, variables) => {
+      // Use the cardId from mutation input for invalidation
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(variables.cardId) })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.timeline(variables.cardId) })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.dashboardStats() })
     },
   })
 }

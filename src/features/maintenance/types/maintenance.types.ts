@@ -1,7 +1,7 @@
 import type { ReceiptCondition } from "./inspection.types"
 import type { WorkItem } from "./work-item.types"
 import type { Approval } from "./approval.types"
-import type { ActivityEvent } from "./activity.types"
+import type { ActivityEvent, StatusEvent } from "./activity.types"
 
 export type MaintenanceStatus =
   | "draft"
@@ -54,6 +54,7 @@ export interface MaintenanceCard {
   expectedDelivery?: { date?: string; time?: string }
   receiverName?: string
   activityEvents: ActivityEvent[]
+  statusEvents?: StatusEvent[]
 }
 
 export const MAINTENANCE_STATUSES: MaintenanceStatus[] = [

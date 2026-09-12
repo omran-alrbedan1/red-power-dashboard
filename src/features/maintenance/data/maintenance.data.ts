@@ -65,6 +65,7 @@ export const initialCards: MaintenanceCard[] = [
         assignee: "شام",
         status: "in_progress",
         isRequired: true,
+        displayOrder: 0,
       },
       {
         id: "mwi-002",
@@ -74,6 +75,7 @@ export const initialCards: MaintenanceCard[] = [
         progress: 0,
         status: "pending",
         isRequired: true,
+        displayOrder: 1,
       },
     ],
     approval: { approved: true, approvedAt: "2026-08-28T14:50:00.000Z", approvedByName: "أحمد السميري", amount: 150 },
@@ -109,6 +111,7 @@ export const initialCards: MaintenanceCard[] = [
         assignee: "شام",
         status: "in_progress",
         isRequired: true,
+        displayOrder: 0,
       },
     ],
     expectedDelivery: { date: "2026-09-03T00:00:00.000Z" },

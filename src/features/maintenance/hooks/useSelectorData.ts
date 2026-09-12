@@ -1,9 +1,22 @@
 import { useQuery } from "@tanstack/react-query"
-import { maintenanceService } from "../services/maintenance.service"
+import { apiRequest } from "@/lib/api/client"
+import type { ApiPaginated } from "@/lib/api/contracts"
+
+interface SelectorCustomer { id: number; name: string; phone: string; email?: string }
+interface SelectorVehicle {
+  id: number; make: string; model: string; plateNumber: string; manufactureYear: number; vin?: string
+  currentOwnership: { id: number; customerId: number } | null
+}
 
 export function useSelectorData() {
   return useQuery({
     queryKey: ["maintenance-selector"],
-    queryFn: () => maintenanceService.getSelectorData(),
+    queryFn: async () => {
+      const [customers, vehicles] = await Promise.all([
+        apiRequest<ApiPaginated<SelectorCustomer>>({ url: "/customers", params: { page: 1, limit: 100 } }),
+        apiRequest<ApiPaginated<SelectorVehicle>>({ url: "/vehicles", params: { page: 1, limit: 100 } }),
+      ])
+      return { customers: customers.items, vehicles: vehicles.items.filter((vehicle) => vehicle.currentOwnership) }
+    },
   })
 }

@@ -20,6 +20,9 @@ const STATUS_VARIANTS: Record<WorkStatus, Record<string, string>> = {
 const StatusBadge: React.FC<{ status: WorkStatus }> = ({ status }) => {
   const { t } = useTranslation("customers")
   const config = STATUS_VARIANTS[status]
+  if (!config) {
+    return <Badge className="bg-gray-500/15 text-gray-400">{status}</Badge>
+  }
   return <Badge className={config.className}>{t(config.labelKey)}</Badge>
 }
 

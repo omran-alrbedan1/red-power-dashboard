@@ -152,26 +152,13 @@ export const maintenanceService = {
   },
 
   async getCardsByCustomer(
-    customerId: string,
-  ): Promise<MaintenanceCardSummary[]> {
-    await delay(200)
-    return cards
-      .filter((c) => c.customerId === customerId)
-      .map((c) => ({
-        id: c.id,
-        receiptNumber: c.receiptNumber,
-        status: c.status,
-        createdAt: c.createdAt,
-        workCount: c.workItems.length,
-        pendingWork: c.workItems.filter(
-          (w) => w.status === "pending" || w.status === "in_progress",
-        ).length,
-        totalCost: c.workItems.reduce(
-          (sum, w) => sum + (w.estimatedCost || 0),
-          0,
-        ),
-      }))
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    customerId: number,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ data: MaintenanceCardSummary[]; meta: { total: number; page: number; limit: number } }> {
+    // Use API for customer history
+    const { maintenanceApi } = await import("./maintenance-api.service")
+    return maintenanceApi.customerHistory(customerId, page, limit)
   },
 
   async getSelectorData(): Promise<{

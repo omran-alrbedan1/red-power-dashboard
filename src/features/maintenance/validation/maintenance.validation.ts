@@ -18,12 +18,6 @@ export const createWorkItemRowSchema = (t: (key: string) => string) =>
       z.number().min(0, { message: t("validation.estimateNegative") }),
       z.literal(""),
     ]),
-    quantity: z.union([z.number().min(0), z.literal("")]).optional().nullable(),
-    progress: z.number().min(0).max(100).default(0),
-    assignee: z.string().optional(),
-    status: z
-      .enum(["pending", "in_progress", "completed", "cancelled"])
-      .default("pending"),
     isRequired: z.boolean().default(false),
   })
 
@@ -32,69 +26,50 @@ export type WorkItemRowValues = z.infer<
 >
 
 export const createReceiptFormSchema = (t: (key: string) => string) =>
-  z
-    .object({
-      customerName: z
-        .string()
-        .min(1, { message: t("validation.customerNameRequired") }),
-      customerPhone: z
-        .string()
-        .min(9, { message: t("validation.customerPhoneRequired") }),
-      customerEmail: z
-        .string()
-        .email({ message: t("validation.emailInvalid") })
-        .optional()
-        .or(z.literal("")),
+  z.object({
+    customerName: z
+      .string()
+      .min(1, { message: t("validation.customerNameRequired") }),
+    customerPhone: z
+      .string()
+      .min(9, { message: t("validation.customerPhoneRequired") }),
+    customerEmail: z
+      .string()
+      .email({ message: t("validation.emailInvalid") })
+      .optional()
+      .or(z.literal("")),
 
-      vehicleMake: z
-        .string()
-        .min(1, { message: t("validation.makeRequired") }),
-      vehicleModel: z
-        .string()
-        .min(1, { message: t("validation.modelRequired") }),
-      vehiclePlate: z
-        .string()
-        .min(1, { message: t("validation.plateRequired") }),
-      vehicleYear: z.union([z.number().int().min(1900).max(2100), z.literal("")]).optional(),
-      vehicleVin: z.string().optional(),
-      vehicleMileage: z.union([z.number().min(0), z.literal("")]).optional(),
-      vehicleFuel: z.string().optional(),
-      vehicleTransmission: z.string().optional(),
+    vehicleMake: z
+      .string()
+      .min(1, { message: t("validation.makeRequired") }),
+    vehicleModel: z
+      .string()
+      .min(1, { message: t("validation.modelRequired") }),
+    vehiclePlate: z
+      .string()
+      .min(1, { message: t("validation.plateRequired") }),
+    vehicleYear: z.union([z.number().int().min(1900).max(2100), z.literal("")]).optional(),
+    vehicleVin: z.string().optional(),
+    vehicleMileage: z.union([z.number().min(0), z.literal("")]).optional(),
+    vehicleTransmission: z.string().optional(),
+    mileage: z.union([z.number().min(0), z.literal("")]).optional(),
 
-      visitReason: z
-        .string()
-        .min(1, { message: t("validation.reasonRequired") }),
-      otherReason: z.string().optional(),
-      complaint: z.string().optional(),
+    visitReasonIds: z
+      .array(z.string())
+      .min(1, { message: t("validation.reasonRequired") }),
+    conditionOptionIds: z.array(z.string()).default([]),
+    itemOptionIds: z.array(z.string()).default([]),
+    fuelLevel: z.string().default("half"),
+    complaint: z.string().optional(),
+    inspectionNotes: z.string().optional(),
 
-      fuelLevel: z.string().optional(),
-      externalCondition: z.string().optional(),
-      warningLights: z.boolean().optional(),
-      tires: z.string().optional(),
-      battery: z.string().optional(),
-      glass: z.string().optional(),
-      body: z.string().optional(),
-      otherNotes: z.string().optional(),
+    requiredWorks: z.array(createWorkItemRowSchema(t)).default([]),
 
-      itemsLeft: z.array(z.string()).default([]),
-
-      workItems: z.array(createWorkItemRowSchema(t)).default([]),
-
-      approved: z.boolean().optional(),
-      approvalAmount: z.union([z.number().min(0), z.literal("")]).optional(),
-      deliveryDate: z.date().optional().nullable(),
-      deliveryTime: z.date().optional().nullable(),
-      receiverName: z.string().optional(),
-    })
-    .superRefine((values, ctx) => {
-      if (values.visitReason === "other" && !values.otherReason?.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["otherReason"],
-          message: t("validation.reasonRequired"),
-        })
-      }
-    })
+    approved: z.boolean().default(false),
+    approvalName: z.string().optional(),
+    deliveryDate: z.date().optional().nullable(),
+    deliveryTime: z.date().optional().nullable(),
+  })
 
 export type ReceiptFormValues = z.output<
   ReturnType<typeof createReceiptFormSchema>

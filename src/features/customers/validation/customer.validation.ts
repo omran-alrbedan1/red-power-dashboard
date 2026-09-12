@@ -12,8 +12,6 @@ export const createCustomerFormSchema = (t: (key: string) => string) =>
       .email({ message: t("validation.emailInvalid") })
       .optional()
       .or(z.literal("")),
-    address: z.string().optional(),
-    notes: z.string().optional(),
   })
 
 export type CustomerFormValues = z.infer<
@@ -27,21 +25,10 @@ export const createVehicleFormSchema = (t: (key: string) => string) =>
     plateNumber: z
       .string()
       .min(1, { message: t("vehicles.validation.plateRequired") }),
-    year: z
-      .union([z.number().int().min(1900).max(2100), z.literal("")])
-      .optional(),
-    vin: z.string().optional(),
-    mileage: z.union([z.number().min(0), z.literal("")]).optional(),
-    fuelType: z
-      .enum(["petrol", "diesel", "hybrid", "electric", "other"])
-      .optional()
-      .nullable(),
-    transmissionType: z
-      .enum(["automatic", "manual"])
-      .optional()
-      .nullable(),
+    manufactureYear: z.number().int().min(1886).max(new Date().getUTCFullYear() + 1),
+    vin: z.union([z.literal(""), z.string().length(17, { message: t("vehicles.validation.vinInvalid") })]),
+    transmission: z.enum(["automatic", "manual"], { message: t("vehicles.validation.transmissionRequired") }),
     color: z.string().optional(),
-    notes: z.string().optional(),
   })
 
 export type VehicleFormValues = z.infer<

@@ -9,6 +9,7 @@ import { LogIn, Mail, Lock, Wrench } from "lucide-react"
 import { SubmitButton } from "@/components/shared/buttons/SubmitButton"
 import { loginFormSchema, LoginFormValues } from "@/features/auth/validation/auth.validation"
 import { useAuth } from "@/features/auth/context/AuthContext"
+import { ApiError } from "@/lib/api/client"
 import LanguageSwitcher from "@/components/shared/buttons/language-switcher"
 
 const Login: React.FC = () => {
@@ -31,9 +32,9 @@ const Login: React.FC = () => {
       await login(data)
       navigate("/", { replace: true })
     } catch (err) {
-      form.setError("root", {
-        message: t("auth.loginError"),
-      })
+      const message =
+        err instanceof ApiError ? err.message : t("auth.loginError")
+      form.setError("root", { message })
     } finally {
       setIsLoading(false)
     }

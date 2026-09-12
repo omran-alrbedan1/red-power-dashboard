@@ -25,6 +25,7 @@
     "emailInvalid": "البريد الإلكتروني غير صالح"
   },
   "filter": {
+    "search": "بحث الزبائن",
     "name": "الاسم",
     "phone": "رقم الهاتف",
     "plateNumber": "رقم اللوحة",
@@ -69,7 +70,9 @@
     "validation": {
       "makeRequired": "الصنّ مطلوب",
       "modelRequired": "الموديل مطلوب",
-      "plateRequired": "رقم اللوحة مطلوب"
+      "plateRequired": "رقم اللوحة مطلوب",
+      "vinInvalid": "رقم الشاصي (VIN) يجب أن يتكون من 17 حرفاً أو رقماً",
+      "transmissionRequired": "نوع ناقل الحركة مطلوب"
     }
   },
   "history": {
