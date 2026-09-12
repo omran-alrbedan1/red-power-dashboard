@@ -1,6 +1,6 @@
 import { apiRequest } from "@/lib/api/client"
 import type { ApiPaginated } from "@/lib/api/contracts"
-import type { Customer } from "../types/customer.types"
+import type { Customer, CustomerDetails } from "../types/customer.types"
 import type { Vehicle, TransmissionType, VehicleOwnership } from "../types/vehicle.types"
 import type { CustomerHistoryItem, CustomerHistoryPage } from "../types/visit-summary.types"
 
@@ -41,9 +41,12 @@ const vehiclePayload = (input: VehicleInput) => ({
 
 export const customerService = {
   list: (params: CustomerListParams) => apiRequest<ApiPaginated<Customer>>({ url: "/customers", params }),
-  getById: (id: number) => apiRequest<Customer & { currentVehicles: ApiVehicle[] }>({ url: `/customers/${id}` }),
-  async listVehicles(customerId: number): Promise<Vehicle[]> {
-    return (await this.getById(customerId)).currentVehicles.map(mapVehicle)
+  async getById(id: number): Promise<CustomerDetails> {
+    const response = await apiRequest<Customer & { currentVehicles: ApiVehicle[] }>({ url: `/customers/${id}` })
+    return {
+      ...response,
+      currentVehicles: response.currentVehicles.map(mapVehicle),
+    }
   },
   create: (input: CustomerInput) => apiRequest<Customer>({ method: "POST", url: "/customers", data: customerPayload(input) }),
   update: (id: number, input: CustomerInput) => apiRequest<Customer>({ method: "PATCH", url: `/customers/${id}`, data: customerPayload(input) }),

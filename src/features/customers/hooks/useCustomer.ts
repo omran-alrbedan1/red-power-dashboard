@@ -1,40 +1,59 @@
 import { useQuery } from "@tanstack/react-query"
 import { customerService } from "../services/customer.service"
+import { customerQueryKeys } from "../services/customer-query-keys"
 
-export function useCustomer(customerId: string | undefined) {
+export function useCustomer(
+  customerId: string | undefined,
+) {
   const id = Number(customerId)
 
-  const customerQuery = useQuery({
-    queryKey: ["customer", id],
-    queryFn: () => customerService.getById(id),
-    enabled: Number.isInteger(id) && id > 0,
-  })
+  const isValidId =
+    Number.isInteger(id) && id > 0
 
-  const vehiclesQuery = useQuery({
-    queryKey: ["customer", id, "vehicles"],
-    queryFn: () => customerService.listVehicles(id),
-    enabled: Number.isInteger(id) && id > 0 && !!customerQuery.data,
+  const customerQuery = useQuery({
+    queryKey: customerQueryKeys.detail(id),
+    queryFn: () =>
+      customerService.getById(id),
+    enabled: isValidId,
   })
 
   const historyQuery = useQuery({
-    queryKey: ["customer", id, "history"],
-    queryFn: () => customerService.getHistory(id),
-    enabled: Number.isInteger(id) && id > 0 && !!customerQuery.data,
+    queryKey: customerQueryKeys.history(id),
+    queryFn: () =>
+      customerService.getHistory(id),
+    enabled:
+      isValidId &&
+      Boolean(customerQuery.data),
   })
 
   return {
-    customer: customerQuery.data,
-    vehicles: vehiclesQuery.data ?? [],
-    history: historyQuery.data,
+    customer:
+      customerQuery.data,
+
+    vehicles:
+      customerQuery.data
+        ?.currentVehicles ?? [],
+
+    history:
+      historyQuery.data,
+
     isLoading:
-      customerQuery.isLoading || vehiclesQuery.isLoading || historyQuery.isLoading,
+      customerQuery.isLoading ||
+      historyQuery.isLoading,
+
     isError:
-      customerQuery.isError || vehiclesQuery.isError || historyQuery.isError,
-    error: customerQuery.error || vehiclesQuery.error || historyQuery.error,
-    refetch: () => {
-      customerQuery.refetch()
-      vehiclesQuery.refetch()
-      historyQuery.refetch()
+      customerQuery.isError ||
+      historyQuery.isError,
+
+    error:
+      customerQuery.error ||
+      historyQuery.error,
+
+    refetch: async () => {
+      await Promise.all([
+        customerQuery.refetch(),
+        historyQuery.refetch(),
+      ])
     },
   }
 }

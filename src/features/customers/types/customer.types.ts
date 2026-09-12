@@ -1,3 +1,5 @@
+import type { Vehicle } from "./vehicle.types"
+
 export interface Customer {
   id: number
   name: string
@@ -6,4 +8,8 @@ export interface Customer {
   isActive: boolean
   createdAt: string
   updatedAt: string
+}
+
+export interface CustomerDetails extends Customer {
+  currentVehicles: Vehicle[]
 }

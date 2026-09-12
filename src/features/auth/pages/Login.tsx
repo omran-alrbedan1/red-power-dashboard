@@ -10,6 +10,7 @@ import { SubmitButton } from "@/components/shared/buttons/SubmitButton"
 import { loginFormSchema, LoginFormValues } from "@/features/auth/validation/auth.validation"
 import { useAuth } from "@/features/auth/context/AuthContext"
 import { ApiError } from "@/lib/api/client"
+import { toast } from "sonner"
 import LanguageSwitcher from "@/components/shared/buttons/LanguageSwitcher"
 import { images } from '@/constants/images'
 
@@ -35,7 +36,7 @@ const Login: React.FC = () => {
     } catch (err) {
       const message =
         err instanceof ApiError ? err.message : t("auth.loginError")
-      form.setError("root", { message })
+      toast.error(message)
     } finally {
       setIsLoading(false)
     }
@@ -44,25 +45,45 @@ const Login: React.FC = () => {
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background md:flex-row">
       {/* Left Panel: Form */}
-      <div className="flex w-full flex-col items-center justify-center bg-background p-8 md:w-1/2">
-        <div className="w-full max-w-md">
-          <div className="flex flex-col gap-6">
-            <div className="mx-auto mb-4 flex flex-col items-center gap-3">
-              <img
-                src={images.redPowerLogo}
-                alt="Red Power Garage"
-                className="h-auto w-48 object-contain"
-              />
+      <div className="flex w-full flex-col bg-background px-5 py-6 sm:px-8 md:w-1/2 md:py-8">
+        {/* Mobile brand bar */}
+        <div className="flex items-center justify-between md:hidden">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-[0_0_20px_rgba(225,6,19,0.3)]">
+              <Wrench className="h-4 w-4" />
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-text-primary">
-                {t("auth.welcomeBack")}
-              </h2>
-              <p className="text-sm text-text-secondary">
-                {t("auth.loginSubtitle")}
+              <p className="text-sm font-bold leading-tight text-text-primary">
+                Red Power
+              </p>
+
+              <p className="mt-0.5 text-[10px] text-text-muted">
+                Red Power Garage
               </p>
             </div>
+          </div>
+
+          <LanguageSwitcher />
+        </div>
+
+        <div className="flex flex-1 flex-col items-center justify-center py-8 md:py-0">
+          <div className="w-full max-w-md">
+            <div className="flex flex-col gap-6">
+
+              <div>
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary">
+                  Red Power Garage
+                </p>
+
+                <h2 className="text-xl font-semibold text-text-primary sm:text-2xl">
+                  {t("auth.welcomeBack")}
+                </h2>
+
+                <p className="mt-1 text-sm text-text-secondary">
+                  {t("auth.loginSubtitle")}
+                </p>
+              </div>
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -94,12 +115,6 @@ const Login: React.FC = () => {
                   />
                 </div>
 
-                {form.formState.errors.root && (
-                  <div className="rounded-lg border border-primary/30 bg-primary/10 px-4 py-3 text-center text-sm text-red-200">
-                    {form.formState.errors.root.message}
-                  </div>
-                )}
-
                 <SubmitButton
                   isLoading={isLoading}
                   text={t("auth.login")}
@@ -109,10 +124,11 @@ const Login: React.FC = () => {
               </form>
             </Form>
           </div>
+          </div>
         </div>
       </div>
 
-      {/* Left-side desktop brand image panel */}
+      {/* Desktop brand image panel */}
       <div className="relative hidden w-1/2 overflow-hidden md:block">
         <div className="absolute inset-0 overflow-hidden">
           <img
@@ -121,20 +137,7 @@ const Login: React.FC = () => {
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/65 to-background/95" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-        <div className="relative flex h-full w-full flex-col items-center justify-center gap-6 p-12 text-center">
-          <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary shadow-[0_0_42px_rgba(225,6,19,0.35)]">
-            <Wrench className="h-12 w-12 text-white" />
-          </div>
-          <h2 className="text-4xl font-bold text-white">Red Power Garage</h2>
-          <p className="max-w-sm text-lg text-zinc-200">
-            لوحة تحكم إدارة ورشة Red Power
-          </p>
-          <div className="mt-4 border-t border-white/20 pt-4">
-            <LanguageSwitcher />
-          </div>
-        </div>
       </div>
     </div>
   )

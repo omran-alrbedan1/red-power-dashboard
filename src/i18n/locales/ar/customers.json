@@ -13,6 +13,18 @@
   "detailsDescription": "زبون مسجّل في الورشة",
   "detailsSubtitle": "معلومات التواصل مع الزبون",
   "backToList": "العودة إلى قائمة الزبائن",
+  "messages": {
+    "created": "تم إنشاء الزبون بنجاح",
+    "updated": "تم تحديث بيانات الزبون بنجاح",
+    "vehicleAdded": "تم إضافة المركبة بنجاح",
+    "ownershipTransferred": "تم نقل ملكية المركبة بنجاح"
+  },
+  "errors": {
+    "createFailed": "فشل إنشاء الزبون",
+    "updateFailed": "فشل تحديث بيانات الزبون",
+    "vehicleAddFailed": "فشل إضافة المركبة",
+    "ownershipTransferFailed": "فشل نقل ملكية المركبة"
+  },
   "fields": {
     "name": "الاسم",
     "namePlaceholder": "أدخل اسم الزبون",

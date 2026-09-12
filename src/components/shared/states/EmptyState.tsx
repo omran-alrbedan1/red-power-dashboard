@@ -48,7 +48,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         />
       ) : (
         <div className="mb-6 rounded-full bg-background-secondary p-4">
-          <Icon className="w-16 h-16 text-primary" />
+          <Icon className="w-8 h-8 text-primary" />
         </div>
       )}
 

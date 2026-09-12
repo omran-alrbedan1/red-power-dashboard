@@ -13,6 +13,18 @@
   "detailsDescription": "Registered workshop customer",
   "detailsSubtitle": "Customer contact information",
   "backToList": "Back to customer list",
+  "messages": {
+    "created": "Customer created successfully",
+    "updated": "Customer updated successfully",
+    "vehicleAdded": "Vehicle added successfully",
+    "ownershipTransferred": "Vehicle ownership transferred successfully"
+  },
+  "errors": {
+    "createFailed": "Failed to create customer",
+    "updateFailed": "Failed to update customer",
+    "vehicleAddFailed": "Failed to add vehicle",
+    "ownershipTransferFailed": "Failed to transfer vehicle ownership"
+  },
   "fields": {
     "name": "Name",
     "namePlaceholder": "Enter customer name",

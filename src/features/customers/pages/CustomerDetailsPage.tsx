@@ -1,14 +1,11 @@
 import React, { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import {
-  Mail,
-  Phone,
-  User,
-} from "lucide-react"
+import { Mail, Phone, User } from "lucide-react"
 
 import PageHeader from "@/components/shared/headers/PageHeader"
 import ErrorState from "@/components/shared/states/ErrorState"
+import { images } from "@/constants/images"
 
 import { useCustomer } from "../hooks/useCustomer"
 import { useAddVehicle } from "../hooks/useCustomers"
@@ -16,97 +13,18 @@ import { useAddVehicle } from "../hooks/useCustomers"
 import { AddVehicleDialog } from "../components/AddVehicleDialog"
 import { CustomerVehicles } from "../components/CustomerVehicles"
 import { CustomerHistoryView } from "../components/CustomerHistory"
+import CustomerDetailsSkeleton from "../components/CustomerDetailsSkeleton"
 
 import type { VehicleFormValues } from "../validation/customer.validation"
 import type { VehicleInput } from "../services/customer.service"
-import { images } from "@/constants/images"
-
-interface DetailItemProps {
-  icon: React.ElementType
-  label: string
-  value?: string | null
-  ltr?: boolean
-}
-
-const DetailItem: React.FC<DetailItemProps> = ({
-  icon: Icon,
-  label,
-  value,
-  ltr = false,
-}) => {
-  if (!value) {
-    return null
-  }
-
-  return (
-    <div
-      className="
-        flex min-h-[82px] items-center gap-4
-        rounded-xl border border-border/60
-        bg-background-secondary/20
-        px-4 py-3
-      "
-    >
-      <div
-        className="
-          flex h-11 w-11 shrink-0
-          items-center justify-center
-          rounded-full
-          bg-primary/10
-          text-primary
-        "
-      >
-        <Icon className="h-5 w-5" />
-      </div>
-
-      <div className="min-w-0">
-        <p className="text-xs font-medium text-text-muted">
-          {label}
-        </p>
-
-        <p
-          className="
-            mt-1 truncate text-sm
-            font-semibold text-text-primary
-          "
-          dir={ltr ? "ltr" : undefined}
-        >
-          {value}
-        </p>
-      </div>
-    </div>
-  )
-}
-
-const getInitials = (name: string) => {
-  const parts = name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-
-  if (parts.length === 0) {
-    return "?"
-  }
-
-  if (parts.length === 1) {
-    return parts[0][0]?.toUpperCase() ?? "?"
-  }
-
-  return `${parts[0][0]}${parts[1][0]}`.toUpperCase()
-}
+import DetailItem from "@/components/shared/custom/DetailItem"
 
 const CustomerDetailsPage: React.FC = () => {
   const { t } = useTranslation("customers")
-
-  const { customerId } =
-    useParams<{ customerId: string }>()
-
+  const { customerId } = useParams<{ customerId: string }>()
   const navigate = useNavigate()
 
-  const [
-    vehicleDialogOpen,
-    setVehicleDialogOpen,
-  ] = useState(false)
+  const [vehicleDialogOpen, setVehicleDialogOpen] = useState(false)
 
   const {
     customer,
@@ -120,66 +38,22 @@ const CustomerDetailsPage: React.FC = () => {
   const addVehicle = useAddVehicle()
 
   if (isError) {
-    return (
-      <ErrorState
-        variant="default"
-        retry={refetch}
-      />
-    )
+    return <ErrorState variant="default" retry={refetch} />
   }
 
   if (isLoading || !customer) {
-    return (
-      <div className="flex flex-col gap-5">
-        <div
-          className="
-            h-[180px] animate-pulse
-            rounded-2xl
-            bg-background-secondary
-          "
-        />
-
-        <div
-          className="
-            h-[180px] animate-pulse
-            rounded-2xl
-            bg-background-secondary
-          "
-        />
-
-        <div
-          className="
-            h-[220px] animate-pulse
-            rounded-2xl
-            bg-background-secondary
-          "
-        />
-
-        <div
-          className="
-            h-[220px] animate-pulse
-            rounded-2xl
-            bg-background-secondary
-          "
-        />
-      </div>
-    )
+    return <CustomerDetailsSkeleton />
   }
 
-  const handleAddVehicle = (
-    values: VehicleFormValues,
-  ) => {
+  const handleAddVehicle = (values: VehicleFormValues) => {
     const input: VehicleInput = {
       make: values.make,
       model: values.model,
       plateNumber: values.plateNumber,
       vin: values.vin || undefined,
-      manufactureYear:
-        values.manufactureYear,
-      transmission:
-        values.transmission,
-      color:
-        values.color || undefined,
+      manufactureYear: values.manufactureYear,
+      transmission: values.transmission,
+      color: values.color || undefined,
     }
 
     addVehicle.mutate(
@@ -188,16 +62,13 @@ const CustomerDetailsPage: React.FC = () => {
         input,
       },
       {
-        onSuccess: () => {
-          setVehicleDialogOpen(false)
-        },
+        onSuccess: () => setVehicleDialogOpen(false),
       },
     )
   }
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Hero */}
       <PageHeader
         title={customer.name}
         description={t(
@@ -210,60 +81,23 @@ const CustomerDetailsPage: React.FC = () => {
           "backToList",
           "Back to customers",
         )}
-        onBackClick={() =>
-          navigate("/customers")
-        }
+        onBackClick={() => navigate("/customers")}
         showDateTime
       />
 
-      {/* Customer details */}
-      <section
-        className="
-          overflow-hidden rounded-2xl
-          border border-border/60
-          bg-background-card
-          shadow-[0_8px_30px_rgba(15,23,42,0.045)]
-        "
-      >
-        <div
-          className="
-            flex items-center justify-between
-            border-b border-border/60
-            px-5 py-4
-          "
-        >
+      <section className="overflow-hidden rounded-2xl border border-border/60 bg-background-card shadow-[0_8px_30px_rgba(15,23,42,0.045)]">
+        <div className="flex items-center justify-between border-b border-border/60 px-5 py-4">
           <div className="flex items-center gap-3">
-            <div
-              className="
-                flex h-10 w-10
-                items-center justify-center
-                rounded-xl
-                bg-primary/10
-                text-primary
-              "
-            >
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <User className="h-5 w-5" />
             </div>
 
             <div>
-              <h2
-                className="
-                  text-base font-bold
-                  text-text-primary
-                "
-              >
-                {t(
-                  "details",
-                  "Customer Details",
-                )}
+              <h2 className="text-base font-bold text-text-primary">
+                {t("details", "Customer Details")}
               </h2>
 
-              <p
-                className="
-                  mt-0.5 text-xs
-                  text-text-muted
-                "
-              >
+              <p className="mt-0.5 text-xs text-text-muted">
                 {t(
                   "detailsSubtitle",
                   "Customer contact information",
@@ -271,27 +105,9 @@ const CustomerDetailsPage: React.FC = () => {
               </p>
             </div>
           </div>
-
-          <div
-            className="
-              flex h-11 w-11
-              items-center justify-center
-              rounded-full
-              bg-primary/10
-              text-sm font-bold
-              text-primary
-            "
-          >
-            {getInitials(customer.name)}
-          </div>
         </div>
 
-        <div
-          className="
-            grid gap-4 p-5
-            md:grid-cols-2
-          "
-        >
+        <div className="grid gap-4 p-5 md:grid-cols-2">
           <DetailItem
             icon={Phone}
             label={t(
@@ -314,21 +130,17 @@ const CustomerDetailsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Vehicles */}
       <CustomerVehicles
+      //@ts-ignore
         vehicles={vehicles}
-        onAddClick={() =>
-          setVehicleDialogOpen(true)
-        }
+        onAddClick={() => setVehicleDialogOpen(true)}
       />
 
-      {/* Maintenance history */}
       <CustomerHistoryView
         history={history}
         isLoading={isLoading}
       />
 
-      {/* Add vehicle dialog */}
       <AddVehicleDialog
         open={vehicleDialogOpen}
         onOpenChange={setVehicleDialogOpen}
