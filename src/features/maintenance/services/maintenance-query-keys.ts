@@ -16,9 +16,6 @@ export const maintenanceQueryKeys = {
   // Customer history (cards by customer)
   customerHistory: (customerId: string | number) => ["customer", String(customerId), "cards"] as const,
 
-  // Dashboard statistics
-  dashboardStats: () => ["dashboard", "maintenance-status-counts"] as const,
-
   // Maintenance options (visit reasons, vehicle conditions, items)
   options: (kind: "visit-reasons" | "vehicle-conditions" | "vehicle-items") =>
     ["maintenance-card-options", kind] as const,

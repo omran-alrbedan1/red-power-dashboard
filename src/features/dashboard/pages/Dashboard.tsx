@@ -33,6 +33,50 @@ const Dashboard: React.FC = () => {
   const value = (count?: number) =>
     isLoading || isError ? "—" : count ?? 0
 
+
+  const statCards = [
+    {
+      key: "open",
+      label: t("dashboard.statCards.openCards"),
+      value: maintenance?.openCards,
+      sub: t("dashboard.statCards.totalMaintenance"),
+      footer: t("dashboard.statCards.activeWorkshop"),
+      icon: ClipboardList,
+      variant: "primary" as const,
+      path: "/maintenance?status=open",
+    },
+    {
+      key: "closed",
+      label: t("dashboard.statCards.closedCards"),
+      value: maintenance?.closedCards,
+      sub: t("dashboard.statCards.completedMaintenance"),
+      footer: t("dashboard.statCards.successfullyClosed"),
+      icon: CircleCheck,
+      variant: "success" as const,
+      path: "/maintenance?status=closed",
+    },
+    {
+      key: "today",
+      label: t("dashboard.statCards.todayReceived"),
+      value: maintenance?.todayReceived,
+      sub: t("dashboard.statCards.newMaintenance"),
+      footer: t("dashboard.statCards.todayIntake"),
+      icon: CalendarCheck,
+      variant: "info" as const,
+      path: "/maintenance",
+    },
+    {
+      key: "total",
+      label: t("dashboard.statCards.totalCards"),
+      value: maintenance?.totalCards,
+      sub: t("dashboard.statCards.allMaintenance"),
+      footer: t("dashboard.statCards.systemTotal"),
+      icon: Wrench,
+      variant: "neutral" as const,
+      path: "/maintenance",
+    },
+  ]
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -89,93 +133,21 @@ const Dashboard: React.FC = () => {
 
       {/* Maintenance stats */}
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          label={t(
-            "dashboard.statCards.openCards",
-            "Open Cards",
-          )}
-          value={value(maintenance?.openCards)}
-          sub={t(
-            "dashboard.statCards.totalMaintenance",
-            "Total maintenance cards",
-          )}
-          icon={
-            <ClipboardList className="h-[22px] w-[22px]" />
-          }
-          footer={t(
-            "dashboard.statCards.activeWorkshop",
-            "Active in workshop",
-          )}
-          footerClassName="text-primary"
-          onClick={() =>
-            navigate("/maintenance?status=open")
-          }
-        />
+        {statCards.map((card) => {
+          const Icon = card.icon
 
-        <StatCard
-          label={t(
-            "dashboard.statCards.closedCards",
-            "Closed Cards",
-          )}
-          value={value(maintenance?.closedCards)}
-          sub={t(
-            "dashboard.statCards.completedMaintenance",
-            "Completed maintenance",
-          )}
-          icon={
-            <CircleCheck className="h-[22px] w-[22px]" />
-          }
-          footer={t(
-            "dashboard.statCards.successfullyClosed",
-            "Successfully closed",
-          )}
-          footerClassName="text-primary"
-          onClick={() =>
-            navigate("/maintenance?status=closed")
-          }
-        />
-
-        <StatCard
-          label={t(
-            "dashboard.statCards.todayReceived",
-            "Received Today",
-          )}
-          value={value(maintenance?.todayReceived)}
-          sub={t(
-            "dashboard.statCards.newMaintenance",
-            "New maintenance cards",
-          )}
-          icon={
-            <CalendarCheck className="h-[22px] w-[22px]" />
-          }
-          footer={t(
-            "dashboard.statCards.todayIntake",
-            "Today's intake",
-          )}
-          footerClassName="text-primary"
-          onClick={() => navigate("/maintenance")}
-        />
-
-        <StatCard
-          label={t(
-            "dashboard.statCards.totalCards",
-            "Total Cards",
-          )}
-          value={value(maintenance?.totalCards)}
-          sub={t(
-            "dashboard.statCards.allMaintenance",
-            "All maintenance cards",
-          )}
-          icon={
-            <Wrench className="h-[22px] w-[22px]" />
-          }
-          footer={t(
-            "dashboard.statCards.systemTotal",
-            "System total",
-          )}
-          footerClassName="text-primary"
-          onClick={() => navigate("/maintenance")}
-        />
+          return (
+            <StatCard
+              key={card.key}
+              label={card.label}
+              value={value(card.value)}
+              sub={card.sub}
+              footer={card.footer}
+              icon={<Icon className="h-[22px] w-[22px]" />}
+              onClick={() => navigate(card.path)}
+            />
+          )
+        })}
       </section>
 
       {/* Real customer + vehicle statistics */}

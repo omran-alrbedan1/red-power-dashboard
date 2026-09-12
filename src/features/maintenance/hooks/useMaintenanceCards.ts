@@ -5,6 +5,7 @@ import {
   type MaintenanceCardListParams,
 } from "../services/maintenance-api.service"
 import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
+import { dashboardQueryKeys } from "@/features/dashboard/services/dashboard-query-keys"
 
 export function useMaintenanceCards(params: MaintenanceCardListParams) {
   const { page, limit, search, status, receivedFrom, receivedTo, customerId, vehicleId } = params
@@ -27,7 +28,7 @@ export function useCreateMaintenanceCard() {
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
       queryClient.invalidateQueries({ queryKey: ["history"] })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.selectorData() })
-      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.dashboardStats() })
+      queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.stats() })
     },
   })
 }

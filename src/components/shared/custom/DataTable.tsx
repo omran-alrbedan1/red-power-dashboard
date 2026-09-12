@@ -28,13 +28,13 @@ export interface DataTableProps<T = any> {
   data: T[];
   columns: Column<T>[];
   loading?: boolean;
-  pagination: {
+  pagination?: {
     total: number;
     page: number;
     lastPage: number;
     perPage?: number;
   };
-  onPageChange: (page: number) => void;
+  onPageChange?: (page: number) => void;
   onRowClick?: (item: T) => void;
   getRowId: (item: T) => string | number;
   rowActions?: boolean;
@@ -266,14 +266,16 @@ export function DataTable<T = any>({
             {emptyMessage || t('table.noData')}
           </div>
         )}
-        <DataTablePagination
-          page={pagination.page}
-          lastPage={pagination.lastPage}
-          total={pagination.total}
-          perPage={pagination.perPage ?? 10}
-          onPageChange={onPageChange}
-          t={t}
-        />
+        {pagination && onPageChange && (
+          <DataTablePagination
+            page={pagination.page}
+            lastPage={pagination.lastPage}
+            total={pagination.total}
+            perPage={pagination.perPage ?? 10}
+            onPageChange={onPageChange}
+            t={t}
+          />
+        )}
       </div>
     );
   }
@@ -370,14 +372,16 @@ export function DataTable<T = any>({
         </Table>
       </div>
 
-      <DataTablePagination
-        page={pagination.page}
-        lastPage={pagination.lastPage}
-        total={pagination.total}
-        perPage={pagination.perPage ?? 10}
-        onPageChange={onPageChange}
-        t={t}
-      />
+      {pagination && onPageChange && (
+        <DataTablePagination
+          page={pagination.page}
+          lastPage={pagination.lastPage}
+          total={pagination.total}
+          perPage={pagination.perPage ?? 10}
+          onPageChange={onPageChange}
+          t={t}
+        />
+      )}
     </div>
   );
 }

@@ -91,19 +91,6 @@ export const maintenanceApi = {
     apiDownload(`/maintenance-cards/${cardId}/photos/${photoId}`),
   downloadSignature: (cardId: number) =>
     apiDownload(`/maintenance-cards/${cardId}/signature`),
-  dashboardStats: () =>
-    apiRequest<DashboardStatsResponse>({ url: "/dashboard/stats" }).then(
-      (stats) => ({
-        maintenance: {
-          openCards: stats.maintenance.openCards,
-          closedCards: stats.maintenance.closedCards,
-          todayReceived: stats.maintenance.todayReceived,
-          totalCards: stats.maintenance.totalCards,
-        },
-        customers: stats.customers,
-        vehicles: stats.vehicles,
-      }),
-    ),
   /**
    * @deprecated Prefer customerService.getHistory which uses the dedicated
    * /customers/:id/maintenance-history endpoint. Kept for legacy mock
@@ -116,17 +103,6 @@ export const maintenanceApi = {
         data: result.items.map(toSummary),
         meta: result.meta,
       })),
-}
-
-interface DashboardStatsResponse {
-  maintenance: {
-    openCards: number
-    closedCards: number
-    todayReceived: number
-    totalCards: number
-  }
-  customers: { active: number; total: number }
-  vehicles: { active: number; total: number }
 }
 
 function toSummary(row: MaintenanceCardListRow): MaintenanceCardSummary {
