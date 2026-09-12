@@ -8,11 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ChevronRight, ChevronLeft, MoreHorizontal } from 'lucide-react';
+import { ChevronRight, ChevronLeft, MoreHorizontal, type LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatNumber } from '@/lib/formatter';
 import { useTranslation } from 'react-i18next';
+import { EmptyState } from '@/components/shared/states';
 
 export interface Column<T = any> {
   key: string;
@@ -45,6 +45,22 @@ export interface DataTableProps<T = any> {
     isAr: boolean;
   }>;
   emptyMessage?: string;
+  emptyState?: {
+    icon?: LucideIcon;
+    imageUrl?: string;
+    imageAlt?: string;
+    title?: string;
+    description?: string;
+    primaryAction?: {
+      label: string;
+      icon?: LucideIcon;
+      onClick: () => void;
+    };
+    secondaryAction?: {
+      label: string;
+      onClick: () => void;
+    };
+  };
   className?: string;
 }
 
@@ -67,29 +83,63 @@ const getPageNumbers = (current: number, last: number) => {
 
 // Skeleton loading component
 function DataTableSkeleton({ columns }: { columns: Column[] }) {
+  const barWidth = (colIndex: number, rowIndex: number) => {
+    const widths = [88, 72, 60, 78, 66, 84];
+    return widths[(colIndex * 3 + rowIndex) % widths.length];
+  };
+
   return (
-    <div className="rounded-md border border-border">
+    <div className="overflow-hidden rounded-md border border-border">
+      <div className="h-0.5 w-full bg-primary/15 skeleton-shimmer" />
+
       <div className="min-w-[40rem]">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-background-secondary/40">
               {columns.map((column) => (
                 <TableHead
                   key={column.key}
                   className={column.className}
                   style={{ width: column.width }}
                 >
-                  <Skeleton className="h-4 w-20 bg-background-secondary" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-3.5 w-3.5 rounded bg-primary/20 skeleton-shimmer" />
+                    <span className="h-3.5 w-16 rounded bg-primary/20 skeleton-shimmer" />
+                  </div>
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {[...Array(5)].map((_, index) => (
-              <TableRow key={index}>
-                {columns.map((column) => (
+            {[...Array(5)].map((_, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {columns.map((column, colIndex) => (
                   <TableCell key={column.key}>
-                    <Skeleton className="h-4 w-full max-w-[200px] bg-background-secondary" />
+                    {colIndex === 0 && column.headerIcon ? (
+                      <div className="flex items-center gap-3">
+                        <span className="h-9 w-9 shrink-0 rounded-full bg-primary/10 skeleton-shimmer" />
+                        <span
+                          className="h-4 rounded bg-primary/15 skeleton-shimmer"
+                          style={{
+                            width: `${barWidth(
+                              colIndex,
+                              rowIndex,
+                            )}%`,
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <span
+                        className={`block h-4 rounded bg-primary/15 skeleton-shimmer`}
+                        style={{
+                          width: `${barWidth(
+                            colIndex,
+                            rowIndex,
+                          )}%`,
+                        }}
+                      />
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
@@ -97,13 +147,15 @@ function DataTableSkeleton({ columns }: { columns: Column[] }) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-        <Skeleton className="h-4 w-32 bg-background-secondary" />
+
+      <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <span className="h-4 w-32 rounded bg-primary/15 skeleton-shimmer" />
+
         <div className="flex items-center gap-1">
-          <Skeleton className="h-8 w-20 rounded-md bg-background-secondary" />
-          <Skeleton className="h-8 w-8 rounded-md bg-background-secondary" />
-          <Skeleton className="h-8 w-8 rounded-md bg-background-secondary" />
-          <Skeleton className="h-8 w-20 rounded-md bg-background-secondary" />
+          <span className="h-8 w-20 rounded-md bg-primary/10 skeleton-shimmer" />
+          <span className="h-8 w-8 rounded-md bg-primary/20 skeleton-shimmer" />
+          <span className="h-8 w-8 rounded-md bg-primary/20 skeleton-shimmer" />
+          <span className="h-8 w-20 rounded-md bg-primary/10 skeleton-shimmer" />
         </div>
       </div>
     </div>
@@ -228,6 +280,7 @@ export function DataTable<T = any>({
   rowActions = false,
   mobileCardComponent: MobileCard,
   emptyMessage,
+  emptyState,
   className = '',
 }: DataTableProps<T>) {
   const { t, i18n } = useTranslation();
@@ -262,9 +315,21 @@ export function DataTable<T = any>({
           />
         ))}
         {data.length === 0 && (
-          <div className="py-8 text-center text-sm text-text-muted">
-            {emptyMessage || t('table.noData')}
-          </div>
+          emptyState ? (
+            <EmptyState
+              icon={emptyState.icon}
+              imageUrl={emptyState.imageUrl}
+              imageAlt={emptyState.imageAlt}
+              title={emptyState.title ?? emptyMessage ?? t('table.noData')}
+              description={emptyState.description ?? ''}
+              primaryAction={emptyState.primaryAction}
+              secondaryAction={emptyState.secondaryAction}
+            />
+          ) : (
+            <div className="py-8 text-center text-sm text-text-muted">
+              {emptyMessage || t('table.noData')}
+            </div>
+          )
         )}
         {pagination && onPageChange && (
           <DataTablePagination
@@ -348,23 +413,27 @@ export function DataTable<T = any>({
                 )}
               </TableRow>
             ))}
-            {data.length === 0 && !showActions && (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="py-8 text-center text-text-muted"
-                >
-                  {emptyMessage || t('table.noData')}
-                </TableCell>
-              </TableRow>
-            )}
-            {data.length === 0 && showActions && (
+            {data.length === 0 && (
               <TableRow>
                 <TableCell
                   colSpan={includingActions}
-                  className="py-8 text-center text-text-muted"
+                  className="p-0"
                 >
-                  {emptyMessage || t('table.noData')}
+                  {emptyState ? (
+                    <EmptyState
+                      icon={emptyState.icon}
+                      imageUrl={emptyState.imageUrl}
+                      imageAlt={emptyState.imageAlt}
+                      title={emptyState.title ?? emptyMessage ?? t('table.noData')}
+                      description={emptyState.description ?? ''}
+                      primaryAction={emptyState.primaryAction}
+                      secondaryAction={emptyState.secondaryAction}
+                    />
+                  ) : (
+                    <div className="py-8 text-center text-text-muted">
+                      {emptyMessage || t('table.noData')}
+                    </div>
+                  )}
                 </TableCell>
               </TableRow>
             )}

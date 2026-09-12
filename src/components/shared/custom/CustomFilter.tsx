@@ -92,7 +92,8 @@ export function CustomFilter<T extends FieldValues>({
   title = 'Filters',
   className = '',
 }: CustomFilterProps<T>) {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
+  const isRtl = i18n.language?.toLowerCase().startsWith('ar') === true;
   const form = useForm<T>({ 
     defaultValues: defaultValues as T 
   });
@@ -161,7 +162,7 @@ export function CustomFilter<T extends FieldValues>({
                 variant="secondary"
                 className="h-5 bg-primary/10 px-1.5 py-0 text-xs text-primary"
               >
-                {activeFilters.length} {t('active')?.toLowerCase() || 'active'}
+                {activeFilters.length} {t('common.active') || 'Active'}
               </Badge>
             )}
           </h2>
@@ -175,8 +176,8 @@ export function CustomFilter<T extends FieldValues>({
           className="group/btn h-9 px-3 text-xs text-text-secondary transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
         >
           <FilterX className="me-1.5 h-3.5 w-3.5 transition-transform group-hover/btn:rotate-12" />
-          <span className="hidden sm:inline">{t('reset') || 'Reset Filters'}</span>
-          <span className="sm:hidden">{t('reset') || 'Reset'}</span>
+          <span className="hidden sm:inline">{t('common.resetFilters') || 'Reset Filters'}</span>
+          <span className="sm:hidden">{t('common.reset') || 'Reset'}</span>
           {hasActive && (
             <span className="ms-1.5 rounded-full bg-primary px-1.5 py-0 text-xs text-white transition-colors group-hover/btn:bg-primary-dark">
               {activeFilters.length}
@@ -204,6 +205,7 @@ export function CustomFilter<T extends FieldValues>({
                     name={filter.name}
                     placeholder={filter.placeholder ?? filter.label}
                     inputClassName="h-9 text-sm"
+                    dir={isRtl ? 'rtl' : 'ltr'}
                     leftIcon={filter.type === 'text' ? Icon : undefined}
                     iconPosition="left"
                     options={filter.options}
@@ -217,7 +219,7 @@ export function CustomFilter<T extends FieldValues>({
               size="sm"
               className="w-full h-9 text-sm text-white"
             >
-              {isLoading ? t('processing') || 'Applying...' : t('filter') || 'Apply Filters'}
+              {isLoading ? t('common.processing') || 'Applying...' : t('common.applyFilters') || 'Apply Filters'}
             </Button>
           </div>
 
@@ -241,6 +243,7 @@ export function CustomFilter<T extends FieldValues>({
                     name={filter.name}
                     placeholder={filter.placeholder ?? filter.label}
                     inputClassName="h-9 text-sm"
+                    dir={isRtl ? 'rtl' : 'ltr'}
                     leftIcon={filter.type === 'text' ? Icon : undefined}
                     iconPosition="left"
                     options={filter.options}
@@ -255,7 +258,7 @@ export function CustomFilter<T extends FieldValues>({
               size="sm"
               className="h-9 px-4 text-sm text-white"
             >
-              {isLoading ? t('apply') : t('apply') || 'Apply'}
+              {isLoading ? t('common.processing') || 'Applying...' : t('common.applyFilters') || 'Apply Filters'}
             </Button>
           </div>
         </form>
@@ -265,7 +268,7 @@ export function CustomFilter<T extends FieldValues>({
       {hasActive && (
         <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-border pt-3">
           <span className="text-xs text-text-secondary hidden sm:inline">
-            {t('activeFilters') || 'Active filters:'}
+            {t('common.activeFilters') || 'Active filters:'}
           </span>
 
           {activeFilters.map((filter) => {

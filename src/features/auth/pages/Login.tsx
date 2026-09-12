@@ -10,7 +10,7 @@ import { SubmitButton } from "@/components/shared/buttons/SubmitButton"
 import { loginFormSchema, LoginFormValues } from "@/features/auth/validation/auth.validation"
 import { useAuth } from "@/features/auth/context/AuthContext"
 import { ApiError } from "@/lib/api/client"
-import LanguageSwitcher from "@/components/shared/buttons/language-switcher"
+import LanguageSwitcher from "@/components/shared/buttons/LanguageSwitcher"
 import { images } from '@/constants/images'
 
 const Login: React.FC = () => {

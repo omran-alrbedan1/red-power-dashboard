@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Moon, Sun } from "lucide-react"
-import { useTheme } from "./theme-provider"
+import { useTheme } from "./ThemeProvider"
 import { useCallback, useRef } from "react"
 import { flushSync } from "react-dom"
 

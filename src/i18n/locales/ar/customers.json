@@ -2,6 +2,7 @@
   "title": "الزبائن",
   "subtitle": "إدارة ملفات الزبائن والمركبات",
   "addCustomer": "إضافة زبون",
+  "addCustomerDescription": "أضف ملف زبون جديد إلى سجلات الورشة الخاصة بك.",
   "editCustomer": "تعديل الزبون",
   "searchPlaceholder": "ابحث بالاسم، الهاتف، اللوحة، رقم الشاصي...",
   "noResults": "لم يتم العثور على زبائن مطابقين",
@@ -9,13 +10,22 @@
   "updatedAt": "آخر تحديث",
   "empty": "لم يتم تسجيل أي زبون بعد",
   "details": "تفاصيل الزبون",
-  "backToList": "العودة للقائمة",
+  "detailsDescription": "زبون مسجّل في الورشة",
+  "detailsSubtitle": "معلومات التواصل مع الزبون",
+  "backToList": "العودة إلى قائمة الزبائن",
   "fields": {
     "name": "الاسم",
+    "namePlaceholder": "أدخل اسم الزبون",
     "phone": "رقم الهاتف",
+    "phonePlaceholder": "أدخل رقم الهاتف",
     "email": "البريد الإلكتروني",
+    "emailPlaceholder": "أدخل البريد الإلكتروني",
     "address": "العنوان",
     "notes": "ملاحظات"
+  },
+  "form": {
+    "customerInformation": "معلومات الزبون",
+    "customerInformationDescription": "أضف معلومات التواصل الخاصة بالزبون إلى نظام الورشة."
   },
   "validation": {
     "nameRequired": "الاسم مطلوب",
@@ -30,7 +40,7 @@
     "phone": "رقم الهاتف",
     "plateNumber": "رقم اللوحة",
     "vin": "رقم الشاصي (VIN)",
-    "make": "الصنّ",
+    "make": "الماركة",
     "model": "الموديل"
   },
   "table": {
@@ -42,18 +52,35 @@
   },
   "vehicles": {
     "title": "المركبات",
+    "description": "المركبات المسجّلة لهذا الزبون",
     "addVehicle": "إضافة مركبة",
+    "addDescription": "أضف مركبة إلى هذا الزبون.",
     "noVehicles": "لا توجد مركبات لهذا الزبون",
+    "noVehiclesDescription": "أضف أول مركبة لهذا الزبون لبدء تتبع الصيانة.",
+    "form": {
+      "basicInformation": "معلومات المركبة الأساسية",
+      "basicInformationDescription": "أدخل معلومات الصانع والموديل الخاصة بالمركبة.",
+      "identification": "بيانات تعريف المركبة",
+      "identificationDescription": "أضف رقم اللوحة ورقم الشاصي (VIN) إن وجد.",
+      "specifications": "مواصفات المركبة",
+      "specificationsDescription": "أدخل سنة الصنع وناقل الحركة واللون."
+    },
     "fields": {
-      "make": "الصنّ",
+      "make": "الماركة",
+      "makePlaceholder": "مثال: تويوتا",
       "model": "الموديل",
+      "modelPlaceholder": "مثال: كامري",
       "plateNumber": "رقم اللوحة",
+      "plateNumberPlaceholder": "أدخل رقم اللوحة",
       "vin": "رقم الشاصي (VIN)",
+      "vinPlaceholder": "أدخل رقم الشاصي (VIN)",
       "year": "السنة",
       "mileage": "العداد (كم)",
       "fuelType": "نوع الوقود",
       "transmissionType": "ناقل الحركة",
+      "transmissionPlaceholder": "اختر نوع ناقل الحركة",
       "color": "اللون",
+      "colorPlaceholder": "مثال: أسود",
       "notes": "ملاحظات"
     },
     "fuelTypes": {
@@ -68,7 +95,7 @@
       "manual": "يدوي"
     },
     "validation": {
-      "makeRequired": "الصنّ مطلوب",
+      "makeRequired": "الماركة مطلوبة",
       "modelRequired": "الموديل مطلوب",
       "plateRequired": "رقم اللوحة مطلوب",
       "vinInvalid": "رقم الشاصي (VIN) يجب أن يتكون من 17 حرفاً أو رقماً",
@@ -78,7 +105,9 @@
   "history": {
     "title": "سجل الصيانة",
     "status": "الحالة",
-    "noHistory": "لا يوجد سجل بعد",
+    "description": "زيارات الورشة السابقة لهذا الزبون",
+    "noHistory": "لا يوجد سجل صيانة بعد",
+    "noHistoryDescription": "ستظهر سجلات الصيانة الخاصة بهذا الزبون هنا.",
     "loading": "جاري تحميل السجل...",
     "statuses": {
       "open": "مفتوحة",

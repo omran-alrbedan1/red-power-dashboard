@@ -2,6 +2,7 @@
   "title": "Customers",
   "subtitle": "Manage customer profiles and vehicles",
   "addCustomer": "Add Customer",
+  "addCustomerDescription": "Add a new customer profile to your workshop records.",
   "editCustomer": "Edit Customer",
   "searchPlaceholder": "Search by name, phone, plate, VIN...",
   "noResults": "No matching customers found",
@@ -9,13 +10,22 @@
   "updatedAt": "Last Updated",
   "empty": "No customers registered yet",
   "details": "Customer Details",
-  "backToList": "Back to List",
+  "detailsDescription": "Registered workshop customer",
+  "detailsSubtitle": "Customer contact information",
+  "backToList": "Back to customer list",
   "fields": {
     "name": "Name",
+    "namePlaceholder": "Enter customer name",
     "phone": "Phone",
+    "phonePlaceholder": "Enter phone number",
     "email": "Email",
+    "emailPlaceholder": "Enter email address",
     "address": "Address",
     "notes": "Notes"
+  },
+  "form": {
+    "customerInformation": "Customer Information",
+    "customerInformationDescription": "Add the customer's contact information to your garage system."
   },
   "validation": {
     "nameRequired": "Name is required",
@@ -42,18 +52,35 @@
   },
   "vehicles": {
     "title": "Vehicles",
+    "description": "Vehicles registered for this customer",
     "addVehicle": "Add Vehicle",
+    "addDescription": "Add a vehicle to this customer.",
     "noVehicles": "No vehicles for this customer",
+    "noVehiclesDescription": "Add the customer's first vehicle to start tracking maintenance.",
+    "form": {
+      "basicInformation": "Vehicle Information",
+      "basicInformationDescription": "Enter the vehicle manufacturer and model information.",
+      "identification": "Vehicle Identification",
+      "identificationDescription": "Add the plate number and VIN if available.",
+      "specifications": "Vehicle Specifications",
+      "specificationsDescription": "Enter the manufacturing year, transmission and color."
+    },
     "fields": {
       "make": "Make",
+      "makePlaceholder": "e.g. Toyota",
       "model": "Model",
+      "modelPlaceholder": "e.g. Camry",
       "plateNumber": "Plate Number",
+      "plateNumberPlaceholder": "Enter plate number",
       "vin": "VIN",
+      "vinPlaceholder": "Enter vehicle VIN",
       "year": "Year",
       "mileage": "Mileage (km)",
       "fuelType": "Fuel Type",
       "transmissionType": "Transmission",
+      "transmissionPlaceholder": "Select transmission",
       "color": "Color",
+      "colorPlaceholder": "e.g. Black",
       "notes": "Notes"
     },
     "fuelTypes": {
@@ -78,7 +105,9 @@
   "history": {
     "title": "Maintenance History",
     "status": "Status",
-    "noHistory": "No history yet",
+    "description": "Previous workshop visits for this customer",
+    "noHistory": "No maintenance history yet",
+    "noHistoryDescription": "Maintenance records for this customer will appear here.",
     "loading": "Loading history…",
     "statuses": {
       "open": "Open",

@@ -17,7 +17,7 @@ import { useMaintenanceCards } from "@/features/maintenance/hooks/useMaintenance
 import type { MaintenanceCardListRow } from "@/features/maintenance/types/maintenance-detail.types"
 
 import RecentMaintenanceMobileCard from "./RecentMaintenanceMobileCard"
-import { createRecentMaintenanceColumns } from "./recentMaintenanceColumns"
+import { createRecentMaintenanceColumns } from "./RecentMaintenanceColumns"
 
 const RecentMaintenanceCards: React.FC = () => {
   const { t, i18n } = useTranslation()

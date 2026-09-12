@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Wrench, Plus, FileText, User, Car, CalendarDays } from "lucide-react"
@@ -9,8 +8,9 @@ import { CustomFilter } from "@/components/shared/custom/CustomFilter"
 import { EmptyState } from "@/components/shared/states"
 import ErrorState from "@/components/shared/states/ErrorState"
 import { formatDate } from "@/lib/formatter"
+import { useUrlFilters } from "@/hooks/useUrlFilters"
 import { useMaintenanceCards } from "../hooks/useMaintenanceCards"
-import { MaintenanceStatusBadge } from "../components/status-badge"
+import { MaintenanceStatusBadge } from "../components/StatusBadge"
 import {
   maintenanceFilterDefaultValues,
   maintenanceFilterFields,
@@ -72,31 +72,30 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
 const MaintenanceListPage: React.FC = () => {
   const { t, i18n } = useTranslation("maintenance")
   const navigate = useNavigate()
-  const [page, setPage] = useState(1)
-  const [activeFilters, setActiveFilters] = useState<MaintenanceFilterValues>()
+  const {
+    values: filters,
+    page,
+    apply,
+    setPage,
+    reset,
+    hasActive,
+  } = useUrlFilters<MaintenanceFilterValues>({
+    defaults: maintenanceFilterDefaultValues,
+    dateRangeKeys: ["receivedAt"],
+  })
 
-  const range = activeFilters?.receivedAt
+  const range = filters?.receivedAt
   const cardsQuery = useMaintenanceCards({
     page,
     limit: PAGE_LIMIT,
-    ...(activeFilters?.search?.trim() ? { search: activeFilters.search.trim() } : {}),
-    ...(activeFilters?.status ? { status: activeFilters.status as MaintenanceCardListRow["status"] } : {}),
+    ...(filters?.search?.trim() ? { search: filters.search.trim() } : {}),
+    ...(filters?.status ? { status: filters.status as MaintenanceCardListRow["status"] } : {}),
     ...(range?.from ? { receivedFrom: range.from.toISOString() } : {}),
     ...(range?.to ? { receivedTo: new Date(range.to.getTime() + 86400000).toISOString() } : {}),
   })
 
   const cards = cardsQuery.data?.items ?? []
   const meta = cardsQuery.data?.meta
-
-  const applyFilters = (filters: MaintenanceFilterValues) => {
-    setActiveFilters(filters)
-    setPage(1)
-  }
-
-  const resetFilters = () => {
-    setActiveFilters(undefined)
-    setPage(1)
-  }
 
   const columns: Column<MaintenanceCardListRow>[] = [
     {
@@ -169,8 +168,6 @@ const MaintenanceListPage: React.FC = () => {
     return <ErrorState variant="default" retry={() => cardsQuery.refetch()} />
   }
 
-  const hasActiveFilter = activeFilters !== undefined
-
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
@@ -186,9 +183,10 @@ const MaintenanceListPage: React.FC = () => {
 
       <CustomFilter<MaintenanceFilterValues>
         filters={maintenanceFilterFields(t)}
-        onApplyFilters={applyFilters}
-        onResetFilters={resetFilters}
+        onApplyFilters={apply}
+        onResetFilters={reset}
         defaultValues={maintenanceFilterDefaultValues}
+        initialFilters={filters}
         isLoading={cardsQuery.isFetching}
         title={t("filter.title")}
       />
@@ -196,10 +194,10 @@ const MaintenanceListPage: React.FC = () => {
       {cards.length === 0 && !cardsQuery.isLoading ? (
         <EmptyState
           icon={Wrench}
-          title={hasActiveFilter ? t("list.noResults") : t("empty")}
+          title={hasActive ? t("list.noResults") : t("empty")}
           description={t("subtitle")}
           primaryAction={
-            hasActiveFilter
+            hasActive
               ? undefined
               : { label: t("addCard"), icon: Plus, onClick: () => navigate("/maintenance/new") }
           }

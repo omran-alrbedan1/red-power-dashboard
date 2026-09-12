@@ -1,8 +1,8 @@
 import React from "react"
 import { Bell, User, LogOut, Menu, X } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { ModeToggle } from "../mode-toggle"
-import LanguageSwitcher from "../shared/buttons/language-switcher"
+import { ModeToggle } from "../ModeToggle"
+import LanguageSwitcher from "../shared/buttons/LanguageSwitcher"
 import { useAuth } from "@/features/auth/context/AuthContext"
 
 interface HeaderProps {

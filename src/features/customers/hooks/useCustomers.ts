@@ -12,7 +12,6 @@ export function useCustomers(page: number, limit: number, filters?: CustomerFilt
   return useQuery({
     queryKey: ["customers", { page, limit, search }],
     queryFn: () => customerService.list({ page, limit, search }),
-    // Debounce search by keeping cached data for 300ms and only refetching when stale
     staleTime: 300,
     gcTime: 300,
   })

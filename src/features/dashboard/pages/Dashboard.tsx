@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
           "dashboard.subtitle",
           "Workshop Management Dashboard",
         )}
-        backgroundImage={images.dashboardHeros}
+        backgroundImage={images.dashboardHero}
         showDateTime
       />
 

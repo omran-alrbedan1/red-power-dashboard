@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import './index.css'
 import './i18n/config'
 import App from './App'
-import { ThemeProvider } from './components/theme-provider'
+import { ThemeProvider } from './components/ThemeProvider'
 import { AuthProvider } from './features/auth/context/AuthContext'
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';

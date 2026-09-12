@@ -31,13 +31,13 @@ import {
   type ReceiptFormInputValues,
   type ReceiptFormValues,
 } from "../validation/maintenance.validation"
-import { CustomerSelect } from "../components/customer-select"
-import { VehicleSelect } from "../components/vehicle-select"
-import { CustomerFields } from "../components/sections/customer-fields"
-import { VehicleFields } from "../components/sections/vehicle-fields"
-import { VisitSection } from "../components/sections/visit-section"
-import { WorkSection } from "../components/sections/work-section"
-import { DeliverySection } from "../components/sections/delivery-section"
+import { CustomerSelect } from "../components/CustomerSelect"
+import { VehicleSelect } from "../components/VehicleSelect"
+import { CustomerFields } from "../components/sections/CustomerFields"
+import { VehicleFields } from "../components/sections/VehicleFields"
+import { VisitSection } from "../components/sections/VisitSection"
+import { WorkSection } from "../components/sections/WorkSection"
+import { DeliverySection } from "../components/sections/DeliverySection"
 
 type StepNumber = 1 | 2 | 3 | 4
 

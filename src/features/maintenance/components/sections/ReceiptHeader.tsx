@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next"
 import { Hash, Calendar } from "lucide-react"
-import { MaintenanceStatusBadge } from "../status-badge"
+import { MaintenanceStatusBadge } from "../StatusBadge"
 import { formatDateTime } from "@/lib/formatter"
 import type { MaintenanceCardStatus } from "../../types/maintenance-detail.types"
 

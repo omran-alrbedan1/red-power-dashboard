@@ -5,7 +5,11 @@ import approve from '@/assets/images/approve.svg'
 import drivers from '@/assets/images/drivers.svg'
 import sidebarBackground from '@/assets/images/sidebar/sidebar.png'
 import avatarPlaceholder from '@/assets/images/avatar-placeholder.svg'
-import dashboardHeros from '@/assets/images/heros/dashboard-hero.png'
+import dashboardHero from '@/assets/images/heros/dashboard-hero.png'
+import customersHero from '@/assets/images/heros/customers-hero.png'
+import customerHero from '@/assets/images/heros/customer-hero.png'
+import emptyCustomers from '@/assets/images/customers/empty.svg'
+import createCustomerHero from '@/assets/images/heros/create-customer-hero.png'
 
 //// icons
 import box from '@/assets/icons/box-svgrepo-com.svg'
@@ -14,7 +18,6 @@ import drivingLicense from '@/assets/icons/driver-license.svg'
 import vehicleLicense from '@/assets/icons/vechile-license.svg'
 import insuranceDocument from '@/assets/icons/insurance.svg'
 
-const baseUrl = import.meta.env.BASE_URL
 
 export const images = {
   logo,
@@ -23,10 +26,12 @@ export const images = {
   approve,
   drivers,
   avatarPlaceholder,
-  redPowerLogo: `${baseUrl}images/red-power/brand/red-power-logo.png`,
-  loginBackground: `${baseUrl}images/red-power/brand/og-share-background-og.jpg`,
   sidebarBackground,
-  dashboardHeros,
+  dashboardHero,
+  customersHero,
+  customerHero,
+  createCustomerHero,
+  emptyCustomers
 }
 
 export const icons = {

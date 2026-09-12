@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import type { MaintenanceCardDetail } from "../types/maintenance-detail.types"
 import { getClosureStatus } from "../utils/closure-guard"
 import { useCloseCard } from "../hooks/useCloseCard"
-import { ClosureGuardBadge } from "./closure-guard-badge"
+import { ClosureGuardBadge } from "./ClosureGuardBadge"
 
 interface CloseCardDialogProps {
   card: MaintenanceCardDetail
