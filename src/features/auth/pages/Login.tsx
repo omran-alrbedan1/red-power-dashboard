@@ -11,6 +11,7 @@ import { loginFormSchema, LoginFormValues } from "@/features/auth/validation/aut
 import { useAuth } from "@/features/auth/context/AuthContext"
 import { ApiError } from "@/lib/api/client"
 import LanguageSwitcher from "@/components/shared/buttons/language-switcher"
+import { images } from '@/constants/images'
 
 const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -48,7 +49,7 @@ const Login: React.FC = () => {
           <div className="flex flex-col gap-6">
             <div className="mx-auto mb-4 flex flex-col items-center gap-3">
               <img
-                src="/images/red-power/brand/red-power-logo.png"
+                src={images.redPowerLogo}
                 alt="Red Power Garage"
                 className="h-auto w-48 object-contain"
               />
@@ -115,7 +116,7 @@ const Login: React.FC = () => {
       <div className="relative hidden w-1/2 overflow-hidden md:block">
         <div className="absolute inset-0 overflow-hidden">
           <img
-            src="/images/red-power/brand/og-share-background-og.jpg"
+            src={images.loginBackground}
             alt=""
             className="h-full w-full object-cover"
           />

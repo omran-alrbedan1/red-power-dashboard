@@ -29,7 +29,7 @@ const CustomerMobileCard: React.FC<MobileCardProps> = ({
     <button
       type="button"
       onClick={onViewDetails}
-      className="w-full rounded-lg border border-border bg-card p-4 text-start shadow-sm transition-colors hover:bg-muted/30"
+      className="w-full rounded-lg border border-border bg-card p-4 text-start shadow-sm transition-colors hover:bg-background-secondary"
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-3">
@@ -40,20 +40,22 @@ const CustomerMobileCard: React.FC<MobileCardProps> = ({
             <p className="text-sm font-semibold text-text-primary">
               {item.name}
             </p>
-            <p className="text-xs text-muted-foreground" dir="ltr">
+            <p className="text-xs text-text-muted" dir="ltr">
               {item.phone}
             </p>
           </div>
         </div>
         <ChevronLeft
-          className={`h-5 w-5 text-muted-foreground ${isAr ? "rotate-180" : ""}`}
+          className={`h-5 w-5 text-text-muted ${isAr ? "rotate-180" : ""}`}
         />
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-text-muted">
         <span className="flex items-center gap-1">
           <CalendarDays className="h-3.5 w-3.5 text-primary" />
-          {formatDate(item.createdAt, isAr ? "ar-SA" : "en-GB")}
+          <span dir="ltr">
+            {formatDate(item.createdAt, isAr ? "ar-SA" : "en-GB")}
+          </span>
         </span>
       </div>
     </button>
@@ -84,7 +86,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       header: t("table.phone"),
       headerIcon: Phone,
       cell: (customer) => (
-        <span dir="ltr" className="text-muted-foreground">
+        <span dir="ltr" className="text-text-muted">
           {customer.phone}
         </span>
       ),
@@ -94,7 +96,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       header: t("table.createdAt"),
       headerIcon: CalendarDays,
       cell: (customer) => (
-        <span className="text-muted-foreground">
+        <span className="text-text-muted" dir="ltr">
           {formatDate(customer.createdAt)}
         </span>
       ),
@@ -123,6 +125,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       onPageChange={onPageChange}
       getRowId={(customer) => customer.id}
       onRowClick={onRowClick}
+      rowActions
       mobileCardComponent={MobileCard}
       emptyMessage={emptyMessage}
     />

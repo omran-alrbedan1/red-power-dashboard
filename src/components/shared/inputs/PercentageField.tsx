@@ -39,7 +39,7 @@ export const PercentageField: React.FC<PercentageFieldProps> = ({
         type="text"
         placeholder={placeholder || "0"}
         disabled={disabled}
-        className={cn(inputClassName, "px-6 py-5 text-base pr-14")}
+        className={cn(inputClassName, "pe-14")}
         value={displayValue}
         onChange={handleChange}
         min={min}
@@ -47,7 +47,7 @@ export const PercentageField: React.FC<PercentageFieldProps> = ({
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
       />
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground group-focus-within:text-primary transition-colors">
+      <div className="absolute end-4 top-1/2 transform -translate-y-1/2 text-sm text-text-muted group-focus-within:text-primary transition-colors">
         %
       </div>
     </div>

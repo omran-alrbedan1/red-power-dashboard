@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import {
   LayoutDashboard,
@@ -8,25 +8,47 @@ import {
   UserCircle,
   Settings,
   X,
+  type LucideIcon,
 } from "lucide-react"
+import { images } from '@/constants/images'
 
 interface MenuItem {
   titleKey: string
-  path?: string
-  icon: any
+  path: string
+  icon: LucideIcon
   notifs?: number
-  children?: MenuItem[]
 }
 
 const menuItems: MenuItem[] = [
-  { titleKey: "sidebar.menu.home", path: "/", icon: LayoutDashboard },
-  { titleKey: "sidebar.menu.customers", path: "/customers", icon: Users },
-  { titleKey: "sidebar.menu.maintenance", path: "/maintenance", icon: Wrench, notifs: 3 },
+  {
+    titleKey: "sidebar.menu.home",
+    path: "/",
+    icon: LayoutDashboard,
+  },
+  {
+    titleKey: "sidebar.menu.customers",
+    path: "/customers",
+    icon: Users,
+  },
+  {
+    titleKey: "sidebar.menu.maintenance",
+    path: "/maintenance",
+    icon: Wrench,
+    notifs: 3,
+  },
 ]
 
 const accountItems: MenuItem[] = [
-  { titleKey: "sidebar.menu.profile", path: "/profile", icon: UserCircle },
-  { titleKey: "sidebar.menu.settings", path: "/settings", icon: Settings },
+  {
+    titleKey: "sidebar.menu.profile",
+    path: "/profile",
+    icon: UserCircle,
+  },
+  {
+    titleKey: "sidebar.menu.settings",
+    path: "/settings",
+    icon: Settings,
+  },
 ]
 
 interface SidebarProps {
@@ -35,148 +57,194 @@ interface SidebarProps {
   onClose?: () => void
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen = true, isMobile = false, onClose }) => {
-  const isVisible = isMobile ? isOpen : true
-
+const Sidebar: React.FC<SidebarProps> = ({
+  isOpen = true,
+  isMobile = false,
+  onClose,
+}) => {
   useEffect(() => {
     if (!isMobile || !isOpen) return
 
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onClose) {
-        onClose()
-      }
-    }
-
-    document.addEventListener('keydown', handleEsc)
-
-    // Prevent body scroll when mobile menu is open
-    document.body.style.overflow = 'hidden'
-
-    return () => {
-      document.removeEventListener('keydown', handleEsc)
-      document.body.style.overflow = 'unset'
-    }
-  }, [isMobile, isOpen, onClose])
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    if (!isMobile || !isOpen) return
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      if (!target.closest('.mobile-sidebar-content') && !target.closest('.menu-toggle-button')) {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
         onClose?.()
       }
     }
 
-    // Delay to avoid immediate close when opening
-    setTimeout(() => {
-      document.addEventListener('click', handleClickOutside)
-    }, 100)
+    document.addEventListener("keydown", handleEsc)
+    document.body.style.overflow = "hidden"
 
     return () => {
-      document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener("keydown", handleEsc)
+      document.body.style.overflow = ""
     }
   }, [isMobile, isOpen, onClose])
 
-  // Listen for custom close event from navigation
-  useEffect(() => {
-    const handleCloseEvent = () => {
-      onClose?.()
-    }
+  if (isMobile) {
+    return (
+      <>
+        {isOpen && (
+          <button
+            type="button"
+            aria-label="Close sidebar overlay"
+            onClick={onClose}
+            className="fixed inset-0 z-40 bg-black/75"
+          />
+        )}
 
-    window.addEventListener('closeMobileMenu', handleCloseEvent)
-
-    return () => {
-      window.removeEventListener('closeMobileMenu', handleCloseEvent)
-    }
-  }, [onClose])
+        <aside
+          className={[
+            "fixed inset-y-0 start-0 z-50 w-[290px]",
+            "transition-transform duration-200 ease-out",
+            isOpen
+              ? "translate-x-0"
+              : "-translate-x-full rtl:translate-x-full",
+          ].join(" ")}
+        >
+          <SidebarContent
+            isMobile
+            onClose={onClose}
+          />
+        </aside>
+      </>
+    )
+  }
 
   return (
-    <>
-      {/* Mobile Sidebar Overlay */}
-      {isMobile && isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/70 transition-opacity duration-300"
-          onClick={onClose}
-        />
-      )}
-
-      {/* Mobile Sidebar (Drawer) */}
-      {isMobile && (
-        <div
-          className={`mobile-sidebar-content fixed inset-y-0 start-0 z-50 transform transition-transform duration-300 ease-in-out ${
-            isVisible ? "translate-x-0" : "-translate-x-full rtl:translate-x-full"
-          }`}
-        >
-          <SidebarContent open={true} isMobile={true} onClose={onClose} />
-        </div>
-      )}
-
-      {/* Desktop Sidebar (Always visible) */}
-      {!isMobile && <SidebarContent open={true} isMobile={false} onClose={onClose} />}
-    </>
+    <aside className="hidden lg:block">
+      <SidebarContent />
+    </aside>
   )
 }
 
 interface SidebarContentProps {
-  open: boolean
-  isMobile: boolean
+  isMobile?: boolean
   onClose?: () => void
 }
 
-const SidebarContent: React.FC<SidebarContentProps> = ({ open, isMobile, onClose }) => {
+const SidebarContent: React.FC<SidebarContentProps> = ({
+  isMobile = false,
+  onClose,
+}) => {
   const location = useLocation()
   const { t } = useTranslation()
+  const navigate = useNavigate()
+
+  const handleBrandClick = () => {
+    navigate("/")
+
+    if (isMobile) {
+      onClose?.()
+    }
+  }
 
   return (
     <nav
-      className={`relative flex h-screen flex-col shrink-0 w-64 bg-background-card shadow-lg ${
-        isMobile ? "shadow-xl" : "border-e border-border"
-      }`}
+      className="
+        relative flex h-screen w-[290px] shrink-0 flex-col
+        overflow-hidden border-e border-white/10
+        bg-[#090d11] text-white
+      "
     >
-      {/* Close button for mobile */}
+      {/* Full sidebar background */}
+      <img
+        src={images.sidebarBackground}
+        alt=""
+        aria-hidden="true"
+        className="
+          pointer-events-none absolute -mt-12 inset-0
+          h-full w-full object-cover object-center
+          select-none
+        "
+      />
+
+      {/* Dark overlay so menu stays readable */}
+      <div
+        className="
+          pointer-events-none absolute inset-0
+          bg-[linear-gradient(to_bottom,rgba(5,8,11,0.12)_0%,rgba(5,8,11,0.45)_22%,rgba(5,8,11,0.88)_34%,rgba(5,8,11,0.92)_47%,rgba(5,8,11,0.38)_100%)]
+        "
+      />
+
+      {/* subtle side depth */}
+      <div
+        className="
+          pointer-events-none absolute inset-0
+          bg-[linear-gradient(to_right,rgba(0,0,0,0.05),rgba(0,0,0,0.2))]
+          rtl:bg-[linear-gradient(to_left,rgba(0,0,0,0.05),rgba(0,0,0,0.2))]
+        "
+      />
+
+      {/* mobile close */}
       {isMobile && (
         <button
+          type="button"
           onClick={onClose}
-          className="absolute end-3 top-3 z-10 rounded-lg p-2 text-text-secondary hover:bg-background-secondary transition-colors"
           aria-label="Close menu"
+          className="
+            absolute end-4 top-4 z-40
+            flex h-10 w-10 items-center justify-center
+            rounded-xl border border-white/10
+            bg-black/40 text-white/75
+            backdrop-blur-sm
+            hover:bg-black/60 hover:text-white
+            focus-visible:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-[#E10613]
+          "
         >
           <X className="h-5 w-5" />
         </button>
       )}
 
-      <TitleSection isMobile={isMobile} onClose={onClose} />
+      {/* Clickable brand area */}
+      <button
+        type="button"
+        onClick={handleBrandClick}
+        aria-label="Red Power Garage"
+        className="
+          relative z-20 h-[190px] w-full shrink-0
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-inset
+          focus-visible:ring-[#E10613]
+        "
+      />
 
-      <div className="flex-grow overflow-y-auto overflow-x-hidden pb-20 px-2">
-        <div className="space-y-1 mb-6">
-          <div className="px-3 py-2 text-xs font-medium text-text-muted uppercase tracking-wide">
-            {t("sidebar.sections.main")}
-          </div>
+      {/* Navigation */}
+      <div
+        className="
+          relative z-20 flex flex-1 flex-col
+          overflow-y-auto scrollbar-none px-4 pb-[235px]
+        "
+      >
+        <SidebarSectionTitle>
+          {t("sidebar.sections.main", "Main Menu")}
+        </SidebarSectionTitle>
+
+        <div className="space-y-2">
           {menuItems.map((item) => (
-            <Option
+            <SidebarOption
               key={item.path}
-              Icon={item.icon}
-              titleKey={item.titleKey}
-              path={item.path!}
+              item={item}
               currentPath={location.pathname}
-              notifs={item.notifs}
               isMobile={isMobile}
               onClose={onClose}
             />
           ))}
         </div>
 
-        <div className="border-t border-border pt-4 space-y-1">
-          <div className="px-3 py-2 text-xs font-medium text-text-muted uppercase tracking-wide">
-            {t("sidebar.sections.account")}
-          </div>
+        <div className="my-6 h-px bg-white/10" />
+
+        <SidebarSectionTitle>
+          {t("sidebar.sections.account", "Account")}
+        </SidebarSectionTitle>
+
+        <div className="space-y-2">
           {accountItems.map((item) => (
-            <Option
+            <SidebarOption
               key={item.path}
-              Icon={item.icon}
-              titleKey={item.titleKey}
-              path={item.path!}
+              item={item}
               currentPath={location.pathname}
               isMobile={isMobile}
               onClose={onClose}
@@ -188,92 +256,118 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ open, isMobile, onClose
   )
 }
 
-interface OptionProps {
-  Icon: any
-  titleKey: string
-  path: string
-  currentPath: string
-  notifs?: number
-  isMobile?: boolean
-  onClose?: () => void
+interface SidebarSectionTitleProps {
+  children: React.ReactNode
 }
 
-const Option: React.FC<OptionProps> = ({ Icon, titleKey, path, currentPath, notifs, isMobile, onClose }) => {
-  const navigate = useNavigate()
-  const { t } = useTranslation()
-  const isSelected =
-    path === "/"
-      ? currentPath === "/"
-      : currentPath === path || currentPath.startsWith(`${path}/`)
-
-  const handleClick = () => {
-    navigate(path)
-    if (isMobile && onClose) {
-      onClose()
-    }
-  }
-
+const SidebarSectionTitle: React.FC<SidebarSectionTitleProps> = ({
+  children,
+}) => {
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleClick()}
-      className={`cursor-pointer relative flex h-11 w-full items-center rounded-md transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-        isSelected
-          ? "bg-primary text-white shadow-[0_0_18px_rgba(225,6,19,0.25)]"
-          : "text-text-secondary hover:bg-background-secondary hover:text-text-primary"
-      }`}
+    <p
+      className="
+        mb-3 px-3
+        text-[11px] font-semibold uppercase
+        tracking-[0.14em] text-white/45
+      "
     >
-      <div className="grid h-full w-12 place-content-center">
-        <Icon className={`h-4 w-4 ${isSelected ? 'text-white' : 'text-primary'}`} />
-      </div>
-
-      <span className="text-sm font-medium flex-1">
-        {t(titleKey)}
-      </span>
-
-      {notifs !== undefined && notifs > 0 && (
-        <span className={`absolute end-3 flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium ${
-          isSelected ? 'bg-white text-primary' : 'bg-primary text-white'
-        }`}>
-          {notifs}
-        </span>
-      )}
-    </div>
+      {children}
+    </p>
   )
 }
 
-interface TitleSectionProps {
+interface SidebarOptionProps {
+  item: MenuItem
+  currentPath: string
   isMobile?: boolean
   onClose?: () => void
 }
 
-const TitleSection: React.FC<TitleSectionProps> = ({ isMobile, onClose }) => {
+const SidebarOption: React.FC<SidebarOptionProps> = ({
+  item,
+  currentPath,
+  isMobile = false,
+  onClose,
+}) => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
-  const handleClick = () => {
-    navigate("/")
-    if (isMobile && onClose) {
-      onClose()
+  const Icon = item.icon
+
+  const isSelected =
+    item.path === "/"
+      ? currentPath === "/"
+      : currentPath === item.path ||
+        currentPath.startsWith(`${item.path}/`)
+
+  const handleNavigate = () => {
+    navigate(item.path)
+
+    if (isMobile) {
+      onClose?.()
     }
   }
 
   return (
-    <div className="mb-5 border-b border-border px-3 py-4">
-      <button
-        type="button"
-        onClick={handleClick}
-        className="red-power-sidebar-brand flex w-full items-center justify-center rounded-lg border border-transparent bg-transparent px-4 py-3 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        aria-label="Red Power Garage"
+    <button
+      type="button"
+      onClick={handleNavigate}
+      className={[
+        "group relative flex h-[52px] w-full items-center rounded-xl px-4 text-start",
+        "outline-none",
+        "focus-visible:ring-2 focus-visible:ring-[#E10613]",
+        isSelected
+          ? [
+              "bg-gradient-to-r",
+              "from-[#E10613]",
+              "to-[#C50010]",
+              "text-white",
+              "shadow-[0_8px_28px_rgba(225,6,19,0.28)]",
+            ].join(" ")
+          : [
+              "text-white/75",
+              "hover:bg-white/[0.07]",
+              "hover:text-white",
+              "backdrop-blur-[2px]",
+            ].join(" "),
+      ].join(" ")}
+    >
+      <span
+        className="
+          flex h-8 w-8 shrink-0
+          items-center justify-center
+        "
       >
-        <img
-          src="/images/red-power/brand/red-power-logo.png"
-          alt="Red Power Garage"
-          className="h-12 w-auto max-w-[180px] object-contain"
+        <Icon
+          strokeWidth={1.9}
+          className={[
+            "h-[19px] w-[19px]",
+            isSelected
+              ? "text-white"
+              : "text-white/75 group-hover:text-white",
+          ].join(" ")}
         />
-      </button>
-    </div>
+      </span>
+
+      <span className="ms-3 flex-1 text-[15px] font-medium">
+        {t(item.titleKey)}
+      </span>
+
+      {item.notifs !== undefined && item.notifs > 0 && (
+        <span
+          className={[
+            "flex min-w-6 items-center justify-center",
+            "rounded-full px-1.5 py-0.5",
+            "text-xs font-semibold",
+            isSelected
+              ? "bg-white text-[#E10613]"
+              : "bg-[#E10613] text-white",
+          ].join(" ")}
+        >
+          {item.notifs}
+        </span>
+      )}
+    </button>
   )
 }
 

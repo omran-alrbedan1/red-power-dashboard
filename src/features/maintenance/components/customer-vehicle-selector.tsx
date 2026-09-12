@@ -84,7 +84,7 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
       </CardHeader>
       <CardContent className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <label className="flex items-center gap-1.5 text-xs font-medium text-text-secondary">
             <Users className="h-3.5 w-3.5 text-primary" />
             {t("customer.select")}
           </label>
@@ -106,7 +106,7 @@ export const CustomerVehicleSelector: React.FC<CustomerVehicleSelectorProps> = (
         </div>
 
         <div className="space-y-1.5">
-          <label className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <label className="flex items-center gap-1.5 text-xs font-medium text-text-secondary">
             <Car className="h-3.5 w-3.5 text-primary" />
             {t("vehicle.select")}
           </label>

@@ -36,7 +36,7 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
     <button
       type="button"
       onClick={onViewDetails}
-      className="w-full rounded-lg border border-border bg-card p-4 text-start shadow-sm transition-colors hover:bg-muted/30"
+      className="w-full rounded-lg border border-border bg-card p-4 text-start shadow-sm transition-colors hover:bg-background-secondary"
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
         <MaintenanceStatusBadge status={item.status} />
       </div>
 
-      <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+      <div className="mt-3 space-y-1 text-xs text-text-muted">
         <p className="flex items-center gap-1.5">
           <User className="h-3.5 w-3.5 text-primary" />
           {item.customer.name}
@@ -60,7 +60,9 @@ const MaintenanceMobileCard: React.FC<MobileCardProps> = ({
         </p>
         <p className="flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5 text-primary" />
-          {formatDate(item.receivedAt, isAr ? "ar-SA" : "en-GB")}
+          <span dir="ltr">
+            {formatDate(item.receivedAt, isAr ? "ar-SA" : "en-GB")}
+          </span>
         </p>
       </div>
     </button>
@@ -120,7 +122,7 @@ const MaintenanceListPage: React.FC = () => {
       cell: (c) => (
         <span>
           {c.vehicle.make} {c.vehicle.model}
-          <span className="text-muted-foreground" dir="ltr">
+          <span className="text-text-muted" dir="ltr">
             {" "}({c.vehicle.plateNumber})
           </span>
         </span>
@@ -137,7 +139,7 @@ const MaintenanceListPage: React.FC = () => {
       header: t("receivedAt"),
       headerIcon: CalendarDays,
       cell: (c) => (
-        <span className="text-muted-foreground">
+        <span className="text-text-muted" dir="ltr">
           {formatDate(c.receivedAt, i18n.language === "ar" ? "ar-SA" : "en-GB")}
         </span>
       ),
@@ -211,6 +213,7 @@ const MaintenanceListPage: React.FC = () => {
           onPageChange={setPage}
           getRowId={(c) => c.id}
           onRowClick={(c) => navigate(`/maintenance/${c.id}`)}
+          rowActions
           mobileCardComponent={MobileCard}
           emptyMessage={t("list.noResults")}
         />

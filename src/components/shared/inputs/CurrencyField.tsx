@@ -10,7 +10,6 @@ interface CurrencyFieldProps {
   ariaLabel?: string
   ariaDescribedBy?: string
   currency?: string
-  locale?: string
 }
 
 export const CurrencyField: React.FC<CurrencyFieldProps> = ({
@@ -21,7 +20,6 @@ export const CurrencyField: React.FC<CurrencyFieldProps> = ({
   ariaLabel,
   ariaDescribedBy,
   currency = "USD",
-  locale = "en-US",
 }) => {
   const [displayValue, setDisplayValue] = useState("")
   
@@ -39,13 +37,13 @@ export const CurrencyField: React.FC<CurrencyFieldProps> = ({
         type="text"
         placeholder={placeholder || "0.00"}
         disabled={disabled}
-        className={cn(inputClassName, "px-6 py-5 text-base pl-14")}
+        className={cn(inputClassName, "ps-14")}
         value={displayValue}
         onChange={handleChange}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
       />
-      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-sm text-muted-foreground group-focus-within:text-primary transition-colors">
+      <div className="absolute start-4 top-1/2 transform -translate-y-1/2 text-sm text-text-muted group-focus-within:text-primary transition-colors">
         {currency === "USD" ? "$" : currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency}
       </div>
     </div>

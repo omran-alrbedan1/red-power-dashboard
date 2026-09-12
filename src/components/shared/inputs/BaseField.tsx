@@ -22,14 +22,14 @@ export const BaseField: React.FC<BaseFieldProps> = ({
     return (
       <div className="relative group">
         {hasLeftIcon && LeftIcon && (
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors group-focus-within:text-primary">
-            <LeftIcon className={cn("h-5 w-5 text-muted-foreground group-focus-within:text-primary", iconClassName)} />
+          <div className="absolute start-4 top-1/2 transform -translate-y-1/2 transition-colors group-focus-within:text-primary">
+            <LeftIcon className={cn("h-5 w-5 text-text-muted group-focus-within:text-primary", iconClassName)} />
           </div>
         )}
         {children}
         {hasRightIcon && RightIcon && (
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 transition-colors group-focus-within:text-primary">
-            <RightIcon className={cn("h-5 w-5 text-muted-foreground group-focus-within:text-primary", iconClassName)} />
+          <div className="absolute end-4 top-1/2 transform -translate-y-1/2 transition-colors group-focus-within:text-primary">
+            <RightIcon className={cn("h-5 w-5 text-text-muted group-focus-within:text-primary", iconClassName)} />
           </div>
         )}
       </div>

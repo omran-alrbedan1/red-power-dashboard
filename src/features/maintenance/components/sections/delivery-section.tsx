@@ -59,7 +59,7 @@ export const DeliverySection = <T extends FieldValues>({
         />
 
         <div className="sm:col-span-2">
-          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+          <p className="flex items-center gap-2 text-xs text-text-muted">
             <CalendarClock className="h-4 w-4 text-primary" />
             {t("approval.hint")}
           </p>

@@ -8,17 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ChevronRight, ChevronLeft, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatNumber } from '@/lib/formatter';
 import { useTranslation } from 'react-i18next';
 
 export interface Column<T = any> {
@@ -28,6 +21,7 @@ export interface Column<T = any> {
   cell?: (item: T) => React.ReactNode;
   className?: string;
   width?: string;
+  align?: 'start' | 'end';
 }
 
 export interface DataTableProps<T = any> {
@@ -43,6 +37,7 @@ export interface DataTableProps<T = any> {
   onPageChange: (page: number) => void;
   onRowClick?: (item: T) => void;
   getRowId: (item: T) => string | number;
+  rowActions?: boolean;
   mobileCardComponent?: React.ComponentType<{
     item: T;
     onViewDetails: () => void;
@@ -74,7 +69,7 @@ const getPageNumbers = (current: number, last: number) => {
 function DataTableSkeleton({ columns }: { columns: Column[] }) {
   return (
     <div className="rounded-md border border-border">
-      <div className="min-w-3xl">
+      <div className="min-w-[40rem]">
         <Table>
           <TableHeader>
             <TableRow>
@@ -84,7 +79,7 @@ function DataTableSkeleton({ columns }: { columns: Column[] }) {
                   className={column.className}
                   style={{ width: column.width }}
                 >
-                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20 bg-background-secondary" />
                 </TableHead>
               ))}
             </TableRow>
@@ -94,7 +89,7 @@ function DataTableSkeleton({ columns }: { columns: Column[] }) {
               <TableRow key={index}>
                 {columns.map((column) => (
                   <TableCell key={column.key}>
-                    <Skeleton className="h-4 w-full max-w-[200px]" />
+                    <Skeleton className="h-4 w-full max-w-[200px] bg-background-secondary" />
                   </TableCell>
                 ))}
               </TableRow>
@@ -103,23 +98,24 @@ function DataTableSkeleton({ columns }: { columns: Column[] }) {
         </Table>
       </div>
       <div className="flex items-center justify-between px-4 py-3 border-t border-border">
-        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-4 w-32 bg-background-secondary" />
         <div className="flex items-center gap-1">
-          <Skeleton className="h-8 w-20 rounded-md" />
-          <Skeleton className="h-8 w-8 rounded-md" />
-          <Skeleton className="h-8 w-8 rounded-md" />
-          <Skeleton className="h-8 w-20 rounded-md" />
+          <Skeleton className="h-8 w-20 rounded-md bg-background-secondary" />
+          <Skeleton className="h-8 w-8 rounded-md bg-background-secondary" />
+          <Skeleton className="h-8 w-8 rounded-md bg-background-secondary" />
+          <Skeleton className="h-8 w-20 rounded-md bg-background-secondary" />
         </div>
       </div>
     </div>
   );
 }
 
-// Pagination component using shadcn/ui
+// Pagination component
 interface DataTablePaginationProps {
   page: number;
   lastPage: number;
   total: number;
+  perPage: number;
   onPageChange: (page: number) => void;
   t: (key: string, options?: any) => string;
 }
@@ -128,6 +124,7 @@ function DataTablePagination({
   page,
   lastPage,
   total,
+  perPage,
   onPageChange,
   t,
 }: DataTablePaginationProps) {
@@ -138,61 +135,83 @@ function DataTablePagination({
 
   if (lastPage <= 1) return null;
 
+  const from = (page - 1) * perPage + 1;
+  const to = Math.min(page * perPage, total);
+
+  const baseButton =
+    'inline-flex h-8 items-center rounded-md border border-border transition-colors';
+
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t border-border">
-      <div className="text-sm text-muted-foreground order-2 sm:order-1">
+    <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm text-text-muted">
         {t('table.showing', {
           defaultValue: `Showing {{from}} to {{to}} of {{total}} results`,
-          from: (page - 1) * 10 + 1,
-          to: Math.min(page * 10, total),
-          total: total.toLocaleString(),
+          from,
+          to,
+          total: formatNumber(total),
         })}
-      </div>
+      </p>
 
-      <Pagination className="order-1 sm:order-2">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (page > 1) onPageChange(page - 1);
-              }}
-              className={page === 1 ? 'pointer-events-none opacity-50' : ''}
-            />
-          </PaginationItem>
+      <nav aria-label={t('table.pagination', { defaultValue: 'Pagination' })}>
+        <ul className="flex items-center gap-1">
+          <li>
+            <button
+              type="button"
+              onClick={() => onPageChange(page - 1)}
+              disabled={page === 1}
+              className={cn(
+                baseButton,
+                'gap-1 px-2 text-text-secondary hover:text-text-primary disabled:pointer-events-none disabled:opacity-40'
+              )}
+              aria-label={t('previous')}
+            >
+              <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
+              <span className="hidden sm:inline">{t('previous')}</span>
+            </button>
+          </li>
 
           {pageNumbers.map((pageNum, idx) => (
-            <PaginationItem key={idx}>
+            <li key={idx}>
               {pageNum === 'ellipsis' ? (
-                <PaginationEllipsis />
+                <span className="flex h-8 w-8 items-center justify-center">
+                  <MoreHorizontal className="h-4 w-4 text-text-muted" />
+                </span>
               ) : (
-                <PaginationLink
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onPageChange(pageNum);
-                  }}
-                  isActive={page === pageNum}
+                <button
+                  type="button"
+                  onClick={() => onPageChange(pageNum)}
+                  aria-current={page === pageNum ? 'page' : undefined}
+                  className={cn(
+                    baseButton,
+                    'min-w-8 justify-center px-2 text-sm',
+                    page === pageNum
+                      ? 'border-primary/40 bg-primary/10 font-semibold text-primary'
+                      : 'text-text-secondary hover:bg-background-secondary hover:text-text-primary'
+                  )}
                 >
                   {pageNum}
-                </PaginationLink>
+                </button>
               )}
-            </PaginationItem>
+            </li>
           ))}
 
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                if (page < lastPage) onPageChange(page + 1);
-              }}
-              className={page === lastPage ? 'pointer-events-none opacity-50' : ''}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+          <li>
+            <button
+              type="button"
+              onClick={() => onPageChange(page + 1)}
+              disabled={page === lastPage}
+              className={cn(
+                baseButton,
+                'gap-1 px-2 text-text-secondary hover:text-text-primary disabled:pointer-events-none disabled:opacity-40'
+              )}
+              aria-label={t('next')}
+            >
+              <span className="hidden sm:inline">{t('next')}</span>
+              <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
@@ -206,6 +225,7 @@ export function DataTable<T = any>({
   onPageChange,
   onRowClick,
   getRowId,
+  rowActions = false,
   mobileCardComponent: MobileCard,
   emptyMessage,
   className = '',
@@ -225,6 +245,9 @@ export function DataTable<T = any>({
     return <DataTableSkeleton columns={columns} />;
   }
 
+  const includingActions = rowActions && onRowClick ? columns.length + 1 : columns.length;
+  const showActions = rowActions && !!onRowClick;
+
   // Mobile view with custom card component
   if (isMobile && MobileCard) {
     return (
@@ -239,7 +262,7 @@ export function DataTable<T = any>({
           />
         ))}
         {data.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="py-8 text-center text-sm text-text-muted">
             {emptyMessage || t('table.noData')}
           </div>
         )}
@@ -247,6 +270,7 @@ export function DataTable<T = any>({
           page={pagination.page}
           lastPage={pagination.lastPage}
           total={pagination.total}
+          perPage={pagination.perPage ?? 10}
           onPageChange={onPageChange}
           t={t}
         />
@@ -257,17 +281,22 @@ export function DataTable<T = any>({
   // Desktop table view
   return (
     <div className={`overflow-x-auto rounded-md border border-border ${className}`}>
-      <div className="min-w-3xl">
+      <div className="min-w-[40rem]">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-background-secondary/40 hover:bg-background-secondary/40">
               {columns.map((column) => (
                 <TableHead
                   key={column.key}
                   className={column.className}
                   style={{ width: column.width }}
                 >
-                  <span className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  <span
+                    className={cn(
+                      'flex items-center gap-1.5 whitespace-nowrap text-xs font-medium uppercase tracking-wide',
+                      column.align === 'end' && 'justify-end'
+                    )}
+                  >
                     {column.headerIcon && (
                       <column.headerIcon className="h-3.5 w-3.5 text-primary" />
                     )}
@@ -275,6 +304,7 @@ export function DataTable<T = any>({
                   </span>
                 </TableHead>
               ))}
+              {showActions && <TableHead className="w-12" />}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -282,25 +312,55 @@ export function DataTable<T = any>({
               <TableRow
                 key={getRowId(item)}
                 className={cn(
-                  "transition-colors",
-                  onRowClick && "cursor-pointer hover:bg-muted/30"
+                  onRowClick && 'cursor-pointer hover:bg-background-secondary/60'
                 )}
                 onClick={() => onRowClick?.(item)}
               >
                 {columns.map((column) => (
-                  <TableCell key={column.key} className="text-sm">
+                  <TableCell
+                    key={column.key}
+                    className={cn(
+                      'text-text-secondary',
+                      column.align === 'end' && 'text-end'
+                    )}
+                  >
                     {column.cell
                       ? column.cell(item)
                       : (item as any)[column.key] || '—'}
                   </TableCell>
                 ))}
+                {showActions && (
+                  <TableCell className="text-end">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRowClick?.(item);
+                      }}
+                      aria-label={t('table.view', { defaultValue: 'View details' })}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-background-card hover:text-primary"
+                    >
+                      <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+                    </button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
-            {data.length === 0 && (
+            {data.length === 0 && !showActions && (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="text-center py-8 text-muted-foreground"
+                  className="py-8 text-center text-text-muted"
+                >
+                  {emptyMessage || t('table.noData')}
+                </TableCell>
+              </TableRow>
+            )}
+            {data.length === 0 && showActions && (
+              <TableRow>
+                <TableCell
+                  colSpan={includingActions}
+                  className="py-8 text-center text-text-muted"
                 >
                   {emptyMessage || t('table.noData')}
                 </TableCell>
@@ -314,6 +374,7 @@ export function DataTable<T = any>({
         page={pagination.page}
         lastPage={pagination.lastPage}
         total={pagination.total}
+        perPage={pagination.perPage ?? 10}
         onPageChange={onPageChange}
         t={t}
       />

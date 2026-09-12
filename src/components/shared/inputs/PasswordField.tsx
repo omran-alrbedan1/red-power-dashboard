@@ -33,8 +33,8 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
   return (
     <div className="relative group">
       {hasLeftIcon && LeftIcon && (
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2 transition-colors group-focus-within:text-primary">
-          <LeftIcon className={cn("h-5 w-5 group-focus:text-primary", iconClassName)} />
+        <div className="absolute start-4 top-1/2 transform -translate-y-1/2 transition-colors group-focus-within:text-primary">
+          <LeftIcon className={cn("h-5 w-5 text-text-muted group-focus:text-primary", iconClassName)} />
         </div>
       )}
       <Input
@@ -44,9 +44,8 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
         disabled={disabled}
         className={cn(
           inputClassName,
-          "px-6 py-5 text-base",
-          hasLeftIcon && "pl-14",
-          "pr-14"
+          hasLeftIcon && "ps-14",
+          "pe-14"
         )}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}
@@ -55,7 +54,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
         type="button"
         variant="ghost"
         size="sm"
-        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+        className="absolute end-0 top-0 h-full px-3 py-2 hover:bg-transparent"
         onClick={() => setShowPassword(!showPassword)}
         disabled={disabled}
       >

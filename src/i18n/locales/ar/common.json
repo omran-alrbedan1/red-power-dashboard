@@ -27,19 +27,57 @@
   },
   "header": {
     "adminUser": "مدير النظام",
-    "administrator": "管理員",
+    "administrator": "مدير النظام",
     "notifications": "الإشعارات"
   },
   "dashboard": {
+    "workshopManagement": "إدارة الورشة",
     "welcome": "مرحباً بك في Red Power",
     "subtitle": "لوحة تحكم إدارة الورشة",
+    "statsError": "تعذر تحميل إحصائيات الصيانة",
     "statCards": {
       "openCards": "البطاقات المفتوحة",
+      "totalMaintenance": "إجمالي بطاقات الصيانة",
+      "activeWorkshop": "قيد العمل في الورشة",
       "closedCards": "البطاقات المغلقة",
+      "completedMaintenance": "صيانة مكتملة",
+      "successfullyClosed": "أُغلقت بنجاح",
       "todayReceived": "وصلت اليوم",
-      "totalCards": "إجمالي البطاقات"
+      "newMaintenance": "بطاقات صيانة جديدة",
+      "todayIntake": "استلام اليوم",
+      "totalCards": "إجمالي البطاقات",
+      "allMaintenance": "كل بطاقات الصيانة",
+      "systemTotal": "إجمالي النظام"
     },
-    "viewMaintenance": "عرض كل بطاقات الصيانة"
+    "entities": {
+      "customers": "الزبائن",
+      "customersDescription": "زبائن الورشة المسجلون",
+      "totalCustomers": "إجمالي الزبائن",
+      "vehicles": "المركبات",
+      "vehiclesDescription": "المركبات المسجلة في الورشة",
+      "totalVehicles": "إجمالي المركبات"
+    },
+    "recentMaintenance": {
+      "title": "أحدث بطاقات الصيانة",
+      "description": "أحدث البطاقات المستلمة في الورشة",
+      "error": "تعذر تحميل بطاقات الصيانة",
+      "empty": "لا توجد بطاقات صيانة بعد",
+      "emptyDescription": "ستظهر هنا استمارات الاستلام الجديدة.",
+      "card": "البطاقة",
+      "received": "تاريخ الاستلام"
+    },
+    "quickActions": {
+      "title": "إجراءات سريعة",
+      "description": "مهام الورشة الشائعة",
+      "createMaintenance": "إنشاء بطاقة صيانة",
+      "createMaintenanceDescription": "تسجيل زيارة مركبة",
+      "customers": "الزبائن",
+      "customersDescription": "إدارة زبائن الورشة",
+      "vehicles": "المركبات",
+      "vehiclesDescription": "استعراض مركبات الزبائن",
+      "maintenance": "كل بطاقات الصيانة",
+      "maintenanceDescription": "استعراض استمارات الورشة"
+    }
   },
   "common": {
     "loading": "جاري التحميل...",
@@ -63,13 +101,19 @@
     "confirm": "تأكيد",
     "close": "إغلاق",
     "filters": "عوامل التصفية",
-    "active": "مفعّل",
+    "active": "نشط",
     "activeFilters": "التصفية النشطة:",
+    "viewAll": "عرض الكل",
+    "customer": "الزبون",
+    "vehicle": "المركبة",
+    "retry": "إعادة المحاولة",
     "reset": "إعادة تعيين",
     "apply": "تطبيق",
     "table": {
       "showing": "عرض {{from}} إلى {{to}} من {{total}} نتيجة",
-      "noData": "لا توجد بيانات"
+      "noData": "لا توجد بيانات",
+      "view": "عرض التفاصيل",
+      "pagination": "ترقيم الصفحات"
     }
   },
   "maintenance": {

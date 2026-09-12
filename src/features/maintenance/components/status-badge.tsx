@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge"
 import type { MaintenanceCardStatus } from "../types/maintenance-detail.types"
 
 const STATUS_TONES: Record<MaintenanceCardStatus, string> = {
-  open: "bg-sky-500/15 text-sky-400",
-  closed: "bg-green-500/15 text-green-500",
+  open: "border border-sky-500/25 bg-sky-500/15 text-sky-400",
+  closed: "border border-green-500/25 bg-green-500/15 text-green-500",
 }
 
 export const MaintenanceStatusBadge: React.FC<{

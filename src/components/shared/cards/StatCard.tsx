@@ -1,48 +1,151 @@
+import React from "react"
+import { ArrowRight, ArrowUpRight } from "lucide-react"
+import { formatNumber } from "@/lib/formatter"
+
 interface StatCardProps {
   label: string
   value: number | string
   icon: React.ReactNode
-  sub: string      
-  change?: number  
+  sub?: string
+  footer?: string
+
+  footerClassName?: string
+  arrowClassName?: string
+
+  onClick?: () => void
 }
+
 const StatCard: React.FC<StatCardProps> = ({
   label,
   value,
-  sub,
   icon,
+  sub,
+  footer,
+  footerClassName = "text-red-500",
+  arrowClassName = "text-slate-600",
+  onClick,
 }) => {
+  const formattedValue =
+    typeof value === "number" ? formatNumber(value) : value
+
   return (
-    <div className="relative w-full min-h-40 rounded-[28px] bg-background-card overflow-hidden group">
-      <div
-        className={"absolute inset-0 flex flex-col justify-between p-6 transition-all duration-200 group-hover:scale-[1.01]"}
-      >
-        {/* Top Section */}
-        <div className="flex flex-col gap-1">
-          <h3 className="text-[18px] font-bold text-primary tracking-[-0.3px] leading-tight m-0">
-            {label}
-          </h3>
-          {sub && (
-            <p className="text-[12px] font-medium text-subtitle m-0">
-              {sub}
-            </p>
-          )}
+    <article
+      className="
+        relative h-[168px] w-full overflow-hidden
+        rounded-[18px]
+        bg-card
+        px-5 py-5
+        shadow-[0_8px_28px_rgba(15,23,42,0.055)]
+        dark:bg-background-card
+      "
+    >
+      {/* Content */}
+      <div className="relative z-10 flex h-full flex-col">
+        {/* Header */}
+        <div className="flex items-start gap-3">
+          <div
+            className={`
+              flex h-12 w-12 shrink-0
+              items-center justify-center
+              rounded-[13px]
+              bg-primary text-white
+            `}
+          >
+            {icon}
+          </div>
+
+          <div className="min-w-0 pt-0.5">
+            <h3
+              className="
+                truncate
+                text-[14px] font-bold leading-5
+                dark:text-text-primary"
+            >
+              {label}
+            </h3>
+
+            {sub && (
+              <p
+                className="
+                  mt-0.5 truncate
+                  text-[11px] font-normal leading-4
+                  text-slate-500
+                  dark:text-text-muted
+                "
+              >
+                {sub}
+              </p>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-end justify-between w-full">
-          <p className="text-3xl font-bold tracking-[-0.5px] leading-none m-0">
-            {typeof value === 'number' ? value.toLocaleString() : value}
+        {/* Number */}
+        <div className="mt-4">
+          <p
+            className="
+              text-[29px] font-bold leading-none
+              tracking-[-0.04em]
+            "
+          >
+            {formattedValue}
           </p>
         </div>
-      </div>
 
-      {/* Icon positioned correctly for RTL/LTR */}
-      <div className="absolute bottom-0 ltr:right-0 rtl:left-0 w-16 h-16 flex items-center justify-center pointer-events-none">
-        <div className="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center pointer-events-auto shadow-sm ltr:translate-x-1 rtl:-translate-x-1 ltr:translate-y-1 rtl:translate-y-1 transition-transform group-hover:scale-105">
-          {icon}
+        {/* Bottom */}
+        <div className="mt-auto flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <ArrowUpRight
+              className={`
+                h-4 w-4 shrink-0
+                ${footerClassName}
+              `}
+            />
+
+            {footer && (
+              <span
+                className="
+                  truncate text-[11px] font-medium
+                  text-slate-500
+                  dark:text-text-muted
+                "
+              >
+                {footer}
+              </span>
+            )}
+          </div>
+
+          {onClick && (
+            <button
+              type="button"
+              onClick={onClick}
+              aria-label={`Open ${label}`}
+              className="
+                flex h-9 w-9 shrink-0
+                items-center justify-center
+                rounded-full
+                bg-primary/80
+                shadow-[0_3px_12px_rgba(15,23,42,0.04)]
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-primary
+                dark:bg-white/[0.06]
+              "
+            >
+              <ArrowRight
+                className={`
+                  h-4 w-4
+                  rtl:rotate-180
+                text-white
+
+                  ${arrowClassName}
+                `}
+              />
+            </button>
+          )}
         </div>
       </div>
-    </div>
-  );
-};
+    </article>
+  )
+}
 
-export default StatCard;
+export default StatCard

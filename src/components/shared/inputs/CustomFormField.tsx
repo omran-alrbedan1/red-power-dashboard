@@ -74,7 +74,7 @@
       disabled,
       loading,
       className,
-      labelClassName='my-2',
+      labelClassName='mb-1.5',
       inputClassName,
       containerClassName,
       tooltip,
@@ -101,7 +101,6 @@
       ariaLabel,
       ariaDescribedBy,
       currency,
-      locale,
     } = props
 
     const renderField = useCallback((field: any) => {
@@ -186,7 +185,7 @@
           return <OtpInputField {...commonProps} otpLength={otpLength} />
             
         case FormFieldType.CURRENCY:
-          return <CurrencyField {...commonProps} placeholder={props.placeholder} currency={currency} locale={locale} />
+          return <CurrencyField {...commonProps} placeholder={props.placeholder} currency={currency} />
         
         case FormFieldType.PERCENTAGE:
           return <PercentageField {...commonProps} placeholder={props.placeholder} min={min} max={max} />
@@ -194,7 +193,7 @@
         default:
           return null
       }
-    }, [fieldType, props, disabled, inputClassName, ariaLabel, ariaDescribedBy, leftIcon, rightIcon, iconPosition, iconClassName, maxLength, min, max, step, options, dateOptions, timeOptions, sliderMarks, fileUploadOptions, maxRating, autocompleteOptions, colorPickerOptions, otpLength, tagInputOptions, currency, locale, name, label])
+    }, [fieldType, props, disabled, inputClassName, ariaLabel, ariaDescribedBy, leftIcon, rightIcon, iconPosition, iconClassName, maxLength, min, max, step, options, dateOptions, timeOptions, sliderMarks, fileUploadOptions, maxRating, autocompleteOptions, colorPickerOptions, otpLength, tagInputOptions, currency, name, label])
 
     const renderLabel = () => {
       if (!label && fieldType !== FormFieldType.CHECKBOX && fieldType !== FormFieldType.SWITCH) {
@@ -207,7 +206,7 @@
           className={cn("block w-full text-start text-sm font-medium", labelClassName)}
         >
           {label}
-          {required && <span className="text-destructive ms-1 text-red-500">*</span>}
+          {required && <span className="ms-1 text-primary">*</span>}
         </Label>
       )
 
@@ -218,7 +217,7 @@
               <TooltipTrigger asChild>
                 <div className="flex w-full items-center gap-1 text-start cursor-help" dir="auto">
                   {labelContent}
-                  <AlertCircle className="h-3.5 w-3.5 text-muted-foreground" />
+                  <AlertCircle className="h-3.5 w-3.5 text-text-muted" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -237,26 +236,23 @@
         name={name}
         control={control}
         render={({ field, fieldState }) => (
-          <div className={cn("space-y-4", containerClassName, className)} dir={dir}>
+<div className={cn("space-y-2", containerClassName, className)} dir={dir}>
             {renderLabel()}
             
             {loading ? (
-              <Skeleton className={cn("h-10 w-full", inputClassName)} />
+              <Skeleton className={cn("h-9 w-full", inputClassName)} />
             ) : (
-              <div className="mt-2">
-                {renderField(field)}
-
-              </div>
+              renderField(field)
             )}
             
-            {description && (
-              <p dir="auto" className={cn("text-start text-xs text-muted-foreground", props.descriptionClassName)}>
+{description && (
+              <p dir="auto" className={cn("text-start text-xs text-text-secondary", props.descriptionClassName)}>
                 {description}
               </p>
             )}
             
             {fieldState.error && (
-              <p dir="auto" className={cn("text-start text-xs text-destructive", props.errorClassName)}>
+              <p dir="auto" className={cn("text-start text-xs text-primary", props.errorClassName)}>
                 {fieldState.error.message}
               </p>
             )}

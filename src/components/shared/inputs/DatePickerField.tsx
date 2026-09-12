@@ -63,14 +63,14 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
         type="button"
         variant="outline"
         className={cn(
-          "w-full justify-start text-start font-normal",
-          !field.value && "text-muted-foreground",
+"w-full justify-start text-start font-normal",
+          !field.value && "text-text-secondary",
           inputClassName
         )}
         disabled={disabled}
         onClick={() => setOpen(!open)}
       >
-        <CalendarIcon className="mr-2 h-4 w-4" />
+        <CalendarIcon className="me-2 h-4 w-4" />
         {field.value ? (
           format(new Date(field.value), dateOptions?.format || "PPP")
         ) : (
@@ -78,7 +78,7 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
         )}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-white border rounded-md shadow-lg min-w-[280px]">
+        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg min-w-[280px]">
           <Calendar
             mode="single"
             selected={field.value ? new Date(field.value) : undefined}

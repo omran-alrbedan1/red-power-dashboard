@@ -288,7 +288,7 @@ const ReceiptCreatePage: React.FC = () => {
                     "flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors",
                     isActive && "bg-primary text-white",
                     isDone && "bg-primary/20 text-primary",
-                    !isActive && !isDone && "bg-muted text-muted-foreground"
+                    !isActive && !isDone && "bg-background-secondary text-text-muted"
                   )}
                 >
                   {isDone ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
@@ -296,7 +296,7 @@ const ReceiptCreatePage: React.FC = () => {
                 <span
                   className={cn(
                     "hidden text-sm sm:inline",
-                    isActive ? "font-medium text-text-primary" : "text-muted-foreground"
+                    isActive ? "font-medium text-text-primary" : "text-text-muted"
                   )}
                 >
                   {t(`wizard.step${stepNumber}`)}
@@ -319,13 +319,13 @@ const ReceiptCreatePage: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                <label className="mb-1.5 block text-xs font-medium text-text-secondary">
                   {t("customer.select")}
                 </label>
                 <CustomerSelect value={selectedCustomerId} onChange={setSelectedCustomerId} />
               </div>
               <div className="border-t border-border pt-4">
-                <p className="mb-3 text-xs text-muted-foreground">{t("customer.createHint")}</p>
+                <p className="mb-3 text-xs text-text-muted">{t("customer.createHint")}</p>
                 <CustomerFields control={form.control} />
               </div>
             </CardContent>
@@ -342,7 +342,7 @@ const ReceiptCreatePage: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                <label className="mb-1.5 block text-xs font-medium text-text-secondary">
                   {t("vehicle.select")}
                 </label>
                 <VehicleSelect
@@ -360,7 +360,7 @@ const ReceiptCreatePage: React.FC = () => {
                 />
               </div>
               <div className="border-t border-border pt-4">
-                <p className="mb-3 text-xs text-muted-foreground">{t("vehicle.createHint")}</p>
+                <p className="mb-3 text-xs text-text-muted">{t("vehicle.createHint")}</p>
                 <VehicleFields control={form.control} />
               </div>
             </CardContent>
@@ -414,13 +414,13 @@ const ReceiptCreatePage: React.FC = () => {
               </p>
 
               <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">{t("media.photos")}</p>
+                <p className="text-xs font-medium text-text-secondary">{t("media.photos")}</p>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <input
                     type="file"
                     accept="image/*"
                     multiple
-                    className="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary"
+                    className="block w-full text-sm file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary"
                     onChange={(event) => setPhotos(Array.from(event.target.files ?? []))}
                   />
                   <Button
@@ -440,12 +440,12 @@ const ReceiptCreatePage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <p className="text-xs font-medium text-muted-foreground">{t("media.signature")}</p>
+                <p className="text-xs font-medium text-text-secondary">{t("media.signature")}</p>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <input
                     type="file"
                     accept="image/*"
-                    className="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary"
+                    className="block w-full text-sm file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary"
                     onChange={(event) => setSignatureFile(event.target.files?.[0] ?? null)}
                   />
                   <Button
@@ -464,9 +464,9 @@ const ReceiptCreatePage: React.FC = () => {
                 )}
               </div>
 
-              {mediaError && <p className="text-sm text-destructive">{mediaError}</p>}
+              {mediaError && <p className="text-sm text-primary">{mediaError}</p>}
               {(uploadPhotos.isError || uploadSignature.isError) && !mediaError && (
-                <p className="text-sm text-destructive">{t("media.error")}</p>
+                <p className="text-sm text-primary">{t("media.error")}</p>
               )}
 
               <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
@@ -491,7 +491,7 @@ const ReceiptCreatePage: React.FC = () => {
         )}
 
         {form.formState.errors.root && (
-          <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
+          <p className="text-sm text-primary">{form.formState.errors.root.message}</p>
         )}
 
         {step < 4 && (

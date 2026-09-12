@@ -9,7 +9,7 @@ interface SliderFieldProps {
   min?: number
   max?: number
   step?: number
-  sliderMarks?: Array<{ value: number; label: string }>
+  sliderMarks?: Record<number, string>
 }
 
 export const SliderField: React.FC<SliderFieldProps> = ({
@@ -32,15 +32,15 @@ export const SliderField: React.FC<SliderFieldProps> = ({
         disabled={disabled}
         className={cn(inputClassName)}
       />
-      <div className="flex justify-between text-xs text-muted-foreground">
+      <div className="flex justify-between text-xs text-text-secondary">
         <span>{min}</span>
-        <span className="font-medium text-foreground">{field.value}</span>
+        <span className="font-medium text-text-primary">{field.value}</span>
         <span>{max}</span>
       </div>
-      {sliderMarks && (
-        <div className="flex justify-between text-xs text-muted-foreground">
-          {sliderMarks.map((mark) => (
-            <span key={mark.value}>{mark.label}</span>
+      {sliderMarks && Object.keys(sliderMarks).length > 0 && (
+        <div className="flex justify-between text-xs text-text-secondary">
+          {Object.entries(sliderMarks).map(([value, label]) => (
+            <span key={value}>{label}</span>
           ))}
         </div>
       )}

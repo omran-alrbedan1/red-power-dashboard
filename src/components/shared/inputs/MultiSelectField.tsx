@@ -36,14 +36,14 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
       <Button
         variant="outline"
         className={cn(
-          "w-full justify-start text-start font-normal",
-          !field.value?.length && "text-muted-foreground",
+"w-full justify-start text-start font-normal",
+          !field.value?.length && "text-text-secondary",
           inputClassName
         )}
         disabled={disabled}
         onClick={() => setOpen(!open)}
       >
-        <ChevronDown className="mr-2 h-4 w-4" />
+        <ChevronDown className="me-2 h-4 w-4" />
         {field.value?.length ? (
           <div className="flex gap-1 flex-wrap">
             {field.value.map((value: string) => (
@@ -57,7 +57,7 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
         )}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-white border rounded-md shadow-lg w-full">
+        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg w-full">
           <Command>
             <CommandInput placeholder="Search options..." />
             <CommandList>
@@ -71,7 +71,7 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
                   >
                     <Check
                       className={cn(
-                        "mr-2 h-4 w-4",
+                        "me-2 h-4 w-4",
                         field.value?.includes(option.value) ? "opacity-100" : "opacity-0"
                       )}
                     />

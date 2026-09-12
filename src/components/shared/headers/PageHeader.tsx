@@ -4,122 +4,202 @@ import { ArrowLeft, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface PageHeaderProps {
-    title: string
-    description?: string
-    showBackButton?: boolean
-    backButtonLabel?: string
-    onBackClick?: () => void
-    rightContent?: React.ReactNode
-    image?: {
-        src: string
-        alt: string
-        className?: string
-        position?: "left" | "right"
-    }
-    gradient?: string
-    className?: string
+  title: string
+  highlight?: string
+  eyebrow?: string
+  description?: string
+
+  showBackButton?: boolean
+  backButtonLabel?: string
+  onBackClick?: () => void
+
+  rightContent?: React.ReactNode
+
+  backgroundImage?: string
+
+  showDateTime?: boolean
+
+  className?: string
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
-    title,
-    description,
-    showBackButton = false,
-    backButtonLabel,
-    onBackClick,
-    rightContent,
-    image,
-    gradient = "from-primary/10 via-primary/5 to-transparent",
-    className = "",
+  title,
+  highlight,
+  eyebrow,
+  description,
+
+  showBackButton = false,
+  backButtonLabel,
+  onBackClick,
+
+  rightContent,
+
+  backgroundImage,
+
+  showDateTime = true,
+
+  className = "",
 }) => {
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
-    const handleBackClick = () => {
-        if (onBackClick) {
-            onBackClick()
-        } else {
-            navigate(-1)
-        }
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick()
+      return
     }
 
-    const currentDate = new Date()
-    const dateOptions: Intl.DateTimeFormatOptions = {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric'
+    navigate(-1)
+  }
+
+  const currentDate = new Date()
+
+  const formattedDate = currentDate.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+
+  const formattedTime = currentDate.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  const renderTitle = () => {
+    if (!highlight || !title.includes(highlight)) {
+      return title
     }
-    const formattedDate = currentDate.toLocaleDateString(undefined, dateOptions)
+
+    const [before, after] = title.split(highlight)
 
     return (
-        <div className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${gradient} border border-border/50 ${className}`}>
-            {/* Top-right corner absolute positioned element for three dots */}
-            {rightContent && (
-                <div className="absolute top-4 rtl:left-4 ltr:right-4 z-20">
-                    {rightContent}
-                </div>
-            )}
-            
-            <div className="flex items-center justify-between p-6 relative z-10">
-                {/* Left side content */}
-                <div className="flex-1 space-y-3">
-                    {showBackButton && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleBackClick}
-                            className="mb-1 -ms-2 text-text-secondary hover:text-text transition-all duration-200 hover:translate-x-[-2px] rtl:hover:translate-x-[2px]"
-                        >
-                            <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
-                            {backButtonLabel || "Back"}
-                        </Button>
-                    )}
-
-                    <div className="space-y-2">
-                        {/* Title */}
-                        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent pe-12 text-start">
-                            {title}
-                        </h1>
-
-                        {/* Description and metadata */}
-                        <div className="space-y-1.5">
-                            {description && (
-                                <p className="text-sm text-text-muted max-w-2xl pe-12 text-start">
-                                    {description}
-                                </p>
-                            )}
-
-                            {/* Date display */}
-                            <div className="flex items-center gap-3 text-xs text-text-muted">
-                                <div className="flex items-center gap-1">
-                                    <Calendar size={12} className="text-primary" />
-                                    <span>{formattedDate}</span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                    <Clock size={12} className="text-primary" />
-                                    <span>{currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Image section */}
-                {image && (
-                    <div className="flex items-center gap-4">
-                        <div
-                            className={`flex-shrink-0 pointer-events-none ${image.position === "left" ? "order-first" : ""
-                                }`}
-                        >
-                            <img
-                                src={image.src}
-                                alt={image.alt}
-                                className={`hidden md:block sm:h-56 -my-12 sm:w-56 object-contain transition-transform duration-300 hover:scale-105 ${image.className || ""}`}
-                            />
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
+      <>
+        {before}
+        <span className="text-[#F0142F]">{highlight}</span>
+        {after}
+      </>
     )
+  }
+
+  return (
+    <section
+      className={`
+        relative min-h-[190px] overflow-hidden rounded-2xl
+        border border-white/10 bg-[#0b0d10]
+        ${className}
+      `}
+    >
+      {/* Background image */}
+      {backgroundImage && (
+        <img
+          src={backgroundImage}
+          alt=""
+          aria-hidden="true"
+          className="
+            pointer-events-none absolute inset-0
+            h-full w-full object-cover object-center
+            select-none
+          "
+        />
+      )}
+
+      {/* Main dark overlay */}
+      <div
+        className="
+          pointer-events-none absolute inset-0
+          bg-[linear-gradient(90deg,rgba(8,10,13,0.98)_0%,rgba(18,8,11,0.94)_30%,rgba(20,6,9,0.72)_47%,rgba(5,8,11,0.18)_72%,rgba(5,8,11,0.30)_100%)]
+        "
+      />
+
+
+      {/* optional right content */}
+      {rightContent && (
+        <div className="absolute end-5 top-5 z-20">
+          {rightContent}
+        </div>
+      )}
+
+      <div
+        className="
+          relative z-10 flex min-h-[190px]
+          items-center px-6 py-6
+          sm:px-8 lg:px-9
+        "
+      >
+        <div className="max-w-[620px]">
+          {/* Back button */}
+          {showBackButton && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleBackClick}
+              className="
+                mb-4 -ms-2
+                text-white/65 hover:bg-white/10 hover:text-white
+              "
+            >
+              <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" />
+
+              {backButtonLabel || "Back"}
+            </Button>
+          )}
+
+          {/* eyebrow */}
+          {eyebrow && (
+            <p
+              className="
+                mb-4 text-[10px] font-semibold uppercase
+                tracking-[0.34em] text-white/55
+                sm:text-[11px]
+              "
+            >
+              {eyebrow}
+            </p>
+          )}
+
+          {/* title */}
+          <h1
+            className="
+              text-2xl font-bold leading-tight tracking-tight text-white
+              sm:text-3xl
+            "
+          >
+            {renderTitle()}
+          </h1>
+
+          {/* description */}
+          {description && (
+            <p
+              className="
+                mt-3 max-w-[470px]
+                text-sm leading-5 text-white/75
+                sm:text-[15px] sm:leading-6
+              "
+            >
+              {description}
+            </p>
+          )}
+
+          {/* date and time */}
+          {showDateTime && (
+            <div className="mt-5 flex flex-wrap items-center gap-5">
+              <div className="flex items-center gap-2 text-xs text-white/70">
+                <Calendar className="h-4 w-4 text-[#F0142F]" />
+                <span>{formattedDate}</span>
+              </div>
+
+              <span className="hidden h-3 w-px bg-white/20 sm:block" />
+
+              <div className="flex items-center gap-2 text-xs text-white/70">
+                <Clock className="h-4 w-4 text-[#F0142F]" />
+                <span>{formattedTime}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default PageHeader

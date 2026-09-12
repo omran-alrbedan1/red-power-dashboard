@@ -30,18 +30,18 @@ export const ComboboxField: React.FC<ComboboxFieldProps> = ({
       <Button
         variant="outline"
         className={cn(
-          "w-full justify-between text-start font-normal",
-          !field.value && "text-muted-foreground",
+"w-full justify-between text-start font-normal",
+          !field.value && "text-text-secondary",
           inputClassName
         )}
         disabled={disabled}
         onClick={() => setOpen(!open)}
       >
         {selectedOption ? selectedOption.label : placeholder || "Select option"}
-        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        <ChevronDown className="ms-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-white border rounded-md shadow-lg w-full">
+        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg w-full">
           <Command>
             <CommandInput
               placeholder="Search options..."
@@ -62,7 +62,7 @@ export const ComboboxField: React.FC<ComboboxFieldProps> = ({
                   >
                     <Check
                       className={cn(
-                        "mr-2 h-4 w-4",
+                        "me-2 h-4 w-4",
                         field.value === option.value ? "opacity-100" : "opacity-0"
                       )}
                     />

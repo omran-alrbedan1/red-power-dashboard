@@ -39,14 +39,14 @@ export const TimePickerField: React.FC<TimePickerFieldProps> = ({
       <Button
         variant="outline"
         className={cn(
-          "w-full justify-start text-start font-normal",
-          !field.value && "text-muted-foreground",
+"w-full justify-start text-start font-normal",
+          !field.value && "text-text-secondary",
           inputClassName
         )}
         disabled={disabled}
         onClick={() => setOpen(!open)}
       >
-        <Clock className="mr-2 h-4 w-4" />
+        <Clock className="me-2 h-4 w-4" />
         {field.value ? (
           format(new Date(field.value), timeOptions?.format || "p")
         ) : (
@@ -54,7 +54,7 @@ export const TimePickerField: React.FC<TimePickerFieldProps> = ({
         )}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-white border rounded-md shadow-lg">
+        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg">
           <div className="max-h-60 overflow-y-auto p-2">
             {timeSlots.map((time, index) => (
               <Button

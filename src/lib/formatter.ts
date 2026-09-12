@@ -27,6 +27,10 @@ export function formatCurrency(
   }
 }
 
+export function formatNumber(value: number, locale?: string): string {
+  return new Intl.NumberFormat(locale).format(value)
+}
+
 export function formatDate(date: Date | string, locale = "ar-SA"): string {
   return new Intl.DateTimeFormat(locale, {
     year: "numeric",

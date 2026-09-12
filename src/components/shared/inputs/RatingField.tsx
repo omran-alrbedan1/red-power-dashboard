@@ -34,7 +34,7 @@ export const RatingField: React.FC<RatingFieldProps> = ({
               "h-6 w-6",
               rating <= (hoveredRating || field.value || 0)
                 ? "fill-primary text-primary"
-                : "text-muted-foreground"
+                : "text-text-muted"
             )}
           />
         </button>

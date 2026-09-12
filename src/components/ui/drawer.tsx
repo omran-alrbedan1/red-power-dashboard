@@ -50,8 +50,8 @@ const DrawerContent = React.forwardRef<
       className={cn(
         "fixed z-50 flex h-auto flex-col border bg-background",
         direction === "bottom" && "inset-x-0 bottom-0 mt-24 rounded-t-[10px]",
-        direction === "left" && "inset-y-0 left-0 w-64 rounded-r-[10px]",
-        direction === "right" && "inset-y-0 right-0 w-64 rounded-l-[10px]",
+        direction === "left" && "inset-y-0 start-0 w-64 rounded-e-[10px]",
+        direction === "right" && "inset-y-0 end-0 w-64 rounded-s-[10px]",
         direction === "top" && "inset-x-0 top-0 rounded-b-[10px]",
         className
       )}
@@ -73,7 +73,7 @@ const DrawerHeader = ({
   ...props
 }: DrawerHeaderProps) => (
   <div
-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
+    className={cn("grid gap-1.5 p-4 text-center sm:text-start", className)}
     {...props}
   />
 )

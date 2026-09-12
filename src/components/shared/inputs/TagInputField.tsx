@@ -23,12 +23,20 @@ export const TagInputField: React.FC<TagInputFieldProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
-  
+  const { maxTags, allowDuplicates } = tagInputOptions || {}
+
   const handleAddTag = (tag: string) => {
     const trimmedTag = tag.trim()
-    if (trimmedTag && !field.value?.includes(trimmedTag)) {
-      field.onChange([...(field.value || []), trimmedTag])
+    const currentTags: string[] = field.value || []
+    if (
+      !trimmedTag ||
+      (maxTags !== undefined && currentTags.length >= maxTags) ||
+      (!allowDuplicates && currentTags.includes(trimmedTag))
+    ) {
+      setInputValue("")
+      return
     }
+    field.onChange([...currentTags, trimmedTag])
     setInputValue("")
   }
   
@@ -46,7 +54,7 @@ export const TagInputField: React.FC<TagInputFieldProps> = ({
   }
   
   return (
-    <div className={cn("flex flex-wrap gap-2 p-2 border rounded-md", inputClassName)}>
+    <div className={cn("flex flex-wrap gap-2 p-2 border border-border rounded-md", inputClassName)}>
       {field.value?.map((tag: string) => (
         <Badge key={tag} variant="secondary" className="flex items-center gap-1">
           {tag}

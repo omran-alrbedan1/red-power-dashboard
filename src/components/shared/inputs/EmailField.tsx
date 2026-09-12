@@ -46,9 +46,8 @@ export const EmailField: React.FC<EmailFieldProps> = ({
         disabled={disabled}
         className={cn(
           inputClassName,
-          "px-6 py-5 text-base",
-          hasLeftIcon && "pl-14",
-          hasRightIcon && "pr-14"
+          hasLeftIcon && "ps-14",
+          hasRightIcon && "pe-14"
         )}
         aria-label={ariaLabel}
         aria-describedby={ariaDescribedBy}

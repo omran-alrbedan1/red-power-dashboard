@@ -147,14 +147,14 @@ export function CustomFilter<T extends FieldValues>({
   };
 
   return (
-    <div className={"rounded-lg border bg-card p-3 sm:p-4 shadow-sm transition-shadow duration-200 hover:shadow-md " + className}>
+    <div className={"rounded-lg border border-border bg-card p-3 shadow-sm sm:p-4 " + className}>
       {/* Header */}
-      <div className="mb-3 sm:mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-3 flex flex-col gap-2 sm:mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <div className="rounded-lg bg-primary/10 p-1.5">
             <SlidersHorizontal className="h-4 w-4 text-primary" />
           </div>
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-text">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-text-primary">
             {title}
             {hasActive && (
               <Badge
@@ -172,13 +172,13 @@ export function CustomFilter<T extends FieldValues>({
           size="sm"
           onClick={handleReset}
           disabled={!hasActive}
-          className="group/btn h-8 px-3 text-xs transition-all duration-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+          className="group/btn h-9 px-3 text-xs text-text-secondary transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
         >
-          <FilterX className="mr-1.5 h-3.5 w-3.5 transition-transform group-hover/btn:rotate-12" />
+          <FilterX className="me-1.5 h-3.5 w-3.5 transition-transform group-hover/btn:rotate-12" />
           <span className="hidden sm:inline">{t('reset') || 'Reset Filters'}</span>
           <span className="sm:hidden">{t('reset') || 'Reset'}</span>
           {hasActive && (
-            <span className="ml-1.5 rounded-full bg-primary px-1.5 py-0 text-xs text-white transition-all group-hover/btn:bg-red-500">
+            <span className="ms-1.5 rounded-full bg-primary px-1.5 py-0 text-xs text-white transition-colors group-hover/btn:bg-primary-dark">
               {activeFilters.length}
             </span>
           )}
@@ -195,7 +195,7 @@ export function CustomFilter<T extends FieldValues>({
               return (
                 <div key={String(filter.name)}>
                   <label className="mb-1.5 block text-xs font-medium text-text-secondary">
-                    <Icon className="mr-1 inline-block h-3.5 w-3.5 text-primary" />
+                    <Icon className="me-1 inline-block h-3.5 w-3.5 text-primary" />
                     {filter.label}
                   </label>
                   <CustomFormField
@@ -203,7 +203,7 @@ export function CustomFilter<T extends FieldValues>({
                     control={control}
                     name={filter.name}
                     placeholder={filter.placeholder ?? filter.label}
-                    inputClassName="h-8 md:h-10  text-sm"
+                    inputClassName="h-9 text-sm"
                     leftIcon={filter.type === 'text' ? Icon : undefined}
                     iconPosition="left"
                     options={filter.options}
@@ -215,7 +215,7 @@ export function CustomFilter<T extends FieldValues>({
               type="submit"
               disabled={isLoading}
               size="sm"
-              className="w-full h-8 text-sm text-white"
+              className="w-full h-9 text-sm text-white"
             >
               {isLoading ? t('processing') || 'Applying...' : t('filter') || 'Apply Filters'}
             </Button>
@@ -232,7 +232,7 @@ export function CustomFilter<T extends FieldValues>({
                   style={{ minWidth: filter.minWidth ?? '150px' }}
                 >
                   <label className="mb-1.5 block text-xs font-medium text-text-secondary">
-                    <Icon className="mr-1 inline-block h-3.5 w-3.5 text-primary" />
+                    <Icon className="me-1 inline-block h-3.5 w-3.5 text-primary" />
                     {filter.label}
                   </label>
                   <CustomFormField
@@ -240,7 +240,7 @@ export function CustomFilter<T extends FieldValues>({
                     control={control}
                     name={filter.name}
                     placeholder={filter.placeholder ?? filter.label}
-                    inputClassName="h-10 text-sm p-2"
+                    inputClassName="h-9 text-sm"
                     leftIcon={filter.type === 'text' ? Icon : undefined}
                     iconPosition="left"
                     options={filter.options}
@@ -253,7 +253,7 @@ export function CustomFilter<T extends FieldValues>({
               type="submit"
               disabled={isLoading}
               size="sm"
-              className="h-9 mb-0.5 px-4 text-sm text-white"
+              className="h-9 px-4 text-sm text-white"
             >
               {isLoading ? t('apply') : t('apply') || 'Apply'}
             </Button>
@@ -292,7 +292,7 @@ export function CustomFilter<T extends FieldValues>({
                 <span className="sm:hidden">{filter.label}: </span>
                 {label}
                 <XCircle
-                  className="ml-1 h-3 w-3 cursor-pointer transition-colors hover:text-red-500"
+                  className="ms-1 h-3 w-3 cursor-pointer transition-colors hover:text-primary"
                   onClick={() => clearField(filter.name)}
                 />
               </Badge>

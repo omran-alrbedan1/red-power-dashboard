@@ -94,7 +94,7 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
           type="button"
           variant="destructive"
           size="sm"
-          className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute -top-2 -end-2 h-6 w-6 rounded-full p-0 opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={() => handleRemoveFile(index)}
         >
           <X className="h-3 w-3" />
@@ -108,7 +108,7 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
       <div
         className={cn(
           "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors",
-          dragActive ? "border-primary bg-primary/10" : "border-muted-foreground/25",
+          dragActive ? "border-primary bg-primary/10" : "border-text-secondary/25",
           inputClassName
         )}
         onDragEnter={handleDrag}
@@ -117,8 +117,8 @@ export const FileUploadField: React.FC<FileUploadFieldProps> = ({
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
       >
-        <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-        <p className="text-sm text-muted-foreground">
+        <Upload className="mx-auto mb-2 h-8 w-8 text-text-muted" />
+        <p className="text-sm text-text-secondary">
           {placeholder || "Drag and drop files here, or click to select"}
         </p>
         <input

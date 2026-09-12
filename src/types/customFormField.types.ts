@@ -1,7 +1,11 @@
+import type { Control, FieldValues, Path } from "react-hook-form"
+import type { LucideIcon } from "lucide-react"
+
 export interface Option {
   label: string
   value: string
   disabled?: boolean
+  icon?: LucideIcon | string
 }
 
 export interface DateOption {
@@ -35,10 +39,10 @@ export type ColorOption = {
   value: string
 }
 
-export interface CustomFormFieldProps<T> {
+export interface CustomFormFieldProps<T extends FieldValues = FieldValues> {
   fieldType: string
-  control: any
-  name: string
+  control: Control<T>
+  name: Path<T>
   label?: string
   description?: string
   required?: boolean
@@ -71,7 +75,10 @@ export interface CustomFormFieldProps<T> {
   autocompleteOptions?: Option[]
   colorPickerOptions?: ColorOption[]
   otpLength?: number
-  tagInputOptions?: Option[]
+  tagInputOptions?: {
+    maxTags?: number
+    allowDuplicates?: boolean
+  }
   ariaLabel?: string
   ariaDescribedBy?: string
   currency?: string

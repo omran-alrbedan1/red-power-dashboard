@@ -31,15 +31,53 @@
     "notifications": "Notifications"
   },
   "dashboard": {
+    "workshopManagement": "Workshop Management",
     "welcome": "Welcome to Red Power",
     "subtitle": "Workshop Management Dashboard",
+    "statsError": "Unable to load maintenance statistics",
     "statCards": {
       "openCards": "Open Cards",
+      "totalMaintenance": "Total maintenance cards",
+      "activeWorkshop": "Active in workshop",
       "closedCards": "Closed Cards",
+      "completedMaintenance": "Completed maintenance",
+      "successfullyClosed": "Successfully closed",
       "todayReceived": "Received Today",
-      "totalCards": "Total Cards"
+      "newMaintenance": "New maintenance cards",
+      "todayIntake": "Today's intake",
+      "totalCards": "Total Cards",
+      "allMaintenance": "All maintenance cards",
+      "systemTotal": "System total"
     },
-    "viewMaintenance": "View all maintenance cards"
+    "entities": {
+      "customers": "Customers",
+      "customersDescription": "Registered workshop customers",
+      "totalCustomers": "Total customers",
+      "vehicles": "Vehicles",
+      "vehiclesDescription": "Vehicles registered in the workshop",
+      "totalVehicles": "Total vehicles"
+    },
+    "recentMaintenance": {
+      "title": "Recent Maintenance Cards",
+      "description": "Latest cards received by the workshop",
+      "error": "Unable to load maintenance cards",
+      "empty": "No maintenance cards yet",
+      "emptyDescription": "New workshop receipts will appear here.",
+      "card": "Card",
+      "received": "Received"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Common workshop tasks",
+      "createMaintenance": "Create Maintenance Card",
+      "createMaintenanceDescription": "Register a vehicle visit",
+      "customers": "Customers",
+      "customersDescription": "Manage workshop customers",
+      "vehicles": "Vehicles",
+      "vehiclesDescription": "Browse customer vehicles",
+      "maintenance": "All Maintenance Cards",
+      "maintenanceDescription": "Browse workshop receipts"
+    }
   },
   "common": {
     "loading": "Loading...",
@@ -65,11 +103,17 @@
     "filters": "Filters",
     "active": "active",
     "activeFilters": "Active filters:",
+    "viewAll": "View All",
+    "customer": "Customer",
+    "vehicle": "Vehicle",
+    "retry": "Try again",
     "reset": "Reset",
     "apply": "Apply",
     "table": {
       "showing": "Showing {{from}} to {{to}} of {{total}} results",
-      "noData": "No data"
+      "noData": "No data",
+      "view": "View details",
+      "pagination": "Pagination"
     }
   },
   "maintenance": {

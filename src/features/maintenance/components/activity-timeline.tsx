@@ -45,7 +45,7 @@ export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ events }) =>
             className={cn(
               "relative flex gap-4 pb-4",
               index !== events.length - 1 &&
-                "border-r border-border/30 pr-4 rtl:border-l rtl:pr-0 rtl:pl-4"
+                "border-e border-border/30 pe-4"
             )}
           >
             <div className="flex shrink-0 items-start">
