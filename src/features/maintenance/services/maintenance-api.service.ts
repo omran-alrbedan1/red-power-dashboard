@@ -1,4 +1,5 @@
 import { apiRequest, apiUpload, apiDownload } from "@/lib/api/client"
+import { cleanParams } from "@/lib/api/params"
 import type { ApiPaginated } from "@/lib/api/contracts"
 import type {
   ApiMaintenanceCardDetail,
@@ -11,6 +12,7 @@ import type {
 import type {
   MaintenanceCardDetail,
   MaintenanceCardListRow,
+  PersistedWorkStatus,
 } from "../types/maintenance-detail.types"
 import type { MaintenanceCardSummary } from "../types/summary.types"
 import { mapDetail, mapListRow } from "./maintenance.mapper"
@@ -45,14 +47,17 @@ export interface UpdateWorkItemInput {
   isRequired?: boolean
   estimatedCost?: number | null
   displayOrder?: number
-  status?: "pending" | "in_progress" | "completed" | "cancelled"
+  status?: PersistedWorkStatus
 }
 
 export const maintenanceApi = {
   create: (input: CreateMaintenanceCardInput) =>
     apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: "/maintenance-cards", data: input }).then(toDetail),
   list: (params: MaintenanceCardListParams) =>
-    apiRequest<ApiPaginated<ApiMaintenanceCardListRow>>({ url: "/maintenance-cards", params }).then(
+    apiRequest<ApiPaginated<ApiMaintenanceCardListRow>>({
+      url: "/maintenance-cards",
+      params: cleanParams({ ...params }),
+    }).then(
       (page) => ({
         ...page,
         items: page.items.map(mapListRow),
@@ -86,18 +91,24 @@ export const maintenanceApi = {
     apiDownload(`/maintenance-cards/${cardId}/photos/${photoId}`),
   downloadSignature: (cardId: number) =>
     apiDownload(`/maintenance-cards/${cardId}/signature`),
-  dashboardStats: async () => {
-    const stats = await apiRequest<DashboardStatsResponse>({ url: "/dashboard/stats" })
-    return {
-      draft: 0,
-      open: stats.maintenance.openCards,
-      in_progress: 0,
-      waiting_parts: 0,
-      ready_for_delivery: 0,
-      closed: stats.maintenance.closedCards,
-      cancelled: 0,
-    }
-  },
+  dashboardStats: () =>
+    apiRequest<DashboardStatsResponse>({ url: "/dashboard/stats" }).then(
+      (stats) => ({
+        maintenance: {
+          openCards: stats.maintenance.openCards,
+          closedCards: stats.maintenance.closedCards,
+          todayReceived: stats.maintenance.todayReceived,
+          totalCards: stats.maintenance.totalCards,
+        },
+        customers: stats.customers,
+        vehicles: stats.vehicles,
+      }),
+    ),
+  /**
+   * @deprecated Prefer customerService.getHistory which uses the dedicated
+   * /customers/:id/maintenance-history endpoint. Kept for legacy mock
+   * compatibility; returns the same fields the maintenance list exposes.
+   */
   customerHistory: (customerId: number, page = 1, limit = 10) =>
     maintenanceApi
       .list({ customerId, page, limit })
@@ -120,13 +131,10 @@ interface DashboardStatsResponse {
 
 function toSummary(row: MaintenanceCardListRow): MaintenanceCardSummary {
   return {
-    id: String(row.id),
+    id: row.id,
     receiptNumber: row.cardNumber,
     status: row.status,
     createdAt: row.receivedAt,
-    workCount: 0,
-    pendingWork: 0,
-    totalCost: 0,
   }
 }
 

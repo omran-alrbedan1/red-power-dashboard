@@ -1,7 +1,12 @@
+import type {
+  ApiMaintenanceCardStatus,
+  ApiMaintenanceWorkStatus,
+} from "../constants/status"
+
 export type ApiFuelLevel = "EMPTY" | "QUARTER" | "HALF" | "THREE_QUARTERS" | "FULL"
-export type ApiCardStatus = "OPEN" | "CLOSED"
+export type ApiCardStatus = ApiMaintenanceCardStatus
 export type ApiTransmission = "AUTOMATIC" | "MANUAL"
-export type ApiWorkStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED"
+export type ApiWorkStatus = ApiMaintenanceWorkStatus
 export type MaintenanceOptionKind = "visit-reasons" | "vehicle-conditions" | "vehicle-items"
 
 export interface MaintenanceOption {

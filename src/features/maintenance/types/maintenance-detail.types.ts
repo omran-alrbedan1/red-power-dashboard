@@ -1,12 +1,8 @@
-import type { MaintenanceOption } from "./api-maintenance.types"
+import type { ApiCardStatus, MaintenanceOption, ApiWorkStatus } from "./api-maintenance.types"
 
-export type MaintenanceCardStatus = "open" | "closed"
+export type MaintenanceCardStatus = Lowercase<ApiCardStatus>
 
-export type PersistedWorkStatus =
-  | "pending"
-  | "in_progress"
-  | "completed"
-  | "cancelled"
+export type PersistedWorkStatus = Lowercase<ApiWorkStatus>
 
 export interface MaintenanceCardListRow {
   id: number

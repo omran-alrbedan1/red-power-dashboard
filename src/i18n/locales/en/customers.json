@@ -76,16 +76,13 @@
     }
   },
   "history": {
-    "title": "Complete History",
-    "visits": "Visits",
-    "work": "Work",
+    "title": "Maintenance History",
     "status": "Status",
     "noHistory": "No history yet",
+    "loading": "Loading history…",
     "statuses": {
-      "pending": "Pending",
-      "in_progress": "In Progress",
-      "completed": "Completed",
-      "cancelled": "Cancelled"
+      "open": "Open",
+      "closed": "Closed"
     }
   }
 }

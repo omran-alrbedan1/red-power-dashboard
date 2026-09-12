@@ -35,14 +35,9 @@
     "subtitle": "لوحة تحكم إدارة الورشة",
     "statCards": {
       "openCards": "البطاقات المفتوحة",
-      "inProgress": "قيد التنفيذ",
-      "waitingParts": "بانتظار القطع",
-      "readyForDelivery": "جاهزة للتسليم",
       "closedCards": "البطاقات المغلقة",
-      "todayVisits": "زيارات اليوم",
-      "pendingWork": "العمل المعلق",
-      "completedThisWeek": "مكتمل هذا الأسبوع",
-      "vsLastMonth": "مقارنة بالشهر الماضي: {{value}}"
+      "todayReceived": "وصلت اليوم",
+      "totalCards": "إجمالي البطاقات"
     },
     "viewMaintenance": "عرض كل بطاقات الصيانة"
   },

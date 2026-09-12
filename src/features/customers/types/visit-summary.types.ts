@@ -1,23 +1,26 @@
-export type WorkStatus = "pending" | "in_progress" | "completed" | "cancelled"
+export type CustomerHistoryStatus = "OPEN" | "CLOSED"
 
-export interface VisitSummary {
-  id: string
-  vehicleId: string
+export interface CustomerHistoryItem {
+  id: number
   receiptNumber: string
-  date: string
-  reason: string
-  status: WorkStatus
+  status: CustomerHistoryStatus
+  entryDate: string
+  deliveryDate?: string | null
+  mileage: number
+  vehicle: {
+    id: number
+    plateNumber: string
+    make: string
+    model: string
+    vin?: string | null
+  } | null
 }
 
-export interface WorkItemSummary {
-  id: string
-  visitId: string
-  description: string
-  estimatedCost?: number
-  status: WorkStatus
-}
-
-export interface CustomerHistory {
-  visits: VisitSummary[]
-  workItems: WorkItemSummary[]
+export interface CustomerHistoryPage {
+  data: CustomerHistoryItem[]
+  meta: {
+    page: number
+    limit: number
+    total: number
+  }
 }

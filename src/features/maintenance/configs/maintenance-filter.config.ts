@@ -1,6 +1,7 @@
 import { ListFilter, CalendarDays, Search } from "lucide-react"
 import type { DateRange } from "react-day-picker"
 import type { FilterField } from "@/components/shared/custom/CustomFilter"
+import type { MaintenanceCardStatus } from "../types/maintenance-detail.types"
 
 export interface MaintenanceFilterValues {
   search: string
@@ -14,7 +15,7 @@ export const maintenanceFilterDefaultValues: MaintenanceFilterValues = {
   receivedAt: undefined,
 }
 
-export const PERSISTED_STATUSES = ["open", "closed"] as const
+export const PERSISTED_STATUSES: readonly MaintenanceCardStatus[] = ["open", "closed"]
 
 export const maintenanceFilterFields = (
   t: (key: string) => string,

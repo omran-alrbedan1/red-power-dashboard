@@ -14,7 +14,6 @@ import {
 import ErrorState from "@/components/shared/states/ErrorState"
 import { useCustomer } from "../hooks/useCustomer"
 import { useAddVehicle } from "../hooks/useCustomers"
-import { useHistorySource } from "../../maintenance/hooks/useHistorySource"
 import { CustomerVehicles } from "../components/customer-vehicles"
 import { CustomerHistoryView } from "../components/customer-history"
 import { VehicleForm } from "../components/vehicle-form"
@@ -47,8 +46,6 @@ const CustomerDetailsPage: React.FC = () => {
   const { customer, vehicles, history, isLoading, isError, error, refetch } =
     useCustomer(customerId)
   const addVehicle = useAddVehicle()
-  const { data: maintenanceCards } = useHistorySource(customerId)
-  const maintenanceCardsList = maintenanceCards?.data
 
   if (isError) {
     console.error("Error loading customer:", error)
@@ -121,7 +118,7 @@ const CustomerDetailsPage: React.FC = () => {
         onAddClick={() => setVehicleDialogOpen(true)}
       />
 
-      <CustomerHistoryView history={history} isLoading={isLoading} maintenanceCards={maintenanceCardsList} />
+      <CustomerHistoryView history={history} isLoading={isLoading} />
 
       <Dialog open={vehicleDialogOpen} onOpenChange={setVehicleDialogOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">

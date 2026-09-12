@@ -1,3 +1,7 @@
+/**
+ * @deprecated Legacy mock-only work statuses. Use PersistedWorkStatus
+ * (maintenance-detail.types.ts) for API-backed work items.
+ */
 export type WorkStatus = "pending" | "in_progress" | "completed" | "cancelled"
 
 export interface WorkItem {

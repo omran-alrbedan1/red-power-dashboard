@@ -3,6 +3,11 @@ import type { WorkItem } from "./work-item.types"
 import type { Approval } from "./approval.types"
 import type { ActivityEvent, StatusEvent } from "./activity.types"
 
+/**
+ * @deprecated Legacy mock-only card statuses. The backend persists only
+ * OPEN/CLOSED; use MaintenanceCardStatus (maintenance-detail.types.ts) for
+ * API-backed flows.
+ */
 export type MaintenanceStatus =
   | "draft"
   | "open"

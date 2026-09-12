@@ -2,7 +2,7 @@ import { apiRequest } from "@/lib/api/client"
 import type { ApiPaginated } from "@/lib/api/contracts"
 import type { Customer } from "../types/customer.types"
 import type { Vehicle, TransmissionType, VehicleOwnership } from "../types/vehicle.types"
-import type { CustomerHistory } from "../types/visit-summary.types"
+import type { CustomerHistoryItem, CustomerHistoryPage } from "../types/visit-summary.types"
 
 export interface CustomerInput { name: string; phone: string; email?: string }
 export interface VehicleInput {
@@ -51,15 +51,53 @@ export const customerService = {
     return mapVehicle(await apiRequest<ApiVehicle>({ method: "POST", url: "/vehicles", data: { customerId, ...vehiclePayload(input) } }))
   },
   transferOwnership: (vehicleId: number, customerId: number) => apiRequest<VehicleOwnership>({ method: "POST", url: `/vehicles/${vehicleId}/transfer-ownership`, data: { customerId } }),
-  async getHistory(customerId: number): Promise<CustomerHistory> {
-    const response = await apiRequest<{ history: ApiPaginated<{ id: number; cardNumber: string; receivedAt: string; status: string; vehicleOwnership: { vehicle: { id: number } } }> }>({
-      url: `/customers/${customerId}/maintenance-history`, params: { page: 1, limit: 20 },
+  async getHistory(customerId: number, page = 1, limit = 20): Promise<CustomerHistoryPage> {
+    const response = await apiRequest<{
+      customer: unknown
+      history: ApiPaginated<ApiCustomerHistoryItem>
+    }>({
+      url: `/customers/${customerId}/maintenance-history`,
+      params: { page, limit },
     })
     return {
-      visits: response.history.items.map((card) => ({
-        id: String(card.id), vehicleId: String(card.vehicleOwnership.vehicle.id), receiptNumber: card.cardNumber,
-        date: card.receivedAt, reason: "", status: card.status.toLowerCase() as CustomerHistory["visits"][number]["status"],
-      })), workItems: [],
+      data: response.history.items.map(mapHistoryItem),
+      meta: response.history.meta,
     }
   },
+}
+
+interface ApiCustomerHistoryItem {
+  id: number
+  cardNumber: string
+  status: "OPEN" | "CLOSED"
+  receivedAt: string
+  expectedDeliveryAt?: string | null
+  mileage: number
+  vehicleOwnership: {
+    id: number
+    startedAt: string
+    endedAt?: string | null
+    vehicle: { id: number; make: string; model: string; plateNumber: string; vin?: string | null }
+  } | null
+}
+
+const mapHistoryItem = (item: ApiCustomerHistoryItem): CustomerHistoryItem => {
+  const vehicle = item.vehicleOwnership?.vehicle
+  return {
+    id: item.id,
+    receiptNumber: item.cardNumber,
+    status: item.status,
+    entryDate: item.receivedAt,
+    deliveryDate: item.expectedDeliveryAt ?? null,
+    mileage: item.mileage,
+    vehicle: vehicle
+      ? {
+          id: vehicle.id,
+          plateNumber: vehicle.plateNumber,
+          make: vehicle.make,
+          model: vehicle.model,
+          vin: vehicle.vin ?? null,
+        }
+      : null,
+  }
 }

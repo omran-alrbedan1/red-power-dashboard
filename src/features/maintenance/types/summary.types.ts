@@ -1,19 +1,8 @@
-import type { MaintenanceStatus } from "./maintenance.types"
-import type { WorkStatus } from "./work-item.types"
+import type { MaintenanceCardStatus } from "./maintenance-detail.types"
 
 export interface MaintenanceCardSummary {
-  id: string
+  id: number
   receiptNumber: string
-  status: MaintenanceStatus
+  status: MaintenanceCardStatus
   createdAt: string
-  workCount: number
-  pendingWork: number
-  totalCost: number
-}
-
-export interface WorkItemSummaryRow {
-  id: string
-  description: string
-  estimatedCost: number
-  status: WorkStatus
 }

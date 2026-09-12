@@ -24,6 +24,16 @@ interface ApiSessionHandlers {
 
 const baseURL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1").replace(/\/$/, "")
 
+if (!import.meta.env.VITE_API_BASE_URL) {
+  const isProduction = import.meta.env.PROD
+  if (isProduction) {
+    throw new Error("VITE_API_BASE_URL is not configured")
+  }
+  console.warn(
+    "VITE_API_BASE_URL is not configured; falling back to http://localhost:3000/api/v1",
+  )
+}
+
 const http = axios.create({ baseURL })
 let sessionHandlers: ApiSessionHandlers | null = null
 let refreshPromise: Promise<SessionTokens> | null = null

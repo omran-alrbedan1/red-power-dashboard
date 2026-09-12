@@ -76,16 +76,13 @@
     }
   },
   "history": {
-    "title": "السجل الكامل",
-    "visits": "الزيارات",
-    "work": "الأعمال",
+    "title": "سجل الصيانة",
     "status": "الحالة",
     "noHistory": "لا يوجد سجل بعد",
+    "loading": "جاري تحميل السجل...",
     "statuses": {
-      "pending": "قيد الانتظار",
-      "in_progress": "قيد التنفيذ",
-      "completed": "مكتمل",
-      "cancelled": "ملغي"
+      "open": "مفتوحة",
+      "closed": "مغلقة"
     }
   }
 }
