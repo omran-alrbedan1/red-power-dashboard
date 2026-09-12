@@ -214,7 +214,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
       {/* Navigation */}
       <div
         className="
-          relative z-20 flex flex-1 flex-col
+          relative z-20 flex flex-1 flex-col -mt-8
           overflow-y-auto scrollbar-none px-4 pb-[235px]
         "
       >
