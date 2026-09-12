@@ -13,6 +13,20 @@
   "totalCost": "Total",
   "save": "Save Card",
   "saving": "Saving...",
+  "messages": {
+    "cardCreated": "Card created successfully",
+    "cardClosed": "Card closed successfully",
+    "cardReopened": "Card reopened successfully",
+    "photosUploaded": "Photos uploaded successfully",
+    "signatureUploaded": "Signature uploaded successfully"
+  },
+  "errors": {
+    "createFailed": "Failed to create the card",
+    "closeFailed": "Failed to close the card",
+    "reopenFailed": "Failed to reopen the card",
+    "reopenUnauthorized": "Only super admins can reopen cards",
+    "mediaUploadFailed": "Failed to upload the attached files"
+  },
   "units": {
     "km": "km"
   },

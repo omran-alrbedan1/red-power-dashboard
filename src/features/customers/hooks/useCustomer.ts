@@ -42,11 +42,15 @@ export function useCustomer(
       historyQuery.isLoading,
 
     isError:
-      customerQuery.isError ||
+      customerQuery.isError,
+
+    historyIsError:
       historyQuery.isError,
 
     error:
-      customerQuery.error ||
+      customerQuery.error,
+
+    historyError:
       historyQuery.error,
 
     refetch: async () => {
@@ -54,6 +58,10 @@ export function useCustomer(
         customerQuery.refetch(),
         historyQuery.refetch(),
       ])
+    },
+
+    refetchHistory: async () => {
+      await historyQuery.refetch()
     },
   }
 }

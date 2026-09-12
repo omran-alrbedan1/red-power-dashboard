@@ -44,7 +44,9 @@ const CustomerDetailsPage: React.FC = () => {
     history,
     isLoading,
     isError,
+    historyIsError,
     refetch,
+    refetchHistory,
   } = useCustomer(customerId)
 
   const addVehicle = useAddVehicle()
@@ -149,6 +151,8 @@ const CustomerDetailsPage: React.FC = () => {
       <CustomerHistoryView
         history={history}
         isLoading={isLoading}
+        isError={historyIsError}
+        onRetry={refetchHistory}
       />
 
       <AddVehicleDialog

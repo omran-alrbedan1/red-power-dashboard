@@ -146,6 +146,8 @@
     "description": "Previous workshop visits for this customer",
     "noHistory": "No maintenance history yet",
     "noHistoryDescription": "Maintenance records for this customer will appear here.",
+    "errorTitle": "Could not load maintenance history",
+    "errorDescription": "The maintenance records could not be loaded. Please try again.",
     "loading": "Loading history…",
     "statuses": {
       "open": "Open",

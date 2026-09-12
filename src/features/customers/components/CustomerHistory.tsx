@@ -6,6 +6,7 @@ import {
 } from "lucide-react"
 
 import EmptyState from "@/components/shared/states/EmptyState"
+import ErrorState from "@/components/shared/states/ErrorState"
 
 import type {
   CustomerHistoryPage,
@@ -16,6 +17,8 @@ import { CustomerHistoryItem } from "./CustomerHistoryItem"
 interface CustomerHistoryProps {
   history?: CustomerHistoryPage
   isLoading?: boolean
+  isError?: boolean
+  onRetry?: () => void
 }
 
 export const CustomerHistoryView: React.FC<
@@ -23,6 +26,8 @@ export const CustomerHistoryView: React.FC<
 > = ({
   history,
   isLoading = false,
+  isError = false,
+  onRetry,
 }) => {
   const { t } =
     useTranslation("customers")
@@ -104,8 +109,30 @@ export const CustomerHistoryView: React.FC<
         </div>
       )}
 
+      {/* Error */}
+      {!isLoading &&
+        isError && (
+          <div className="p-5">
+            <ErrorState
+              variant="default"
+              size="sm"
+              title={t(
+                "history.errorTitle",
+                "Could not load maintenance history",
+              )}
+              description={t(
+                "history.errorDescription",
+                "The maintenance records could not be loaded. Please try again.",
+              )}
+              retry={onRetry}
+              className="shadow-none"
+            />
+          </div>
+        )}
+
       {/* Empty */}
       {!isLoading &&
+        !isError &&
         items.length === 0 && (
           <EmptyState
             icon={FileText}
@@ -123,6 +150,7 @@ export const CustomerHistoryView: React.FC<
 
       {/* History */}
       {!isLoading &&
+        !isError &&
         items.length > 0 && (
           <div className="space-y-3 p-5">
             {items.map(

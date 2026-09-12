@@ -14,7 +14,6 @@ import type {
   MaintenanceCardListRow,
   PersistedWorkStatus,
 } from "../types/maintenance-detail.types"
-import type { MaintenanceCardSummary } from "../types/summary.types"
 import { mapDetail, mapListRow } from "./maintenance.mapper"
 
 export type { MaintenanceOptionKind, CreateMaintenanceCardInput }
@@ -91,27 +90,6 @@ export const maintenanceApi = {
     apiDownload(`/maintenance-cards/${cardId}/photos/${photoId}`),
   downloadSignature: (cardId: number) =>
     apiDownload(`/maintenance-cards/${cardId}/signature`),
-  /**
-   * @deprecated Prefer customerService.getHistory which uses the dedicated
-   * /customers/:id/maintenance-history endpoint. Kept for legacy mock
-   * compatibility; returns the same fields the maintenance list exposes.
-   */
-  customerHistory: (customerId: number, page = 1, limit = 10) =>
-    maintenanceApi
-      .list({ customerId, page, limit })
-      .then((result) => ({
-        data: result.items.map(toSummary),
-        meta: result.meta,
-      })),
-}
-
-function toSummary(row: MaintenanceCardListRow): MaintenanceCardSummary {
-  return {
-    id: row.id,
-    receiptNumber: row.cardNumber,
-    status: row.status,
-    createdAt: row.receivedAt,
-  }
 }
 
 function toDetail(detail: MaintenanceCardDetailApi): MaintenanceCardDetail {

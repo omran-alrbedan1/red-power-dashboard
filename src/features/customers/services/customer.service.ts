@@ -45,7 +45,7 @@ export const customerService = {
     const response = await apiRequest<Customer & { currentVehicles: ApiVehicle[] }>({ url: `/customers/${id}` })
     return {
       ...response,
-      currentVehicles: response.currentVehicles.map(mapVehicle),
+      currentVehicles: (response.currentVehicles ?? []).map(mapVehicle),
     }
   },
   create: (input: CustomerInput) => apiRequest<Customer>({ method: "POST", url: "/customers", data: customerPayload(input) }),
@@ -65,8 +65,8 @@ export const customerService = {
       params: { page, limit },
     })
     return {
-      data: response.history.items.map(mapHistoryItem),
-      meta: response.history.meta,
+      data: (response.history?.items ?? []).map(mapHistoryItem),
+      meta: response.history?.meta ?? { page: 1, limit, total: 0 },
     }
   },
 }

@@ -13,6 +13,20 @@
   "totalCost": "الإجمالي",
   "save": "حفظ البطاقة",
   "saving": "جاري الحفظ...",
+  "messages": {
+    "cardCreated": "تم إنشاء البطاقة بنجاح",
+    "cardClosed": "تم إغلاق البطاقة بنجاح",
+    "cardReopened": "تم إعادة فتح البطاقة بنجاح",
+    "photosUploaded": "تم رفع الصور بنجاح",
+    "signatureUploaded": "تم رفع التوقيع بنجاح"
+  },
+  "errors": {
+    "createFailed": "تعذر إنشاء البطاقة",
+    "closeFailed": "تعذر إغلاق البطاقة",
+    "reopenFailed": "تعذر إعادة فتح البطاقة",
+    "reopenUnauthorized": "إعادة فتح البطاقات متاحة لمدير النظام فقط",
+    "mediaUploadFailed": "تعذر رفع الملفات المرفقة"
+  },
   "units": {
     "km": "كم"
   },
