@@ -62,6 +62,8 @@ export interface CustomFormFieldProps<T extends FieldValues = FieldValues> {
   iconPosition?: "left" | "right" | "both"
   iconClassName?: string
   options?: Option[]
+  searchPlaceholder?: string
+  emptyMessage?: string
   min?: number
   max?: number
   step?: number

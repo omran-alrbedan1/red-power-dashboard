@@ -12,7 +12,8 @@ interface DeliverySectionProps<T extends FieldValues> {
 export const DeliverySection = <T extends FieldValues>({
   control,
 }: DeliverySectionProps<T>) => {
-  const { t } = useTranslation("maintenance")
+  const { t, i18n } = useTranslation("maintenance")
+  const formDir = i18n.language === "ar" ? "rtl" : "ltr"
 
   return (
     <div className="space-y-4">
@@ -27,6 +28,7 @@ export const DeliverySection = <T extends FieldValues>({
           control={control}
           name={"approved" as Path<T>}
           label={t("approval.approved")}
+          dir={formDir}
         />
 
         <CustomFormField
@@ -37,7 +39,7 @@ export const DeliverySection = <T extends FieldValues>({
           placeholder={t("approval.customerName")}
           leftIcon={User}
           iconPosition="left"
-          dir="rtl"
+          dir={formDir}
         />
 
         <CustomFormField
@@ -46,7 +48,7 @@ export const DeliverySection = <T extends FieldValues>({
           name={"deliveryDate" as Path<T>}
           label={t("approval.deliveryDate")}
           dateOptions={{ placeholder: t("approval.deliveryDate") }}
-          dir="rtl"
+          dir={formDir}
         />
 
         <CustomFormField
@@ -55,7 +57,7 @@ export const DeliverySection = <T extends FieldValues>({
           name={"deliveryTime" as Path<T>}
           label={t("approval.deliveryTime")}
           timeOptions={{ placeholder: t("approval.deliveryTime") }}
-          dir="rtl"
+          dir={formDir}
         />
 
         <div className="sm:col-span-2">

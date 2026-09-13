@@ -13,7 +13,8 @@ interface VehicleFieldsProps<T extends FieldValues> {
 export const VehicleFields = <T extends FieldValues>({
   control,
 }: VehicleFieldsProps<T>) => {
-  const { t } = useTranslation("maintenance")
+  const { t, i18n } = useTranslation("maintenance")
+  const formDir = i18n.language === "ar" ? "rtl" : "ltr"
 
   const transmissionOptions: Option[] = [
     { value: "automatic", label: t("vehicle.transmission_type.automatic") },
@@ -32,7 +33,7 @@ export const VehicleFields = <T extends FieldValues>({
           required
           leftIcon={Factory}
           iconPosition="left"
-          dir="rtl"
+          dir={formDir}
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -43,7 +44,7 @@ export const VehicleFields = <T extends FieldValues>({
           required
           leftIcon={Car}
           iconPosition="left"
-          dir="rtl"
+          dir={formDir}
         />
       </div>
 
@@ -90,7 +91,7 @@ export const VehicleFields = <T extends FieldValues>({
         options={transmissionOptions}
         leftIcon={Cog}
         iconPosition="left"
-        dir="rtl"
+        dir={formDir}
       />
     </div>
   )

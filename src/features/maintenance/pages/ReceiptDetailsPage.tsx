@@ -12,6 +12,7 @@ import {
   History,
   LockKeyhole,
   Unlock,
+  Pencil,
 } from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -25,14 +26,17 @@ import { ReceiptHeader } from "../components/sections/ReceiptHeader"
 import { ActivityTimeline } from "../components/ActivityTimeline"
 import { CloseCardDialog } from "../components/CloseCardDialog"
 import { ClosureGuardBadge } from "../components/ClosureGuardBadge"
+import { EditReceiptCard } from "../components/sections/EditReceiptCard"
 import { formatDateTime } from "@/lib/formatter"
 
 const ReceiptDetailsPage: React.FC = () => {
   const { t, i18n } = useTranslation("maintenance")
+  const { t: tCommon } = useTranslation("common")
   const isAr = i18n.language === "ar"
   const { cardId } = useParams<{ cardId: string }>()
   const { user } = useAuth()
   const { data: card, isLoading, isError } = useMaintenanceCard(cardId)
+  const [isEditing, setIsEditing] = useState(false)
   const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
   const isCardClosed = card?.status === "closed"
   const isSuperAdmin = user?.role === "super_admin"
@@ -65,6 +69,10 @@ const ReceiptDetailsPage: React.FC = () => {
     return sum + cost
   }, 0)
 
+  const canClose = card.requiredWorks
+    .filter((work) => work.isRequired)
+    .every((work) => work.status === "completed" || work.status === "cancelled")
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
@@ -75,14 +83,29 @@ const ReceiptDetailsPage: React.FC = () => {
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 space-y-0">
           <ReceiptHeader
             receiptNumber={card.cardNumber}
             status={card.status}
             createdAt={card.receivedAt}
           />
+          {card.status !== "closed" && (
+            <Button
+              type="button"
+              variant={isEditing ? "outline" : "default"}
+              onClick={() => setIsEditing((editing) => !editing)}
+              className="gap-1.5"
+            >
+              <Pencil className="h-4 w-4" />
+              {isEditing ? tCommon("common.cancel") : t("editCard")}
+            </Button>
+          )}
         </CardHeader>
       </Card>
+
+      {isEditing && (
+        <EditReceiptCard card={card} onCancel={() => setIsEditing(false)} onSaved={() => setIsEditing(false)} />
+      )}
 
       {card.status !== "closed" && (
         <Card>
@@ -91,7 +114,7 @@ const ReceiptDetailsPage: React.FC = () => {
               <p className="font-medium text-text-primary">{t("closeCard.title")}</p>
               <p className="mt-1 text-sm text-muted-foreground">{t("closeCard.summary")}</p>
             </div>
-            <Button className="shrink-0" onClick={() => setIsCloseDialogOpen(true)}>
+            <Button className="shrink-0" onClick={() => setIsCloseDialogOpen(true)} disabled={!canClose}>
               <LockKeyhole className="h-4 w-4" />
               {t("closeCard.close")}
             </Button>
@@ -132,14 +155,14 @@ const ReceiptDetailsPage: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-muted-foreground">{t("customer.phone")}</label>
-              <p className="font-medium text-text-primary ltr" dir="ltr">
+              <p className="font-medium text-text-primary" dir="ltr">
                 {card.customer.phone}
               </p>
             </div>
             {card.customer.email && (
               <div className="sm:col-span-2">
                 <label className="text-xs text-muted-foreground">{t("customer.email")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
+                <p className="font-medium text-text-primary" dir="ltr">
                   {card.customer.email}
                 </p>
               </div>
@@ -167,14 +190,14 @@ const ReceiptDetailsPage: React.FC = () => {
             </div>
             <div>
               <label className="text-xs text-muted-foreground">{t("vehicle.plateNumber")}</label>
-              <p className="font-medium text-text-primary ltr" dir="ltr">
+              <p className="font-medium text-text-primary" dir="ltr">
                 {card.vehicle.plateNumber}
               </p>
             </div>
             {card.vehicle.manufactureYear && (
               <div>
                 <label className="text-xs text-muted-foreground">{t("vehicle.year")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
+                <p className="font-medium text-text-primary" dir="ltr">
                   {card.vehicle.manufactureYear}
                 </p>
               </div>
@@ -182,14 +205,14 @@ const ReceiptDetailsPage: React.FC = () => {
             {card.vehicle.vin && (
               <div>
                 <label className="text-xs text-muted-foreground">{t("vehicle.vin")}</label>
-                <p className="font-medium text-text-primary ltr" dir="ltr">
+                <p className="font-medium text-text-primary" dir="ltr">
                   {card.vehicle.vin}
                 </p>
               </div>
             )}
             <div>
               <label className="text-xs text-muted-foreground">{t("vehicle.mileage")}</label>
-              <p className="font-medium text-text-primary ltr" dir="ltr">
+              <p className="font-medium text-text-primary" dir="ltr">
                 {card.mileage} {t("units.km")}
               </p>
             </div>
@@ -205,6 +228,8 @@ const ReceiptDetailsPage: React.FC = () => {
         </CardContent>
       </Card>
 
+      {!isEditing && (
+      <>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">
@@ -317,7 +342,7 @@ const ReceiptDetailsPage: React.FC = () => {
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground">{t("work.estimate")}</label>
-                    <p className="font-medium text-text-primary ltr" dir="ltr">
+                    <p className="font-medium text-text-primary" dir="ltr">
                       {item.estimatedCost !== null ? item.estimatedCost : "-"}
                     </p>
                   </div>
@@ -381,6 +406,8 @@ const ReceiptDetailsPage: React.FC = () => {
         </CardContent>
       </Card>
 
+      </>
+      )}
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm">

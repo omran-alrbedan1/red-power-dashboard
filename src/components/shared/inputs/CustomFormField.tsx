@@ -142,10 +142,10 @@
           return <SelectField {...commonProps} placeholder={props.placeholder} options={options} />
         
         case FormFieldType.MULTI_SELECT:
-          return <MultiSelectField {...commonProps} placeholder={props.placeholder} options={options} />
+          return <MultiSelectField {...commonProps} placeholder={props.placeholder} options={options} searchPlaceholder={props.searchPlaceholder} emptyMessage={props.emptyMessage} />
         
         case FormFieldType.COMBOBOX:
-          return <ComboboxField {...commonProps} placeholder={props.placeholder} options={options} />
+          return <ComboboxField {...commonProps} placeholder={props.placeholder} options={options} searchPlaceholder={props.searchPlaceholder} emptyMessage={props.emptyMessage} />
         
         case FormFieldType.DATE_PICKER:
           return <DatePickerField {...commonProps} dateOptions={dateOptions} />

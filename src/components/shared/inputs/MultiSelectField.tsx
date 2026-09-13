@@ -1,16 +1,26 @@
-import React, { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
 import { ChevronDown, Check } from "lucide-react"
-import { Option } from "@/types/customFormField.types"
+import type { Option } from "@/types/customFormField.types"
+
 interface MultiSelectFieldProps {
   field: any
   placeholder?: string
   disabled?: boolean
   inputClassName?: string
   options?: Option[]
+  searchPlaceholder?: string
+  emptyMessage?: string
 }
 
 export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
@@ -19,60 +29,86 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
   disabled,
   inputClassName,
   options = [],
+  searchPlaceholder = "Search options...",
+  emptyMessage = "No options found",
 }) => {
   const [open, setOpen] = useState(false)
-  
-  const handleToggle = (value: string) => {
-    const currentValues = field.value || []
-    if (currentValues.includes(value)) {
-      field.onChange(currentValues.filter((v: string) => v !== value))
-    } else {
-      field.onChange([...currentValues, value])
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setOpen(false)
+      }
     }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("mousedown", handlePointerDown)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
+  const selectedValues: string[] = field.value ?? []
+
+  const handleToggle = (value: string) => {
+    field.onChange(
+      selectedValues.includes(value)
+        ? selectedValues.filter((item) => item !== value)
+        : [...selectedValues, value]
+    )
   }
-  
+
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <Button
+        type="button"
         variant="outline"
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
         className={cn(
-"w-full justify-start text-start font-normal",
-          !field.value?.length && "text-text-secondary",
+          "w-full justify-start text-start font-normal",
+          !selectedValues.length && "text-text-secondary",
           inputClassName
         )}
         disabled={disabled}
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((isOpen) => !isOpen)}
       >
-        <ChevronDown className="me-2 h-4 w-4" />
-        {field.value?.length ? (
-          <div className="flex gap-1 flex-wrap">
-            {field.value.map((value: string) => (
+        <ChevronDown className="me-2 h-4 w-4 shrink-0" />
+        {selectedValues.length ? (
+          <span className="flex flex-wrap gap-1">
+            {selectedValues.map((value) => (
               <Badge key={value} variant="secondary" className="text-xs">
-                {options.find((opt) => opt.value === value)?.label || value}
+                {options.find((option) => option.value === value)?.label ?? value}
               </Badge>
             ))}
-          </div>
+          </span>
         ) : (
-          placeholder || "Select options"
+          placeholder ?? "Select options"
         )}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg w-full">
+        <div className="absolute top-full z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-lg">
           <Command>
-            <CommandInput placeholder="Search options..." />
+            <CommandInput placeholder={searchPlaceholder} />
             <CommandList>
-              <CommandEmpty>No options found.</CommandEmpty>
+              <CommandEmpty>{emptyMessage}</CommandEmpty>
               <CommandGroup>
                 {options.map((option) => (
                   <CommandItem
                     key={option.value}
+                    value={option.label}
                     onSelect={() => handleToggle(option.value)}
                     disabled={option.disabled}
                   >
                     <Check
                       className={cn(
                         "me-2 h-4 w-4",
-                        field.value?.includes(option.value) ? "opacity-100" : "opacity-0"
+                        selectedValues.includes(option.value) ? "opacity-100" : "opacity-0"
                       )}
                     />
                     {option.label}

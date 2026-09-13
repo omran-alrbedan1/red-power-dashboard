@@ -15,7 +15,8 @@ interface WorkSectionProps<T extends FieldValues> {
 export const WorkSection = <T extends FieldValues>({
   control,
 }: WorkSectionProps<T>) => {
-  const { t } = useTranslation("maintenance")
+  const { t, i18n } = useTranslation("maintenance")
+  const formDir = i18n.language === "ar" ? "rtl" : "ltr"
   const { fields, append, remove } = useFieldArray({
     control,
     name: "requiredWorks" as ArrayPath<T>,
@@ -68,7 +69,7 @@ export const WorkSection = <T extends FieldValues>({
                 label={t("work.description")}
                 placeholder={t("work.description")}
                 required
-                dir="rtl"
+                dir={formDir}
               />
               <div className="flex items-end justify-between gap-2">
                 <CustomFormField
@@ -96,6 +97,7 @@ export const WorkSection = <T extends FieldValues>({
                   control={control}
                   name={`requiredWorks.${index}.isRequired` as Path<T>}
                   label={t("work.required")}
+                  dir={formDir}
                 />
               </div>
             </div>

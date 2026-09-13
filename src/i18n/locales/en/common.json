@@ -117,6 +117,16 @@
       "noData": "No data",
       "view": "View details",
       "pagination": "Pagination"
+    },
+    "form": {
+      "searchOptions": "Search options...",
+      "noOptions": "No options found"
+    },
+    "datePicker": {
+      "placeholder": "Pick a date"
+    },
+    "timePicker": {
+      "placeholder": "Pick a time"
     }
   },
   "maintenance": {

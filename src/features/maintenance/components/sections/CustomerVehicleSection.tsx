@@ -13,7 +13,8 @@ interface CustomerVehicleSectionProps<T extends FieldValues> {
 export const CustomerVehicleSection = <T extends FieldValues>({
   control,
 }: CustomerVehicleSectionProps<T>) => {
-  const { t } = useTranslation("maintenance")
+  const { t, i18n } = useTranslation("maintenance")
+  const formDir = i18n.language === "ar" ? "rtl" : "ltr"
 
   const fuelOptions: Option[] = [
     { value: "petrol", label: t("vehicle.fuel_type.petrol") },
@@ -39,7 +40,7 @@ export const CustomerVehicleSection = <T extends FieldValues>({
         required
         leftIcon={User}
         iconPosition="left"
-        dir="rtl"
+        dir={formDir}
       />
       <CustomFormField
         fieldType={FormFieldType.PHONE}
@@ -74,7 +75,7 @@ export const CustomerVehicleSection = <T extends FieldValues>({
           required
           leftIcon={Factory}
           iconPosition="left"
-          dir="rtl"
+          dir={formDir}
         />
         <CustomFormField
           fieldType={FormFieldType.INPUT}
@@ -85,7 +86,7 @@ export const CustomerVehicleSection = <T extends FieldValues>({
           required
           leftIcon={Car}
           iconPosition="left"
-          dir="rtl"
+          dir={formDir}
         />
       </div>
 
@@ -144,7 +145,7 @@ export const CustomerVehicleSection = <T extends FieldValues>({
         label={t("vehicle.fuelType")}
         placeholder={t("vehicle.fuelType")}
         options={fuelOptions}
-        dir="rtl"
+        dir={formDir}
       />
       <CustomFormField
         fieldType={FormFieldType.SELECT}
@@ -153,7 +154,7 @@ export const CustomerVehicleSection = <T extends FieldValues>({
         label={t("vehicle.transmissionType")}
         placeholder={t("vehicle.transmissionType")}
         options={transmissionOptions}
-        dir="rtl"
+        dir={formDir}
       />
     </div>
   )

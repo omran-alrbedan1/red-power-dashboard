@@ -12,7 +12,8 @@ interface CustomerFieldsProps<T extends FieldValues> {
 export const CustomerFields = <T extends FieldValues>({
   control,
 }: CustomerFieldsProps<T>) => {
-  const { t } = useTranslation("maintenance")
+  const { t, i18n } = useTranslation("maintenance")
+  const formDir = i18n.language === "ar" ? "rtl" : "ltr"
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
@@ -25,7 +26,7 @@ export const CustomerFields = <T extends FieldValues>({
         required
         leftIcon={User}
         iconPosition="left"
-        dir="rtl"
+        dir={formDir}
       />
       <CustomFormField
         fieldType={FormFieldType.PHONE}

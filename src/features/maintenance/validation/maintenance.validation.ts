@@ -80,3 +80,28 @@ export type ReceiptFormInputValues = z.input<
 >
 
 export const FUEL_LEVEL_VALUES: readonly string[] = FUEL_LEVELS
+
+export const editReceiptFormSchema = (t: (key: string) => string) =>
+  z.object({
+    mileage: z.union([z.number().min(0), z.literal("")]).optional(),
+    visitReasonIds: z
+      .array(z.string())
+      .min(1, { message: t("validation.reasonRequired") }),
+    conditionOptionIds: z.array(z.string()).default([]),
+    itemOptionIds: z.array(z.string()).default([]),
+    fuelLevel: z.string().default("half"),
+    complaint: z.string().optional(),
+    inspectionNotes: z.string().optional(),
+    approved: z.boolean().default(false),
+    approvalName: z.string().optional(),
+    deliveryDate: z.date().optional().nullable(),
+    deliveryTime: z.date().optional().nullable(),
+  })
+
+export type EditReceiptFormValues = z.output<
+  ReturnType<typeof editReceiptFormSchema>
+>
+
+export type EditReceiptFormInputValues = z.input<
+  ReturnType<typeof editReceiptFormSchema>
+>

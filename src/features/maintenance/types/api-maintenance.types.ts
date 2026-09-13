@@ -38,6 +38,22 @@ export interface MaintenanceStatusEvent {
   } | null
 }
 
+export interface MaintenancePhoto {
+  id: number
+  originalFileName?: string | null
+  mimeType?: string | null
+  sizeBytes?: string | null
+  displayOrder: number
+  createdAt: string
+  contentUrl: string
+}
+
+export interface MaintenanceSignature {
+  mimeType: string
+  sizeBytes: string
+  contentUrl: string
+}
+
 export interface ApiCustomerRef {
   id: number
   name: string

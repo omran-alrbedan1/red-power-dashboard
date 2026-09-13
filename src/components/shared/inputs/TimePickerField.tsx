@@ -1,8 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Clock } from "lucide-react"
 import { format, setHours, setMinutes } from "date-fns"
+import { useTranslation } from "react-i18next"
 import { TimeOption } from "@/types/customFormField.types"
 
 interface TimePickerFieldProps {
@@ -18,55 +19,80 @@ export const TimePickerField: React.FC<TimePickerFieldProps> = ({
   disabled,
   inputClassName,
 }) => {
+  const { t } = useTranslation("common")
   const [open, setOpen] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
   const interval = timeOptions?.interval || 30
-  
-  const generateTimeSlots = () => {
-    const slots = []
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += interval) {
-        const time = setMinutes(setHours(new Date(), hour), minute)
-        slots.push(time)
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setOpen(false)
       }
     }
-    return slots
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("mousedown", handlePointerDown)
+    document.addEventListener("keydown", handleKeyDown)
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown)
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
+
+  const timeSlots: Date[] = []
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += interval) {
+      timeSlots.push(setMinutes(setHours(new Date(), hour), minute))
+    }
   }
-  
-  const timeSlots = generateTimeSlots()
-  
+
+  const toKey = (value: Date) => format(value, "HH:mm")
+  const selectedKey = field.value ? toKey(new Date(field.value)) : undefined
+  const displayFormat = timeOptions?.format || "p"
+
   return (
-    <div className="relative">
+    <div ref={containerRef} className="relative">
       <Button
+        type="button"
         variant="outline"
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
         className={cn(
-"w-full justify-start text-start font-normal",
+          "w-full justify-start text-start font-normal",
           !field.value && "text-text-secondary",
           inputClassName
         )}
         disabled={disabled}
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((isOpen) => !isOpen)}
       >
         <Clock className="me-2 h-4 w-4" />
-        {field.value ? (
-          format(new Date(field.value), timeOptions?.format || "p")
-        ) : (
-          timeOptions?.placeholder || "Pick a time"
-        )}
+        {field.value
+          ? format(new Date(field.value), displayFormat)
+          : timeOptions?.placeholder || t("timePicker.placeholder")}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg">
-          <div className="max-h-60 overflow-y-auto p-2">
-            {timeSlots.map((time, index) => (
+        <div className="absolute top-full z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-lg">
+          <div role="listbox" className="max-h-60 overflow-y-auto p-2">
+            {timeSlots.map((time) => (
               <Button
-                key={index}
+                key={toKey(time)}
+                type="button"
                 variant="ghost"
-                className="w-full justify-start px-3 py-2"
+                role="option"
+                aria-selected={toKey(time) === selectedKey}
+                className={cn(
+                  "w-full justify-start px-3 py-2",
+                  toKey(time) === selectedKey && "bg-primary/10 text-primary"
+                )}
                 onClick={() => {
                   field.onChange(time)
                   setOpen(false)
                 }}
               >
-                {format(time, "p")}
+                {format(time, displayFormat)}
               </Button>
             ))}
           </div>
