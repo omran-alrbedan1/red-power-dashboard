@@ -196,7 +196,7 @@ function DataTablePagination({
   return (
     <div className="flex flex-col gap-3 border-t border-border px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-text-muted">
-        {t('table.showing', {
+        {t('common.table.showing', {
           defaultValue: `Showing {{from}} to {{to}} of {{total}} results`,
           from,
           to,
@@ -204,7 +204,7 @@ function DataTablePagination({
         })}
       </p>
 
-      <nav aria-label={t('table.pagination', { defaultValue: 'Pagination' })}>
+      <nav aria-label={t('common.table.pagination', { defaultValue: 'Pagination' })}>
         <ul className="flex items-center gap-1">
           <li>
             <button
@@ -215,10 +215,10 @@ function DataTablePagination({
                 baseButton,
                 'gap-1 px-2 text-text-secondary hover:text-text-primary disabled:pointer-events-none disabled:opacity-40'
               )}
-              aria-label={t('previous')}
+              aria-label={t('common.previous')}
             >
               <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
-              <span className="hidden sm:inline">{t('previous')}</span>
+              <span className="hidden sm:inline">{t('common.previous')}</span>
             </button>
           </li>
 
@@ -256,9 +256,9 @@ function DataTablePagination({
                 baseButton,
                 'gap-1 px-2 text-text-secondary hover:text-text-primary disabled:pointer-events-none disabled:opacity-40'
               )}
-              aria-label={t('next')}
+              aria-label={t('common.next')}
             >
-              <span className="hidden sm:inline">{t('next')}</span>
+              <span className="hidden sm:inline">{t('common.next')}</span>
               <ChevronRight className="h-4 w-4 rtl:rotate-180" />
             </button>
           </li>
@@ -404,7 +404,7 @@ export function DataTable<T = any>({
                         e.stopPropagation();
                         onRowClick?.(item);
                       }}
-                      aria-label={t('table.view', { defaultValue: 'View details' })}
+                      aria-label={t('common.table.view', { defaultValue: 'View details' })}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-background-card hover:text-primary"
                     >
                       <ChevronRight className="h-4 w-4 rtl:rotate-180" />
@@ -424,14 +424,14 @@ export function DataTable<T = any>({
                       icon={emptyState.icon}
                       imageUrl={emptyState.imageUrl}
                       imageAlt={emptyState.imageAlt}
-                      title={emptyState.title ?? emptyMessage ?? t('table.noData')}
+title={emptyState.title ?? emptyMessage ?? t('common.table.noData')}
                       description={emptyState.description ?? ''}
                       primaryAction={emptyState.primaryAction}
                       secondaryAction={emptyState.secondaryAction}
                     />
                   ) : (
                     <div className="py-8 text-center text-text-muted">
-                      {emptyMessage || t('table.noData')}
+{emptyMessage || t('common.table.noData')}
                     </div>
                   )}
                 </TableCell>

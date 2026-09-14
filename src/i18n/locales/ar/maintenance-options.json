@@ -1,0 +1,93 @@
+{
+  "title": "خيارات الصيانة",
+  "subtitle": "إدارة خيارات بطاقات الصيانة القابلة للتخصيص",
+  "addOption": "إضافة خيار",
+  "addOptionDescription": "أضف خياراً جديداً ليظهر في نماذج بطاقات الصيانة.",
+  "searchPlaceholder": "ابحث في الخيارات...",
+  "noResults": "لا توجد خيارات مطابقة للبحث",
+  "empty": "لا توجد خيارات محفوظة في هذا القسم",
+  "emptyDescription": "ابدأ بإضافة أول خيار أو عدّل عوامل التصفية.",
+  "save": "حفظ",
+  "tabs": {
+    "visitReasons": "أسباب الزيارة",
+    "vehicleConditions": "حالات المركبة",
+    "vehicleItems": "أغراض المركبة"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "موقوف"
+  },
+  "actions": {
+    "edit": "تعديل",
+    "delete": "حذف",
+    "activate": "تفعيل",
+    "deactivate": "إيقاف"
+  },
+  "table": {
+    "name": "الاسم",
+    "code": "الرمز",
+    "displayOrder": "الترتيب",
+    "status": "الحالة",
+    "actions": "الإجراءات"
+  },
+  "fields": {
+    "code": "الرمز",
+    "codePlaceholder": "مثال: OIL_CHANGE",
+    "labelEn": "الاسم بالإنجليزية",
+    "labelEnPlaceholder": "أدخل الاسم بالإنجليزية",
+    "labelAr": "الاسم بالعربية",
+    "labelArPlaceholder": "أدخل الاسم بالعربية",
+    "labelPlaceholder": "أدخل الاسم",
+    "displayOrder": "ترتيب العرض",
+    "displayOrderPlaceholder": "0"
+  },
+  "messages": {
+    "created": "تم إنشاء الخيار بنجاح",
+    "updated": "تم تحديث الخيار بنجاح",
+    "activated": "تم تفعيل الخيار بنجاح",
+    "deactivated": "تم إيقاف الخيار بنجاح",
+    "deleted": "تم حذف الخيار بنجاح",
+    "loadFailed": "تعذر تحميل الخيارات"
+  },
+  "errors": {
+    "createFailed": "فشل إنشاء الخيار",
+    "updateFailed": "فشل تحديث الخيار",
+    "activateFailed": "فشل تفعيل الخيار",
+    "deactivateFailed": "فشل إيقاف الخيار",
+    "deleteFailed": "فشل حذف الخيار",
+    "deleteUsed": "لا يمكن حذف هذا الخيار لأنه مستخدم بالفعل في بطاقات الصيانة."
+  },
+  "validation": {
+    "codeRequired": "الرمز مطلوب",
+    "codeMax": "الرمز يجب ألا يتجاوز 100 حرف",
+    "labelEnRequired": "الاسم بالإنجليزية مطلوب",
+    "labelEnMax": "الاسم بالإنجليزية يجب ألا يتجاوز 150 حرفاً",
+    "labelArRequired": "الاسم بالعربية مطلوب",
+    "labelArMax": "الاسم بالعربية يجب ألا يتجاوز 150 حرفاً",
+    "labelRequired": "الاسم مطلوب",
+    "labelMax": "الاسم يجب ألا يتجاوز 150 حرفاً",
+    "displayOrderInt": "يجب أن يكون الترتيب عدداً صحيحاً",
+    "displayOrderMin": "يجب أن يكون الترتيب 0 أو أكبر"
+  },
+  "filter": {
+    "search": "البحث في الخيارات",
+    "status": "الحالة"
+  },
+  "dialogs": {
+    "create": {
+      "title": "إضافة خيار جديد",
+      "description": "أضف خياراً جديداً ليظهر في نماذج بطاقة الصيانة.",
+      "confirm": "إضافة الخيار"
+    },
+    "edit": {
+      "title": "تعديل الخيار",
+      "description": "حدّث بيانات هذا الخيار المتاح في بطاقات الصيانة.",
+      "confirm": "حفظ التغييرات"
+    },
+    "delete": {
+      "title": "حذف الخيار",
+      "description": "هل أنت متأكد من حذف «{{name}}»؟ سيتوقف هذا الخيار عن الظهور في بطاقات الصيانة.",
+      "confirm": "حذف"
+    }
+  }
+}

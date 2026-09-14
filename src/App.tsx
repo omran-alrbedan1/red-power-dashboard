@@ -12,6 +12,7 @@ import ProfilePage from "./features/staff/pages/ProfilePage"
 import SettingsPage from "./features/settings/pages/SettingsPage"
 import EmployeesPage from "./features/employees/pages/EmployeesPage"
 import EmployeeCreatePage from "./features/employees/pages/EmployeeCreatePage"
+import MaintenanceOptionsPage from "./features/maintenance-options/pages/MaintenanceOptionsPage"
 import { useAuth } from "./features/auth/context/AuthContext"
 import type { ReactNode } from "react"
 import CustomersListPage from "./features/customers/pages/CustomersPage"
@@ -54,6 +55,16 @@ function App() {
           <Route path="maintenance" element={<MaintenanceListPage />} />
           <Route path="maintenance/new" element={<ReceiptCreatePage />} />
           <Route path="maintenance/:cardId" element={<ReceiptDetailsPage />} />
+
+          {/* Maintenance Options (Super Admin only) */}
+          <Route
+            path="maintenance-options"
+            element={
+              <RoleGuard allowedRoles={["SUPER_ADMIN"]}>
+                <MaintenanceOptionsPage />
+              </RoleGuard>
+            }
+          />
 
           {/* Employees (Super Admin only) */}
           <Route

@@ -190,7 +190,7 @@ export function CustomFilter<T extends FieldValues>({
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Mobile: Vertical layout */}
-          <div className="block sm:hidden space-y-3">
+          <div className="block sm:hidden b">
             {filters.map((filter) => {
               const Icon = filter.icon;
               return (
@@ -224,7 +224,7 @@ export function CustomFilter<T extends FieldValues>({
           </div>
 
           {/* Desktop: Horizontal layout */}
-          <div className="hidden sm:flex sm:flex-wrap sm:items-end sm:gap-2">
+          <div className="hidden sm:flex sm:flex-wrap  sm:gap-2 ">
             {filters.map((filter) => {
               const Icon = filter.icon;
               return (
@@ -256,7 +256,7 @@ export function CustomFilter<T extends FieldValues>({
               type="submit"
               disabled={isLoading}
               size="sm"
-              className="h-9 px-4 text-sm text-white"
+              className="h-9 px-4 text-sm text-white mt-5"
             >
               {isLoading ? t('common.processing') || 'Applying...' : t('common.applyFilters') || 'Apply Filters'}
             </Button>

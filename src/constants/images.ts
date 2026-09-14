@@ -12,6 +12,7 @@ import emptyCustomers from '@/assets/images/customers/empty.svg'
 import emptyCars from '@/assets/images/customers/emptyCars.svg'
 import createCustomerHero from '@/assets/images/heros/create-customer-hero.png'
 import maintenanceHero from '@/assets/images/heros/maintenance-hero.png'
+import employeesHero from '@/assets/images/heros/employees-hero.png'
 
 //// icons
 import box from '@/assets/icons/box-svgrepo-com.svg'
@@ -36,6 +37,7 @@ export const images = {
   emptyCustomers,
   emptyCars,
   maintenanceHero,
+  employeesHero,  
 }
 
 export const icons = {

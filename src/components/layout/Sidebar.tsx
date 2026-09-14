@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Users,
   Wrench,
+  SlidersHorizontal,
   UserCircle,
   UserCog,
   Settings,
@@ -39,6 +40,12 @@ const menuItems: MenuItem[] = [
     path: "/maintenance",
     icon: Wrench,
     notifs: 3,
+  },
+  {
+    titleKey: "sidebar.menu.maintenanceOptions",
+    path: "/maintenance-options",
+    icon: SlidersHorizontal,
+    roles: ["SUPER_ADMIN"],
   },
   {
     titleKey: "sidebar.menu.employees",

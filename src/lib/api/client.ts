@@ -43,7 +43,9 @@ export function configureApiSession(handlers: ApiSessionHandlers | null) {
 }
 
 http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  config.headers.set("Accept-Language", i18n.language || "ar")
+  if (!config.headers.has("Accept-Language")) {
+    config.headers.set("Accept-Language", i18n.language || "ar")
+  }
   const accessToken = !config.skipAuth ? sessionHandlers?.getAccessToken() : null
   if (accessToken) config.headers.set("Authorization", `Bearer ${accessToken}`)
   return config

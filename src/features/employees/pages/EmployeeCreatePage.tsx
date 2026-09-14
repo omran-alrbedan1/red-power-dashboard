@@ -37,7 +37,7 @@ const EmployeeCreatePage: React.FC = () => {
       <PageHeader
         title={t("addEmployee", "Add Employee")}
         description={t("addEmployeeDescription", "Create a new staff account to access the dashboard.")}
-        backgroundImage={images.dashboardHero}
+        backgroundImage={images.employeesHero}
         showBackButton
         backButtonLabel={t("backToList", "Back to employees")}
         onBackClick={() => navigate("/employees")}

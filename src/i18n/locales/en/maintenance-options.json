@@ -1,0 +1,93 @@
+{
+  "title": "Maintenance Options",
+  "subtitle": "Manage configurable maintenance card options.",
+  "addOption": "Add Option",
+  "addOptionDescription": "Add a new option that will appear in maintenance card forms.",
+  "searchPlaceholder": "Search options...",
+  "noResults": "No options match your search",
+  "empty": "No options saved yet",
+  "emptyDescription": "Create the first option or adjust your filters.",
+  "save": "Save",
+  "tabs": {
+    "visitReasons": "Visit Reasons",
+    "vehicleConditions": "Vehicle Conditions",
+    "vehicleItems": "Vehicle Items"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "table": {
+    "name": "Name",
+    "code": "Code",
+    "displayOrder": "Display Order",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "fields": {
+    "code": "Code",
+    "codePlaceholder": "e.g. OIL_CHANGE",
+    "labelEn": "English Name",
+    "labelEnPlaceholder": "Enter the English name",
+    "labelAr": "Arabic Name",
+    "labelArPlaceholder": "أدخل الاسم بالعربية",
+    "labelPlaceholder": "Enter the name",
+    "displayOrder": "Display Order",
+    "displayOrderPlaceholder": "0"
+  },
+  "messages": {
+    "created": "Option created successfully",
+    "updated": "Option updated successfully",
+    "activated": "Option activated successfully",
+    "deactivated": "Option deactivated successfully",
+    "deleted": "Option deleted successfully",
+    "loadFailed": "Unable to load maintenance options"
+  },
+  "errors": {
+    "createFailed": "Failed to create option",
+    "updateFailed": "Failed to update option",
+    "activateFailed": "Failed to activate option",
+    "deactivateFailed": "Failed to deactivate option",
+    "deleteFailed": "Failed to delete option",
+    "deleteUsed": "This option cannot be deleted because it is already used by maintenance cards."
+  },
+  "validation": {
+    "codeRequired": "Code is required",
+    "codeMax": "Code must be 100 characters or fewer",
+    "labelEnRequired": "English name is required",
+    "labelEnMax": "English name must be 150 characters or fewer",
+    "labelArRequired": "Arabic name is required",
+    "labelArMax": "Arabic name must be 150 characters or fewer",
+    "labelRequired": "Name is required",
+    "labelMax": "Name must be 150 characters or fewer",
+    "displayOrderInt": "Display order must be a whole number",
+    "displayOrderMin": "Display order must be 0 or more"
+  },
+  "filter": {
+    "search": "Search options",
+    "status": "Status"
+  },
+  "dialogs": {
+    "create": {
+      "title": "Add New Option",
+      "description": "Add a new option that will appear in maintenance card forms.",
+      "confirm": "Add Option"
+    },
+    "edit": {
+      "title": "Edit Option",
+      "description": "Update this maintenance card option.",
+      "confirm": "Save Changes"
+    },
+    "delete": {
+      "title": "Delete Option",
+      "description": "Are you sure you want to delete \"{{name}}\"? This option will no longer appear in maintenance card forms.",
+      "confirm": "Delete"
+    }
+  }
+}

@@ -81,7 +81,7 @@ const EmployeesPage: React.FC = () => {
         <PageHeader
           title={t("title", "Employees")}
           description={t("subtitle", "Manage garage staff accounts")}
-          backgroundImage={images.dashboardHero}
+          backgroundImage={images.employeesHero}
           showDateTime
         />
         <ErrorState
@@ -98,7 +98,7 @@ const EmployeesPage: React.FC = () => {
       <PageHeader
         title={t("title", "Employees")}
         description={t("subtitle", "Manage garage staff accounts")}
-        backgroundImage={images.dashboardHero}
+          backgroundImage={images.employeesHero}
         showDateTime
         rightContent={
           <Button onClick={() => navigate("/employees/new")} className="gap-1.5">
