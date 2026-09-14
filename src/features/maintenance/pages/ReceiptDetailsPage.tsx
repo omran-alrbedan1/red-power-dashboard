@@ -21,6 +21,7 @@ import EmptyState from "@/components/shared/states/EmptyState"
 import ErrorState from "@/components/shared/states/ErrorState"
 import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
 import { useAuth } from "@/features/auth/context/AuthContext"
+import { isSuperAdmin } from "@/lib/permissions"
 import { useReopenCard } from "../hooks/useReopenCard"
 import { ReceiptHeader } from "../components/sections/ReceiptHeader"
 import { ActivityTimeline } from "../components/ActivityTimeline"
@@ -39,7 +40,7 @@ const ReceiptDetailsPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
   const isCardClosed = card?.status === "closed"
-  const isSuperAdmin = user?.role === "super_admin"
+  const isSuperAdminUser = isSuperAdmin(user?.role)
   const reopenCard = useReopenCard()
 
   const handleReopen = () => {
@@ -125,7 +126,7 @@ const ReceiptDetailsPage: React.FC = () => {
         </Card>
       )}
 
-      {isCardClosed && isSuperAdmin && (
+      {isCardClosed && isSuperAdminUser && (
         <Card>
           <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -151,15 +152,15 @@ const ReceiptDetailsPage: React.FC = () => {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className="text-xs text-muted-foreground">{t("customer.name")}</label>
-              <p className="font-medium text-text-primary">{card.customer.name}</p>
+              <p className="font-medium text-text-primary">{card.customer?.name ?? "-"}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground">{t("customer.phone")}</label>
               <p className="font-medium text-text-primary" dir="ltr">
-                {card.customer.phone}
+                {card.customer?.phone ?? "-"}
               </p>
             </div>
-            {card.customer.email && (
+            {card.customer?.email && (
               <div className="sm:col-span-2">
                 <label className="text-xs text-muted-foreground">{t("customer.email")}</label>
                 <p className="font-medium text-text-primary" dir="ltr">
@@ -182,19 +183,19 @@ const ReceiptDetailsPage: React.FC = () => {
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label className="text-xs text-muted-foreground">{t("vehicle.make")}</label>
-              <p className="font-medium text-text-primary">{card.vehicle.make}</p>
+              <p className="font-medium text-text-primary">{card.vehicle?.make ?? "-"}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground">{t("vehicle.model")}</label>
-              <p className="font-medium text-text-primary">{card.vehicle.model}</p>
+              <p className="font-medium text-text-primary">{card.vehicle?.model ?? "-"}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground">{t("vehicle.plateNumber")}</label>
               <p className="font-medium text-text-primary" dir="ltr">
-                {card.vehicle.plateNumber}
+                {card.vehicle?.plateNumber ?? "-"}
               </p>
             </div>
-            {card.vehicle.manufactureYear && (
+            {card.vehicle?.manufactureYear && (
               <div>
                 <label className="text-xs text-muted-foreground">{t("vehicle.year")}</label>
                 <p className="font-medium text-text-primary" dir="ltr">
@@ -202,7 +203,7 @@ const ReceiptDetailsPage: React.FC = () => {
                 </p>
               </div>
             )}
-            {card.vehicle.vin && (
+            {card.vehicle?.vin && (
               <div>
                 <label className="text-xs text-muted-foreground">{t("vehicle.vin")}</label>
                 <p className="font-medium text-text-primary" dir="ltr">
@@ -216,7 +217,7 @@ const ReceiptDetailsPage: React.FC = () => {
                 {card.mileage} {t("units.km")}
               </p>
             </div>
-            {card.vehicle.transmission && (
+            {card.vehicle?.transmission && (
               <div>
                 <label className="text-xs text-muted-foreground">{t("vehicle.transmissionType")}</label>
                 <p className="font-medium text-text-primary">

@@ -54,7 +54,7 @@ export const createRecentMaintenanceColumns = ({
       cell: (card) => (
         <div className="min-w-0">
           <p className="truncate font-medium text-text-primary">
-            {card.customer.name}
+            {card.customer?.name ?? "-"}
           </p>
 
           <p
@@ -64,7 +64,7 @@ export const createRecentMaintenanceColumns = ({
             "
             dir="ltr"
           >
-            {card.customer.phone}
+            {card.customer?.phone ?? "-"}
           </p>
         </div>
       ),
@@ -81,7 +81,9 @@ export const createRecentMaintenanceColumns = ({
       cell: (card) => (
         <div className="min-w-0">
           <p className="truncate font-medium text-text-primary">
-            {card.vehicle.make} {card.vehicle.model}
+            {card.vehicle
+              ? `${card.vehicle.make} ${card.vehicle.model}`
+              : "-"}
           </p>
 
           <p
@@ -91,7 +93,7 @@ export const createRecentMaintenanceColumns = ({
             "
             dir="ltr"
           >
-            {card.vehicle.plateNumber}
+            {card.vehicle?.plateNumber ?? "-"}
           </p>
         </div>
       ),

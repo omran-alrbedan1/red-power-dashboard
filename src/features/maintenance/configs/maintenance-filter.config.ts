@@ -5,7 +5,7 @@ import type { MaintenanceCardStatus } from "../types/maintenance-detail.types"
 
 export interface MaintenanceFilterValues {
   search: string
-  status: string
+  status: MaintenanceCardStatus | ""
   receivedAt: DateRange | undefined
 }
 

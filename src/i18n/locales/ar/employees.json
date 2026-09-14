@@ -1,0 +1,80 @@
+{
+  "title": "الموظفون",
+  "subtitle": "إدارة حسابات موظفي الورشة",
+  "addEmployee": "إضافة موظف",
+  "addEmployeeDescription": "أنشئ حساب موظف جديد ليتمكن من الوصول إلى لوحة التحكم.",
+  "backToList": "العودة إلى قائمة الموظفين",
+  "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني...",
+  "noResults": "لم يتم العثور على موظفين مطابقين",
+  "empty": "لم يتم تسجيل أي موظف بعد",
+  "role": "الدور",
+  "roles": {
+    "admin": "موظف",
+    "superAdmin": "مدير النظام"
+  },
+  "status": {
+    "active": "نشط",
+    "inactive": "موقوف"
+  },
+  "activate": "تفعيل",
+  "deactivate": "تعطيل",
+  "table": {
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "status": "الحالة",
+    "createdAt": "تاريخ الإنشاء",
+    "actions": "الإجراءات"
+  },
+  "fields": {
+    "firstName": "الاسم الأول",
+    "firstNamePlaceholder": "أدخل الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "lastNamePlaceholder": "أدخل الاسم الأخير",
+    "email": "البريد الإلكتروني",
+    "emailPlaceholder": "name@example.com",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور"
+  },
+  "messages": {
+    "created": "تم إنشاء الموظف بنجاح",
+    "activated": "تم تفعيل الموظف بنجاح",
+    "deactivated": "تم تعطيل الموظف بنجاح",
+    "loadFailed": "تعذر تحميل الموظفين"
+  },
+  "errors": {
+    "createFailed": "فشل إنشاء الموظف",
+    "activateFailed": "فشل تفعيل الموظف",
+    "deactivateFailed": "فشل تعطيل الموظف"
+  },
+  "validation": {
+    "firstNameRequired": "الاسم الأول مطلوب",
+    "firstNameMax": "الاسم الأول يجب ألا يتجاوز 150 حرفاً",
+    "lastNameRequired": "الاسم الأخير مطلوب",
+    "lastNameMax": "الاسم الأخير يجب ألا يتجاوز 150 حرفاً",
+    "emailInvalid": "البريد الإلكتروني غير صالح",
+    "emailMax": "البريد الإلكتروني يجب ألا يتجاوز 254 حرفاً",
+    "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+    "passwordMax": "كلمة المرور يجب ألا تتجاوز 72 حرفاً",
+    "confirmRequired": "تأكيد كلمة المرور مطلوب",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين"
+  },
+  "filter": {
+    "search": "بحث الموظفين",
+    "status": "الحالة"
+  },
+  "dialogs": {
+    "activate": {
+      "title": "تفعيل الموظف",
+      "description": "هل أنت متأكد من إعادة تفعيل الموظف «{{name}}»؟",
+      "confirm": "تفعيل"
+    },
+    "deactivate": {
+      "title": "تعطيل الموظف",
+      "description": "هل أنت متأكد من تعطيل الموظف «{{name}}»؟ لن يتمكن من تسجيل الدخول حتى يُعاد تفعيله.",
+      "confirm": "تعطيل"
+    }
+  }
+}

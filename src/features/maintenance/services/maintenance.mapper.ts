@@ -1,7 +1,10 @@
 import type {
   ApiCardStatus,
+  ApiCustomerRef,
+  ApiFuelLevel,
   ApiMaintenanceCardDetail,
   ApiMaintenanceCardListRow,
+  ApiVehicleRef,
   ApiWorkStatus,
   MaintenanceOption,
   MaintenanceStatusEvent,
@@ -13,11 +16,27 @@ import type {
   MaintenanceCardStatus,
   MaintenanceStatusEventRow,
   MaintenanceWorkRow,
+  PersistedFuelLevel,
   PersistedWorkStatus,
 } from "../types/maintenance-detail.types"
 
 export function mapCardStatus(status: ApiCardStatus): MaintenanceCardStatus {
   return status === "CLOSED" ? "closed" : "open"
+}
+
+export function mapFuelLevel(level: ApiFuelLevel): PersistedFuelLevel {
+  switch (level) {
+    case "EMPTY":
+      return "empty"
+    case "QUARTER":
+      return "quarter"
+    case "HALF":
+      return "half"
+    case "THREE_QUARTERS":
+      return "three_quarters"
+    case "FULL":
+      return "full"
+  }
 }
 
 export function mapWorkStatus(status: ApiWorkStatus): PersistedWorkStatus {
@@ -68,38 +87,52 @@ function mapStatusEvent(event: MaintenanceStatusEvent): MaintenanceStatusEventRo
   }
 }
 
+function mapListRowCustomer(customer: ApiCustomerRef | null | undefined) {
+  if (!customer) return null
+  return {
+    id: customer.id,
+    name: customer.name,
+    phone: customer.phone,
+    email: customer.email ?? null,
+  }
+}
+
+function mapListRowVehicle(vehicle: ApiVehicleRef | null | undefined) {
+  if (!vehicle) return null
+  return {
+    id: vehicle.id,
+    make: vehicle.make,
+    model: vehicle.model,
+    plateNumber: vehicle.plateNumber,
+  }
+}
+
+function mapDetailVehicle(vehicle: ApiVehicleRef | null | undefined) {
+  if (!vehicle) return null
+  return {
+    id: vehicle.id,
+    make: vehicle.make,
+    model: vehicle.model,
+    manufactureYear: vehicle.manufactureYear ?? null,
+    plateNumber: vehicle.plateNumber,
+    vin: vehicle.vin ?? null,
+    transmission: vehicle.transmission ? vehicle.transmission.toLowerCase() : null,
+  }
+}
+
 export function mapListRow(row: ApiMaintenanceCardListRow): MaintenanceCardListRow {
-  const customer = row.customer ?? { id: 0, name: "", phone: "" }
-  const vehicle = row.vehicleOwnership?.vehicle ?? { id: 0, make: "", model: "", plateNumber: "" }
   return {
     id: row.id,
     cardNumber: row.cardNumber,
     status: mapCardStatus(row.status),
     receivedAt: row.receivedAt,
     expectedDeliveryAt: row.expectedDeliveryAt ?? null,
-    customer: {
-      id: customer.id,
-      name: customer.name,
-      phone: customer.phone,
-      email: customer.email ?? null,
-    },
-    vehicle: {
-      id: vehicle.id,
-      make: vehicle.make,
-      model: vehicle.model,
-      plateNumber: vehicle.plateNumber,
-    },
+    customer: mapListRowCustomer(row.customer),
+    vehicle: mapListRowVehicle(row.vehicleOwnership?.vehicle),
   }
 }
 
 export function mapDetail(detail: ApiMaintenanceCardDetail): MaintenanceCardDetail {
-  const customer = detail.customer ?? { id: 0, name: "", phone: "" }
-  const vehicle = detail.vehicleOwnership?.vehicle ?? {
-    id: 0,
-    make: "",
-    model: "",
-    plateNumber: "",
-  }
   const createdBy = detail.createdBy
     ? {
         id: detail.createdBy.id,
@@ -119,28 +152,15 @@ export function mapDetail(detail: ApiMaintenanceCardDetail): MaintenanceCardDeta
     receivedAt: detail.receivedAt,
     expectedDeliveryAt: detail.expectedDeliveryAt ?? null,
     mileage: detail.mileage,
-    fuelLevel: detail.fuelLevel.toLowerCase(),
+    fuelLevel: mapFuelLevel(detail.fuelLevel),
     customerComplaint: detail.customerComplaint ?? null,
     inspectionNotes: detail.inspectionNotes ?? null,
     customerApproved: detail.customerApproved,
     customerApprovalName: detail.customerApprovalName ?? null,
     customerApprovedAt: detail.customerApprovedAt ?? null,
-    customer: {
-      id: customer.id,
-      name: customer.name,
-      phone: customer.phone,
-      email: customer.email ?? null,
-    },
-    vehicleOwnershipId: detail.vehicleOwnership?.id ?? 0,
-    vehicle: {
-      id: vehicle.id,
-      make: vehicle.make,
-      model: vehicle.model,
-      manufactureYear: vehicle.manufactureYear ?? null,
-      plateNumber: vehicle.plateNumber,
-      vin: vehicle.vin ?? null,
-      transmission: vehicle.transmission ? vehicle.transmission.toLowerCase() : null,
-    },
+    customer: mapListRowCustomer(detail.customer),
+    vehicleOwnershipId: detail.vehicleOwnership?.id ?? null,
+    vehicle: mapDetailVehicle(detail.vehicleOwnership?.vehicle),
     createdBy,
     visitReasons: toOptions(detail.visitReasons ?? []),
     conditionOptions: toOptions(detail.conditionOptions ?? []),

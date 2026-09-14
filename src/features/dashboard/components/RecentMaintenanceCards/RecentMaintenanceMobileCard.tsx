@@ -59,7 +59,7 @@ const RecentMaintenanceMobileCard: React.FC<
       </div>
 
       <p className="mt-3 truncate text-sm font-semibold text-text-primary">
-        {item.customer.name}
+        {item.customer?.name ?? "-"}
       </p>
 
       <div
@@ -71,7 +71,9 @@ const RecentMaintenanceMobileCard: React.FC<
         <Car className="h-3.5 w-3.5 shrink-0" />
 
         <span className="truncate">
-          {item.vehicle.make} {item.vehicle.model}
+          {item.vehicle
+            ? `${item.vehicle.make} ${item.vehicle.model}`
+            : "-"}
         </span>
 
         <span className="text-border">
@@ -82,7 +84,7 @@ const RecentMaintenanceMobileCard: React.FC<
           className="shrink-0"
           dir="ltr"
         >
-          {item.vehicle.plateNumber}
+          {item.vehicle?.plateNumber ?? "-"}
         </span>
       </div>
 

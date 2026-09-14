@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { Toaster } from "sonner"
 
 import MainLayout from "./components/layout/MainLayout"
+import RoleGuard from "./components/auth/RoleGuard"
 import Dashboard from "./features/dashboard/pages/Dashboard"
 import Login from "./features/auth/pages/Login"
 import MaintenanceListPage from "./features/maintenance/pages/MaintenanceListPage"
@@ -9,6 +10,8 @@ import ReceiptCreatePage from "./features/maintenance/pages/ReceiptCreatePage"
 import ReceiptDetailsPage from "./features/maintenance/pages/ReceiptDetailsPage"
 import ProfilePage from "./features/staff/pages/ProfilePage"
 import SettingsPage from "./features/settings/pages/SettingsPage"
+import EmployeesPage from "./features/employees/pages/EmployeesPage"
+import EmployeeCreatePage from "./features/employees/pages/EmployeeCreatePage"
 import { useAuth } from "./features/auth/context/AuthContext"
 import type { ReactNode } from "react"
 import CustomersListPage from "./features/customers/pages/CustomersPage"
@@ -51,6 +54,24 @@ function App() {
           <Route path="maintenance" element={<MaintenanceListPage />} />
           <Route path="maintenance/new" element={<ReceiptCreatePage />} />
           <Route path="maintenance/:cardId" element={<ReceiptDetailsPage />} />
+
+          {/* Employees (Super Admin only) */}
+          <Route
+            path="employees"
+            element={
+              <RoleGuard allowedRoles={["SUPER_ADMIN"]}>
+                <EmployeesPage />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="employees/new"
+            element={
+              <RoleGuard allowedRoles={["SUPER_ADMIN"]}>
+                <EmployeeCreatePage />
+              </RoleGuard>
+            }
+          />
 
           {/* Profile */}
           <Route path="profile" element={<ProfilePage />} />

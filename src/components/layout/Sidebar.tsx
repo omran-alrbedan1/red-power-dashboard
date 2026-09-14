@@ -6,17 +6,21 @@ import {
   Users,
   Wrench,
   UserCircle,
+  UserCog,
   Settings,
   X,
   type LucideIcon,
 } from "lucide-react"
 import { images } from '@/constants/images'
+import { useAuth } from "@/features/auth/context/AuthContext"
+import type { AppRole } from "@/features/auth/types/auth.types"
 
 interface MenuItem {
   titleKey: string
   path: string
   icon: LucideIcon
   notifs?: number
+  roles?: AppRole[]
 }
 
 const menuItems: MenuItem[] = [
@@ -35,6 +39,12 @@ const menuItems: MenuItem[] = [
     path: "/maintenance",
     icon: Wrench,
     notifs: 3,
+  },
+  {
+    titleKey: "sidebar.menu.employees",
+    path: "/employees",
+    icon: UserCog,
+    roles: ["SUPER_ADMIN"],
   },
 ]
 
@@ -129,6 +139,12 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
   const location = useLocation()
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const visibleMenuItems = menuItems.filter((item) => {
+    if (!item.roles?.length) return true
+    return user ? item.roles.includes(user.role) : false
+  })
 
   const handleBrandClick = () => {
     navigate("/")
@@ -223,7 +239,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({
         </SidebarSectionTitle>
 
         <div className="space-y-2">
-          {menuItems.map((item) => (
+          {visibleMenuItems.map((item) => (
             <SidebarOption
               key={item.path}
               item={item}

@@ -1,10 +1,13 @@
-export type UserRole = "admin" | "super_admin"
+export type AppRole = "SUPER_ADMIN" | "ADMIN"
 
 export interface User {
   id: number
+  firstName: string
+  lastName: string
   name: string
   email: string
-  role: UserRole
+  role: AppRole
+  isActive: boolean
 }
 
 export interface UpdatePasswordPayload {

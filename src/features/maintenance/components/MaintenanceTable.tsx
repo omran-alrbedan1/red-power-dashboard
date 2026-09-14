@@ -84,12 +84,18 @@ const MaintenanceMobileCard: React.FC<MaintenanceMobileCardProps> = ({
       <div className="mt-3 space-y-1 text-xs text-text-muted">
         <p className="flex items-center gap-1.5">
           <User className="h-3.5 w-3.5 text-primary" />
-          {item.customer.name}
+          {item.customer?.name ?? "-"}
         </p>
         <p className="flex items-center gap-1.5">
           <Car className="h-3.5 w-3.5 text-primary" />
-          {item.vehicle.make} {item.vehicle.model}
-          <span dir="ltr">({item.vehicle.plateNumber})</span>
+          {item.vehicle ? (
+            <>
+              {item.vehicle.make} {item.vehicle.model}
+              <span dir="ltr">({item.vehicle.plateNumber})</span>
+            </>
+          ) : (
+            "-"
+          )}
         </p>
         <p className="flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5 text-primary" />
@@ -133,20 +139,23 @@ export const MaintenanceTable: React.FC<MaintenanceTableProps> = ({
         key: "customer",
         header: t("list.customer"),
         headerIcon: User,
-        cell: (card) => card.customer.name,
+        cell: (card) => card.customer?.name ?? "-",
       },
       {
         key: "vehicle",
         header: t("list.vehicle"),
         headerIcon: Car,
-        cell: (card) => (
-          <span>
-            {card.vehicle.make} {card.vehicle.model}
-            <span className="text-text-muted" dir="ltr">
-              {" "}({card.vehicle.plateNumber})
+        cell: (card) =>
+          card.vehicle ? (
+            <span>
+              {card.vehicle.make} {card.vehicle.model}
+              <span className="text-text-muted" dir="ltr">
+                {" "}({card.vehicle.plateNumber})
+              </span>
             </span>
-          </span>
-        ),
+          ) : (
+            "-"
+          ),
       },
       {
         key: "status",

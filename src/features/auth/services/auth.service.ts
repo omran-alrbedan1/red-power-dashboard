@@ -1,12 +1,13 @@
 import { apiRequest, type SessionTokens } from "@/lib/api/client"
-import type { LoginCredentials, UpdatePasswordPayload, User } from "../types/auth.types"
+import type { AppRole, LoginCredentials, UpdatePasswordPayload, User } from "../types/auth.types"
 
 interface ApiUser {
   id: number
   email: string
   firstName?: string | null
   lastName?: string | null
-  role: "ADMIN" | "SUPER_ADMIN"
+  role: AppRole
+  isActive?: boolean
 }
 
 interface AuthResponse extends SessionTokens {
@@ -16,8 +17,11 @@ interface AuthResponse extends SessionTokens {
 const mapUser = (user: ApiUser): User => ({
   id: user.id,
   email: user.email,
+  firstName: user.firstName ?? "",
+  lastName: user.lastName ?? "",
   name: [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email,
-  role: user.role === "SUPER_ADMIN" ? "super_admin" : "admin",
+  role: user.role,
+  isActive: user.isActive ?? true,
 })
 
 export const authService = {

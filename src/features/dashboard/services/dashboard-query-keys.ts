@@ -4,7 +4,6 @@
  * coordinates against the dashboard feature instead of maintenance.
  */
 
-
 export const dashboardQueryKeys = {
   all: ["dashboard"] as const,
 

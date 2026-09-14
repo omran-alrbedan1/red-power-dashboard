@@ -16,6 +16,7 @@ import type {
 import type {
   MaintenanceCardDetail,
   MaintenanceCardListRow,
+  PersistedFuelLevel,
   PersistedWorkStatus,
 } from "../types/maintenance-detail.types"
 import { mapDetail, mapListRow } from "./maintenance.mapper"
@@ -23,21 +24,21 @@ import { mapDetail, mapListRow } from "./maintenance.mapper"
 export type { MaintenanceOptionKind, CreateMaintenanceCardInput }
 export type { ApiFuelLevel } from "../types/api-maintenance.types"
 
-export type FuelLevel = CreateMaintenanceCardInput["fuelLevel"]
+export type FuelLevel = PersistedFuelLevel
 
-const API_FUEL_LEVELS: ApiFuelLevel[] = [
-  "EMPTY",
-  "QUARTER",
-  "HALF",
-  "THREE_QUARTERS",
-  "FULL",
-]
-
-export const toApiFuelLevel = (value: string): ApiFuelLevel => {
-  const upper = value.toUpperCase()
-  return API_FUEL_LEVELS.includes(upper as ApiFuelLevel)
-    ? (upper as ApiFuelLevel)
-    : "HALF"
+export const toApiFuelLevel = (level: PersistedFuelLevel): ApiFuelLevel => {
+  switch (level) {
+    case "empty":
+      return "EMPTY"
+    case "quarter":
+      return "QUARTER"
+    case "half":
+      return "HALF"
+    case "three_quarters":
+      return "THREE_QUARTERS"
+    case "full":
+      return "FULL"
+  }
 }
 
 export interface MaintenanceCardListParams {
@@ -105,10 +106,10 @@ export const maintenanceApi = {
     apiRequest<ApiMaintenanceCardDetail>({ url: `/maintenance-cards/${id}` }).then(toDetail),
   update: (cardId: number, input: UpdateMaintenanceCardInput) =>
     apiRequest<ApiMaintenanceCardDetail>({ method: "PATCH", url: `/maintenance-cards/${cardId}`, data: input }).then(toDetail),
-  options: (kind: MaintenanceOptionKind) =>
-    apiRequest<MaintenanceOption[]>({ url: `/maintenance-card-options/${kind}`, params: { isActive: true } }),
-  createWorkItem: ({ cardId, ...input }: CreateWorkItemInput) =>
-    apiRequest<{ id: number }>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works`, data: input }),
+    options: (kind: MaintenanceOptionKind) =>
+      apiRequest<MaintenanceOption[]>({ url: `/maintenance-card-options/${kind}`, params: { isActive: true } }),
+    createWorkItem: ({ cardId, ...input }: CreateWorkItemInput) =>
+      apiRequest<{ id: number }>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works`, data: input }),
   updateWorkItem: (workItemId: number, { cardId, ...input }: UpdateWorkItemInput) =>
     apiRequest<{ id: number }>({ method: "PATCH", url: `/maintenance-cards/${cardId}/required-works/${workItemId}`, data: { ...input, ...(input.status ? { status: toApiWorkStatus(input.status) } : {}) } }),
   deleteWorkItem: (cardId: number, workItemId: number) =>

@@ -8,6 +8,7 @@
       "home": "الرئيسية",
       "customers": "الزبائن",
       "maintenance": "الصيانة",
+      "employees": "الموظفون",
       "profile": "الملف الشخصي",
       "settings": "الإعدادات",
       "logout": "تسجيل الخروج"
@@ -28,7 +29,11 @@
   "header": {
     "adminUser": "مدير النظام",
     "administrator": "مدير النظام",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "roles": {
+      "admin": "موظف",
+      "superAdmin": "مدير النظام"
+    }
   },
   "dashboard": {
     "workshopManagement": "إدارة الورشة",
@@ -103,6 +108,7 @@
     "filters": "عوامل التصفية",
     "active": "نشط",
     "activeFilters": "عوامل التصفية النشطة:",
+    "accessDenied": "لا تملك صلاحية الوصول إلى هذه الصفحة",
     "viewAll": "عرض الكل",
     "customer": "الزبون",
     "vehicle": "المركبة",

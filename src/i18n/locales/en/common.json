@@ -8,6 +8,7 @@
       "home": "Home",
       "customers": "Customers",
       "maintenance": "Maintenance",
+      "employees": "Employees",
       "profile": "Profile",
       "settings": "Settings",
       "logout": "Logout"
@@ -28,7 +29,11 @@
   "header": {
     "adminUser": "Admin User",
     "administrator": "Administrator",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "roles": {
+      "admin": "Employee",
+      "superAdmin": "Super Admin"
+    }
   },
   "dashboard": {
     "workshopManagement": "Workshop Management",
@@ -103,6 +108,7 @@
     "filters": "Filters",
     "active": "Active",
     "activeFilters": "Active Filters:",
+    "accessDenied": "You do not have permission to access this page.",
     "viewAll": "View All",
     "customer": "Customer",
     "vehicle": "Vehicle",

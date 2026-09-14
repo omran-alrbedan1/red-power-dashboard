@@ -11,6 +11,9 @@ import enCustomers from "./locales/en/customers.json"
 import arMaintenance from "./locales/ar/maintenance.json"
 import enMaintenance from "./locales/en/maintenance.json"
 
+import arEmployees from "./locales/ar/employees.json"
+import enEmployees from "./locales/en/employees.json"
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -20,16 +23,18 @@ i18n
         common: arCommon,
         customers: arCustomers,
         maintenance: arMaintenance,
+        employees: arEmployees,
       },
       en: {
         common: enCommon,
         customers: enCustomers,
         maintenance: enMaintenance,
+        employees: enEmployees,
       },
     },
     fallbackLng: "ar",
     defaultNS: "common",
-    ns: ["common", "customers", "maintenance"],
+    ns: ["common", "customers", "maintenance", "employees"],
     interpolation: {
       escapeValue: false,
     },

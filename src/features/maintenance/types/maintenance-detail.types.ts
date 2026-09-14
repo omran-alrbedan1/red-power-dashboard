@@ -1,8 +1,15 @@
-import type { ApiCardStatus, MaintenanceOption, ApiWorkStatus } from "./api-maintenance.types"
+import type {
+  ApiCardStatus,
+  ApiFuelLevel,
+  MaintenanceOption,
+  ApiWorkStatus,
+} from "./api-maintenance.types"
 
 export type MaintenanceCardStatus = Lowercase<ApiCardStatus>
 
 export type PersistedWorkStatus = Lowercase<ApiWorkStatus>
+
+export type PersistedFuelLevel = Lowercase<ApiFuelLevel>
 
 export interface MaintenanceCardListRow {
   id: number
@@ -15,13 +22,13 @@ export interface MaintenanceCardListRow {
     name: string
     phone: string
     email?: string | null
-  }
+  } | null
   vehicle: {
     id: number
     make: string
     model: string
     plateNumber: string
-  }
+  } | null
 }
 
 export interface MaintenanceWorkRow {
@@ -49,7 +56,7 @@ export interface MaintenanceCardDetail {
   receivedAt: string
   expectedDeliveryAt?: string | null
   mileage: number
-  fuelLevel: string
+  fuelLevel: PersistedFuelLevel
   customerComplaint?: string | null
   inspectionNotes?: string | null
   customerApproved: boolean
@@ -60,8 +67,8 @@ export interface MaintenanceCardDetail {
     name: string
     phone: string
     email?: string | null
-  }
-  vehicleOwnershipId: number
+  } | null
+  vehicleOwnershipId: number | null
   vehicle: {
     id: number
     make: string
@@ -70,7 +77,7 @@ export interface MaintenanceCardDetail {
     plateNumber: string
     vin?: string | null
     transmission?: string | null
-  }
+  } | null
   createdBy?: { id: number; name?: string } | null
   visitReasons: MaintenanceOption[]
   conditionOptions: MaintenanceOption[]

@@ -35,7 +35,7 @@ export const images = {
   createCustomerHero,
   emptyCustomers,
   emptyCars,
-  maintenanceHero
+  maintenanceHero,
 }
 
 export const icons = {

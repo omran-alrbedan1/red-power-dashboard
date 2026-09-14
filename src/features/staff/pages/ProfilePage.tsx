@@ -27,9 +27,9 @@ const ProfilePage: React.FC = () => {
   const { user } = useAuth()
 
   const roleLabel =
-    user?.role === "super_admin"
+    user?.role === "SUPER_ADMIN"
       ? "Super Admin"
-      : user?.role === "admin"
+      : user?.role === "ADMIN"
       ? "Admin"
       : "-"
 

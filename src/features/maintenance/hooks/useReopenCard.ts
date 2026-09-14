@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { useAuth } from "@/features/auth/context/AuthContext"
+import { canReopenMaintenanceCard } from "@/lib/permissions"
 import { maintenanceApi } from "../services/maintenance-api.service"
 import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
 import { dashboardQueryKeys } from "@/features/dashboard/services/dashboard-query-keys"
@@ -14,7 +15,7 @@ export function useReopenCard() {
   return useMutation({
     mutationFn: (cardId: number) => {
       // Only super admins can reopen cards
-      if (user?.role !== "super_admin") {
+      if (!canReopenMaintenanceCard(user?.role)) {
         throw new Error(t("errors.reopenUnauthorized", "Only super admins can reopen cards"))
       }
       return maintenanceApi.reopenCard(cardId)

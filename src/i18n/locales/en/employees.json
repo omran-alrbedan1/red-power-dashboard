@@ -1,0 +1,80 @@
+{
+  "title": "Employees",
+  "subtitle": "Manage garage staff accounts",
+  "addEmployee": "Add Employee",
+  "addEmployeeDescription": "Create a new staff account to access the dashboard.",
+  "backToList": "Back to employees",
+  "searchPlaceholder": "Search by name or email...",
+  "noResults": "No matching employees found",
+  "empty": "No employees registered yet",
+  "role": "Role",
+  "roles": {
+    "admin": "Employee",
+    "superAdmin": "Super Admin"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "activate": "Activate",
+  "deactivate": "Deactivate",
+  "table": {
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "createdAt": "Created At",
+    "actions": "Actions"
+  },
+  "fields": {
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Enter last name",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter password"
+  },
+  "messages": {
+    "created": "Employee created successfully",
+    "activated": "Employee activated successfully",
+    "deactivated": "Employee deactivated successfully",
+    "loadFailed": "Unable to load employees"
+  },
+  "errors": {
+    "createFailed": "Failed to create employee",
+    "activateFailed": "Failed to activate employee",
+    "deactivateFailed": "Failed to deactivate employee"
+  },
+  "validation": {
+    "firstNameRequired": "First name is required",
+    "firstNameMax": "First name must be at most 150 characters",
+    "lastNameRequired": "Last name is required",
+    "lastNameMax": "Last name must be at most 150 characters",
+    "emailInvalid": "Invalid email address",
+    "emailMax": "Email must be at most 254 characters",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordMax": "Password must be at most 72 characters",
+    "confirmRequired": "Password confirmation is required",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "filter": {
+    "search": "Search employees",
+    "status": "Status"
+  },
+  "dialogs": {
+    "activate": {
+      "title": "Activate Employee",
+      "description": "Are you sure you want to activate «{{name}}» again?",
+      "confirm": "Activate"
+    },
+    "deactivate": {
+      "title": "Deactivate Employee",
+      "description": "Are you sure you want to deactivate «{{name}}»? They will not be able to sign in until reactivated.",
+      "confirm": "Deactivate"
+    }
+  }
+}

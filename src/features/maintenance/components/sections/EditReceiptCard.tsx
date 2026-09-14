@@ -75,7 +75,7 @@ export const EditReceiptCard = ({ card, onCancel, onSaved }: EditReceiptCardProp
           inspectionNotes: values.inspectionNotes?.trim() || undefined,
           customerApproved: values.approved,
           ...(values.approved
-            ? { customerApprovalName: values.approvalName?.trim() || card.customer.name }
+            ? { customerApprovalName: values.approvalName?.trim() || card.customer?.name || "" }
             : {}),
           ...(values.approved && !card.customerApproved
             ? { customerApprovedAt: new Date().toISOString() }

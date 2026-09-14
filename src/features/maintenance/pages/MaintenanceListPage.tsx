@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { addDays } from "date-fns"
 import { Wrench, Plus } from "lucide-react"
 import PageHeader from "@/components/shared/headers/PageHeader"
 import { Button } from "@/components/ui/button"
@@ -13,7 +14,6 @@ import {
   maintenanceFilterFields,
   type MaintenanceFilterValues,
 } from "../configs/maintenance-filter.config"
-import type { MaintenanceCardListRow } from "../types/maintenance-detail.types"
 import { images } from "@/constants/images"
 
 const PAGE_LIMIT = 10
@@ -38,9 +38,9 @@ const MaintenanceListPage: React.FC = () => {
     page,
     limit: PAGE_LIMIT,
     ...(filters?.search?.trim() ? { search: filters.search.trim() } : {}),
-    ...(filters?.status ? { status: filters.status as MaintenanceCardListRow["status"] } : {}),
+    ...(filters?.status ? { status: filters.status } : {}),
     ...(range?.from ? { receivedFrom: range.from.toISOString() } : {}),
-    ...(range?.to ? { receivedTo: new Date(range.to.getTime() + 86400000).toISOString() } : {}),
+    ...(range?.to ? { receivedTo: addDays(range.to, 1).toISOString() } : {}),
   })
 
   const cards = cardsQuery.data?.items ?? []

@@ -59,7 +59,7 @@ export const createReceiptFormSchema = (t: (key: string) => string) =>
       .min(1, { message: t("validation.reasonRequired") }),
     conditionOptionIds: z.array(z.string()).default([]),
     itemOptionIds: z.array(z.string()).default([]),
-    fuelLevel: z.string().default("half"),
+    fuelLevel: z.enum(FUEL_LEVELS).default("half"),
     complaint: z.string().optional(),
     inspectionNotes: z.string().optional(),
 
@@ -89,7 +89,7 @@ export const editReceiptFormSchema = (t: (key: string) => string) =>
       .min(1, { message: t("validation.reasonRequired") }),
     conditionOptionIds: z.array(z.string()).default([]),
     itemOptionIds: z.array(z.string()).default([]),
-    fuelLevel: z.string().default("half"),
+    fuelLevel: z.enum(FUEL_LEVELS).default("half"),
     complaint: z.string().optional(),
     inspectionNotes: z.string().optional(),
     approved: z.boolean().default(false),

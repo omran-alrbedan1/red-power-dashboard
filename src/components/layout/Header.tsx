@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ onLogout, onMenuToggle, isMobileMenuOpe
                 {user?.name || t("header.adminUser")}
               </p>
               <p className="text-xs text-text-secondary">
-                {user?.role === "super_admin" ? "Super Admin" : "Admin"}
+                {user?.role === "SUPER_ADMIN" ? t("header.roles.superAdmin", "Super Admin") : t("header.roles.admin", "Admin")}
               </p>
             </div>
             <div className="h-8 w-8 rounded-full bg-gradient-primary flex items-center justify-center">
