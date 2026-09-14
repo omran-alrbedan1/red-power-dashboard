@@ -42,13 +42,13 @@ export function useMaintenanceOptions(
   kind: MaintenanceOptionKind,
   page: number,
   limit: number,
-  filters?: MaintenanceOptionFilterValues,
+  filters: MaintenanceOptionFilterValues,
 ) {
-  const search = filters?.search.trim() || undefined
+  const search = filters.search.trim() || undefined
   const isActive =
-    filters?.status === "active"
+    filters.status === "active"
       ? true
-      : filters?.status === "inactive"
+      : filters.status === "inactive"
         ? false
         : undefined
 

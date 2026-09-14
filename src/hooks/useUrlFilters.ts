@@ -134,7 +134,11 @@ export function useUrlFilters<T extends object>({
       if (keys.includes(key)) {
         const range = value as DateRange
         if (range?.from || range?.to) return true
-      } else if (typeof value === "string" && value !== "") {
+      } else if (
+        typeof value === "string" &&
+        value !== "" &&
+        value !== defaultsRow[key]
+      ) {
         return true
       }
     }

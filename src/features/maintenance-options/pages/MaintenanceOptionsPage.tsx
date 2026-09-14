@@ -45,12 +45,7 @@ const MaintenanceOptionsPage: React.FC = () => {
   const [dialog, setDialog] = useState<OptionDialogState | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<MaintenanceOptionRow | null>(null)
 
-  const optionsQuery = useMaintenanceOptions(
-    activeKind,
-    page,
-    PAGE_LIMIT,
-    hasActive ? filters : undefined,
-  )
+  const optionsQuery = useMaintenanceOptions(activeKind, page, PAGE_LIMIT, filters)
 
   const toggleStatus = useToggleMaintenanceOptionStatus(activeKind)
 
