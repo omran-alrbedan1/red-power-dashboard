@@ -14,6 +14,7 @@ import PageHeader from "@/components/shared/headers/PageHeader"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SubmitButton } from "@/components/shared/buttons/SubmitButton"
+import { Skeleton } from "@/components/ui/skeleton"
 import { customerService } from "@/features/customers/services/customer.service"
 import { customerQueryKeys } from "@/features/customers/services/customer-query-keys"
 import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
@@ -63,6 +64,8 @@ const ReceiptCreatePage: React.FC = () => {
   const visitReasonsQuery = useMaintenanceOptions("visit-reasons")
   const conditionOptionsQuery = useMaintenanceOptions("vehicle-conditions")
   const itemOptionsQuery = useMaintenanceOptions("vehicle-items")
+
+  const isLoadingOptions = visitReasonsQuery.isLoading || conditionOptionsQuery.isLoading || itemOptionsQuery.isLoading
 
   const [step, setStep] = useState<StepNumber>(1)
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null)
@@ -314,7 +317,13 @@ const ReceiptCreatePage: React.FC = () => {
 
       <WizardSteps current={step as WizardStep} />
 
-      <form onSubmit={handleSave} noValidate className="space-y-4 relative overflow-visible">
+      {isLoadingOptions ? (
+        <div className="space-y-4">
+          <Skeleton className="h-64 w-full rounded-2xl" />
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </div>
+      ) : (
+        <form onSubmit={handleSave} noValidate className="space-y-4 relative overflow-visible">
         {step === 1 && (
           <Card>
             <CardHeader className="pb-3">
@@ -491,6 +500,7 @@ const ReceiptCreatePage: React.FC = () => {
           </div>
         )}
       </form>
+      )}
     </div>
   )
 }

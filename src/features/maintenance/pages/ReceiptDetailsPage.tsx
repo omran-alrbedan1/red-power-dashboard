@@ -8,6 +8,7 @@ import PageHeader from "@/components/shared/headers/PageHeader"
 import EmptyState from "@/components/shared/states/EmptyState"
 import ErrorState from "@/components/shared/states/ErrorState"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 
 import { useAuth } from "@/features/auth/context/AuthContext"
 import { formatDateTime } from "@/lib/formatter"
@@ -111,8 +112,16 @@ const ReceiptDetailsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div dir={direction} className="flex min-h-[300px] items-center justify-center rounded-2xl border border-border bg-card">
-        <p className="text-sm font-medium text-muted-foreground">{t("saving")}</p>
+      <div dir={direction} className="mx-auto max-w-7xl space-y-6">
+        <Skeleton className="h-16 w-full rounded-2xl" />
+        <div className="space-y-4">
+          <Skeleton className="h-40 w-full rounded-2xl" />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Skeleton className="h-64 w-full rounded-2xl" />
+            <Skeleton className="h-64 w-full rounded-2xl" />
+          </div>
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </div>
       </div>
     )
   }
