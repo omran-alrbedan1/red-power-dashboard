@@ -90,7 +90,7 @@ export function MaintenanceEditForm({ card, onSaved, onCancel }: MaintenanceEdit
   }
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} noValidate className="space-y-6">
+    <form onSubmit={form.handleSubmit(handleSubmit)} noValidate className="space-y-6 relative overflow-visible">
       {optionsError && !optionsLoading && <div className="flex flex-col gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between"><p className="text-sm text-destructive">{t("options.error")}</p><Button type="button" variant="outline" size="sm" onClick={retryOptions}><RefreshCw className="size-4" />{tCommon("common.retry")}</Button></div>}
       <EditSection icon={<Fuel className="size-4" />} title={t("edit.sections.cardInfo")}><EditBasicInfoSection control={form.control} /></EditSection>
       <EditSection icon={<ClipboardList className="size-4" />} title={t("sections.reason")}><EditVisitSection control={form.control} options={toOptions(visitReasons.data)} loading={visitReasons.isLoading} /></EditSection>

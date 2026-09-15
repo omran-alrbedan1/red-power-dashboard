@@ -57,6 +57,14 @@ function toCost(value: string | number | null | undefined): number | null {
   return Number.isFinite(parsed) ? parsed : null
 }
 
+function mapUserRef(user: { id: number; firstName?: string | null; lastName?: string | null; email: string } | null | undefined): { id: number; name?: string } | null {
+  if (!user) return null
+  return {
+    id: user.id,
+    name: [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email,
+  }
+}
+
 function mapWork(work: MaintenanceWork): MaintenanceWorkRow {
   return {
     id: work.id,
@@ -65,7 +73,13 @@ function mapWork(work: MaintenanceWork): MaintenanceWorkRow {
     isRequired: work.isRequired,
     estimatedCost: toCost(work.estimatedCost),
     status: mapWorkStatus(work.status),
+    startedAt: work.startedAt ?? null,
+    startedBy: mapUserRef(work.startedBy),
     completedAt: work.completedAt ?? null,
+    completedBy: mapUserRef(work.completedBy),
+    cancelledAt: work.cancelledAt ?? null,
+    cancelledBy: mapUserRef(work.cancelledBy),
+    cancellationReason: work.cancellationReason ?? null,
   }
 }
 

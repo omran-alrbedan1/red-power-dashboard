@@ -16,9 +16,12 @@ import { canEditMaintenanceCard, isSuperAdmin } from "@/lib/permissions"
 import { ActivityTimeline } from "../components/ActivityTimeline"
 import { CloseCardDialog } from "../components/CloseCardDialog"
 import { ClosureGuardBadge } from "../components/ClosureGuardBadge"
+import { MaintenanceWorkList } from "../components/work/MaintenanceWorkList"
 import { MaintenanceMediaSection } from "../components/sections/MaintenanceMediaSection"
+import { useMaintenanceActivity } from "../hooks/useMaintenanceActivity"
 import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
 import { useReopenCard } from "../hooks/useReopenCard"
+import { images } from "@/constants/images"
 
 interface SectionCardProps {
   icon: ReactNode
@@ -91,6 +94,7 @@ const ReceiptDetailsPage: React.FC = () => {
   const { user } = useAuth()
 
   const { data: card, isLoading, isError } = useMaintenanceCard(cardId)
+  const { data: activityEvents = [], isLoading: isActivityLoading, isError: isActivityError, refetch: retryActivity } = useMaintenanceActivity(cardId)
   const reopenCard = useReopenCard()
 
   const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
@@ -123,13 +127,11 @@ const ReceiptDetailsPage: React.FC = () => {
 
   const isCardClosed = card.status === "closed"
 
-  const workTotal = card.requiredWorks.reduce((sum, item) => sum + (Number(item.estimatedCost) || 0), 0)
-
   const canClose = card.requiredWorks.filter((work) => work.isRequired).every((work) => work.status === "completed" || work.status === "cancelled")
 
   return (
     <div dir={direction} className="mx-auto max-w-7xl space-y-6">
-      <PageHeader title={t("details")} description={`${t("receiptNumber")}: ${card.cardNumber}`} showBackButton backButtonLabel={t("backToList")} />
+      <PageHeader title={t("details")} backgroundImage={images.cardDetailsHero} description={`${t("receiptNumber")}: ${card.cardNumber}`} showBackButton backButtonLabel={t("backToList")} />
 
       <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
@@ -266,51 +268,7 @@ const ReceiptDetailsPage: React.FC = () => {
           </div>
 
           <SectionCard icon={<Wrench className="size-4" />} title={t("sections.work")}>
-            {card.requiredWorks.length > 0 ? (
-              <div className="overflow-hidden rounded-xl border border-border">
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[620px] text-sm">
-                    <thead>
-                      <tr className="bg-muted/40 text-xs font-medium text-muted-foreground">
-                        <th className="px-4 py-3 text-start">#</th>
-                        <th className="px-4 py-3 text-start">{t("work.description")}</th>
-                        <th className="px-4 py-3 text-center">{t("work.status")}</th>
-                        <th className="px-4 py-3 text-end">{t("work.estimate")}</th>
-                      </tr>
-                    </thead>
-
-                    <tbody className="divide-y divide-border">
-                      {card.requiredWorks.map((item, index) => (
-                        <tr key={item.id}>
-                          <td className="px-4 py-3.5 text-muted-foreground">{index + 1}</td>
-
-                          <td className="px-4 py-3.5">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="font-semibold text-foreground">{item.description}</span>
-
-                              {item.isRequired && <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{t("work.required")}</span>}
-                            </div>
-                          </td>
-
-                          <td className="px-4 py-3.5 text-center">
-                            <span className="inline-flex rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">{t(`work.statuses.${item.status}`)}</span>
-                          </td>
-
-                          <td className="px-4 py-3.5 text-end font-semibold text-foreground" >{item.estimatedCost !== null ? item.estimatedCost : "—"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="flex items-center justify-between border-t border-border bg-muted/20 px-5 py-4">
-                  <span className="text-sm font-semibold text-foreground">{t("work.total")}</span>
-                  <span className="text-lg font-bold text-primary" dir="ltr">{workTotal}</span>
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">{t("work.noWork")}</p>
-            )}
+            <MaintenanceWorkList cardId={card.id} works={card.requiredWorks} readOnly={isCardClosed} />
           </SectionCard>
 
           <div className="grid gap-6 lg:grid-cols-2">
@@ -332,7 +290,21 @@ const ReceiptDetailsPage: React.FC = () => {
           </div>
 
       <SectionCard icon={<History className="size-4" />} title={t("activity.title")}>
-        <ActivityTimeline events={card.statusEvents} />
+        {isActivityLoading ? (
+          <div className="space-y-3">
+            <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+            <p className="text-sm font-medium text-muted-foreground">{t("saving")}</p>
+          </div>
+        ) : isActivityError ? (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-border p-6 text-center">
+            <p className="text-sm text-muted-foreground">{t("errors.workActivityFailed")}</p>
+            <Button type="button" variant="outline" size="sm" onClick={() => retryActivity()}>
+              {t("media.retry")}
+            </Button>
+          </div>
+        ) : (
+          <ActivityTimeline events={activityEvents} />
+        )}
       </SectionCard>
 
       <CloseCardDialog card={card} open={isCloseDialogOpen} onOpenChange={setIsCloseDialogOpen} />

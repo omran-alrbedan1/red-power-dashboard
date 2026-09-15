@@ -22,7 +22,59 @@ export interface MaintenanceWork {
   isRequired: boolean
   estimatedCost?: string | number | null
   status: ApiWorkStatus
+  startedAt?: string | null
+  startedBy?: {
+    id: number
+    firstName?: string | null
+    lastName?: string | null
+    email: string
+  } | null
   completedAt?: string | null
+  completedBy?: {
+    id: number
+    firstName?: string | null
+    lastName?: string | null
+    email: string
+  } | null
+  cancelledAt?: string | null
+  cancelledBy?: {
+    id: number
+    firstName?: string | null
+    lastName?: string | null
+    email: string
+  } | null
+  cancellationReason?: string | null
+}
+
+export type MaintenanceActivityType =
+  | "CARD_CREATED"
+  | "CARD_CLOSED"
+  | "CARD_REOPENED"
+  | "WORK_CREATED"
+  | "WORK_UPDATED"
+  | "WORK_STARTED"
+  | "WORK_COMPLETED"
+  | "WORK_CANCELLED"
+  | "WORK_REOPENED"
+  | "WORK_REMOVED"
+
+export interface MaintenanceActivityEvent {
+  id: string
+  type: MaintenanceActivityType
+  occurredAt: string
+  actor?: {
+    id: number
+    firstName?: string | null
+    lastName?: string | null
+    email: string
+  } | null
+  work?: {
+    id?: number | null
+    description: string
+  } | null
+  fromStatus?: ApiWorkStatus | ApiMaintenanceCardStatus | null
+  toStatus?: ApiWorkStatus | ApiMaintenanceCardStatus | null
+  reason?: string | null
 }
 
 export interface MaintenanceStatusEvent {

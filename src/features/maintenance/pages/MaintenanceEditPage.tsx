@@ -13,6 +13,10 @@ import { EditWorkItemsSection } from "../components/edit/EditWorkItemsSection"
 import { MaintenanceEditForm } from "../components/edit/MaintenanceEditForm"
 import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
 import { useReopenCard } from "../hooks/useReopenCard"
+import { images } from "@/constants/images"
+
+
+
 
 const MaintenanceEditPage: React.FC = () => {
   const { t, i18n } = useTranslation("maintenance")
@@ -58,8 +62,8 @@ const MaintenanceEditPage: React.FC = () => {
   }
 
   return (
-    <div dir={i18n.dir()} className="mx-auto max-w-7xl space-y-6">
-      <PageHeader title={t("edit.title")} description={`${t("receiptNumber")}: ${card.cardNumber}`} showBackButton backButtonLabel={t("edit.backToDetails")} onBackClick={() => navigate(detailsPath)} />
+    <div dir={i18n.dir()} className="mx-auto max-w-7xl space-y-6 relative overflow-visible">
+      <PageHeader title={t("edit.title")} backgroundImage={images.cardDetailsHero} description={`${t("receiptNumber")}: ${card.cardNumber}`} showBackButton backButtonLabel={t("edit.backToDetails")} onBackClick={() => navigate(detailsPath)} />
       <MaintenanceEditForm card={card} onSaved={() => navigate(detailsPath)} onCancel={() => navigate(detailsPath)} />
       <EditWorkItemsSection cardId={card.id} works={card.requiredWorks} />
       <EditMediaSection cardId={card.id} />

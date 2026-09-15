@@ -120,14 +120,13 @@ export const editWorkItemSchema = (t: (key: string) => string) =>
     estimatedCost: z.union([z.number().min(0, { message: t("validation.estimateNegative") }), z.literal("")]),
     isRequired: z.boolean(),
     displayOrder: z.number().int().min(0, { message: t("validation.displayOrderNegative") }),
-    status: z.enum(["pending", "in_progress", "completed", "cancelled"]),
   })
 
 export type EditWorkItemFormValues = z.output<ReturnType<typeof editWorkItemSchema>>
 export type EditWorkItemFormInputValues = z.input<ReturnType<typeof editWorkItemSchema>>
 
 export const createEditWorkItemSchema = (t: (key: string) => string) =>
-  editWorkItemSchema(t).omit({ status: true })
+  editWorkItemSchema(t)
 
 export type CreateEditWorkItemFormValues = z.output<ReturnType<typeof createEditWorkItemSchema>>
 export type CreateEditWorkItemFormInputValues = z.input<ReturnType<typeof createEditWorkItemSchema>>

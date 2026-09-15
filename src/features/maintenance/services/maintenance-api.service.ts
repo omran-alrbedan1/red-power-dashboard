@@ -7,6 +7,7 @@ import type {
   ApiMaintenanceCardListRow,
   ApiMaintenanceCardDetail as MaintenanceCardDetailApi,
   ApiWorkStatus,
+  MaintenanceActivityEvent,
   MaintenanceOption,
   MaintenanceOptionKind,
   MaintenancePhoto,
@@ -159,6 +160,16 @@ export const maintenanceApi = {
     apiRequest<{ id: number }>({ method: "PATCH", url: `/maintenance-cards/${cardId}/required-works/${workItemId}`, data: { ...input, ...(input.status ? { status: toApiWorkStatus(input.status) } : {}) } }),
   deleteWorkItem: (cardId: number, workItemId: number) =>
     apiRequest<void>({ method: "DELETE", url: `/maintenance-cards/${cardId}/required-works/${workItemId}` }),
+  startWork: (cardId: number, workItemId: number) =>
+    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/start` }).then(toDetail),
+  completeWork: (cardId: number, workItemId: number) =>
+    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/complete` }).then(toDetail),
+  cancelWork: (cardId: number, workItemId: number, reason: string) =>
+    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/cancel`, data: { reason } }).then(toDetail),
+  reopenWork: (cardId: number, workItemId: number, input: { reason: string; targetStatus?: "PENDING" | "IN_PROGRESS" }) =>
+    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/reopen`, data: input }).then(toDetail),
+  getActivity: (cardId: number, params?: { page?: number; limit?: number }) =>
+    apiRequest<ApiPaginated<MaintenanceActivityEvent>>({ url: `/maintenance-cards/${cardId}/activity`, params }),
   closeCard: (cardId: number) =>
     apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/close` }).then(toDetail),
   reopenCard: (cardId: number) =>

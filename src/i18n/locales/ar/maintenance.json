@@ -25,6 +25,10 @@
     "workCreated": "تمت إضافة العمل بنجاح",
     "workUpdated": "تم تحديث العمل بنجاح",
     "workDeleted": "تم حذف العمل بنجاح",
+    "workStarted": "تم بدء العمل بنجاح",
+    "workCompleted": "تم إنجاز العمل بنجاح",
+    "workCancelled": "تم إلغاء العمل بنجاح",
+    "workReopened": "تمت إعادة فتح العمل بنجاح",
     "photoDeleted": "تم حذف الصورة بنجاح",
     "signatureDeleted": "تم حذف التوقيع بنجاح"
   },
@@ -39,6 +43,11 @@
     "workCreateFailed": "تعذرت إضافة العمل",
     "workUpdateFailed": "تعذر تحديث العمل",
     "workDeleteFailed": "تعذر حذف العمل",
+    "workStartFailed": "تعذر بدء العمل",
+    "workCompleteFailed": "تعذر إنجاز العمل",
+    "workCancelFailed": "تعذر إلغاء العمل",
+    "workReopenFailed": "تعذرت إعادة فتح العمل",
+    "workActivityFailed": "تعذر تحميل سجل النشاط",
     "photoDeleteFailed": "تعذر حذف الصورة",
     "signatureDeleteFailed": "تعذر حذف التوقيع"
   },
@@ -213,6 +222,35 @@
     "editWork": "تحديث العمل",
     "assigneePlaceholder": "اسم الفني أو المنفذ",
     "updateError": "تعذر تحديث العمل. تأكد من أن انتقال الحالة مسموح.",
+    "completedOn": "تم الإنجاز في:",
+    "cancelledOn": "أُلغي في:",
+    "cancellationReason": "سبب الإلغاء",
+    "actions": {
+      "start": "بدء العمل",
+      "complete": "تم إنجاز العمل",
+      "cancel": "إلغاء العمل",
+      "reopen": "إعادة فتح العمل",
+      "edit": "تعديل البيانات"
+    },
+    "messages": {
+      "started": "تم بدء العمل بنجاح",
+      "completed": "تم إنجاز العمل بنجاح",
+      "cancelled": "تم إلغاء العمل بنجاح",
+      "reopened": "تمت إعادة فتح العمل بنجاح"
+    },
+    "dialogs": {
+      "cancelTitle": "إلغاء العمل",
+      "cancelWorkDescription": "سيظهر هذا الإجراء في سجل النشاط مع السبب.",
+      "cancelReason": "سبب الإلغاء",
+      "cancelReasonPlaceholder": "اكتب سبب الإلغاء...",
+      "canNotCompleteOrCancel": "لا يمكن الإنجاز أو الإلغاء الآن.",
+      "reopenTitle": "إعادة فتح العمل",
+      "reopenWorkDescription": "سيظهر هذا الإجراء في سجل النشاط مع السبب.",
+      "reopenReason": "سبب إعادة الفتح",
+      "reopenReasonPlaceholder": "اكتب سبب إعادة الفتح...",
+      "reopenTargetStatus": "الحالة الجديدة بعد إعادة الفتح",
+      "editWorkDescription": "عدّل بيانات العمل دون تغيير حالته."
+    },
     "statuses": {
       "pending": "قيد الانتظار",
       "in_progress": "قيد التنفيذ",
@@ -304,9 +342,34 @@
   "activity": {
     "title": "سجل النشاط",
     "noActivity": "لا يوجد نشاط مسجل بعد",
+    "reason": "السبب",
+    "statusValue": {
+      "card": {
+        "open": "مفتوحة",
+        "closed": "مغلقة"
+      },
+      "work": {
+        "pending": "قيد الانتظار",
+        "in_progress": "قيد التنفيذ",
+        "completed": "مكتمل",
+        "cancelled": "ملغي"
+      }
+    },
     "status": {
       "open": "تم فتح البطاقة",
       "closed": "تم إغلاق البطاقة"
+    },
+    "types": {
+      "cardCreated": "تم إنشاء بطاقة الصيانة",
+      "cardClosed": "تم إغلاق بطاقة الصيانة",
+      "cardReopened": "تمت إعادة فتح بطاقة الصيانة",
+      "workCreated": "تمت إضافة عمل: {{description}}",
+      "workUpdated": "تم تعديل عمل: {{description}}",
+      "workStarted": "بدأ تنفيذ عمل: {{description}}",
+      "workCompleted": "تم إنجاز عمل: {{description}}",
+      "workCancelled": "تم إلغاء عمل: {{description}}",
+      "workReopened": "تمت إعادة فتح عمل: {{description}}",
+      "workRemoved": "تمت إزالة عمل: {{description}}"
     },
     "card_created": "تم إنشاء البطاقة",
     "card_status_changed": "تم تغيير حالة البطاقة",

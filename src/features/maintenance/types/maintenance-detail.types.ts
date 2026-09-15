@@ -3,6 +3,7 @@ import type {
   ApiFuelLevel,
   MaintenanceOption,
   ApiWorkStatus,
+  MaintenanceActivityEvent,
 } from "./api-maintenance.types"
 
 export type MaintenanceCardStatus = Lowercase<ApiCardStatus>
@@ -38,7 +39,13 @@ export interface MaintenanceWorkRow {
   isRequired: boolean
   estimatedCost?: number | null
   status: PersistedWorkStatus
+  startedAt?: string | null
+  startedBy?: { id: number; name?: string } | null
   completedAt?: string | null
+  completedBy?: { id: number; name?: string } | null
+  cancelledAt?: string | null
+  cancelledBy?: { id: number; name?: string } | null
+  cancellationReason?: string | null
 }
 
 export interface MaintenanceStatusEventRow {
@@ -85,3 +92,5 @@ export interface MaintenanceCardDetail {
   requiredWorks: MaintenanceWorkRow[]
   statusEvents: MaintenanceStatusEventRow[]
 }
+
+export type MaintenanceActivityRow = MaintenanceActivityEvent

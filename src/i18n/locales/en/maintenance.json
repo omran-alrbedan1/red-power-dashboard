@@ -25,6 +25,10 @@
     "workCreated": "Work item added successfully",
     "workUpdated": "Work item updated successfully",
     "workDeleted": "Work item deleted successfully",
+    "workStarted": "Work item started successfully",
+    "workCompleted": "Work item completed successfully",
+    "workCancelled": "Work item cancelled successfully",
+    "workReopened": "Work item reopened successfully",
     "photoDeleted": "Photo deleted successfully",
     "signatureDeleted": "Signature deleted successfully"
   },
@@ -39,6 +43,11 @@
     "workCreateFailed": "Failed to add the work item",
     "workUpdateFailed": "Failed to update the work item",
     "workDeleteFailed": "Failed to delete the work item",
+    "workStartFailed": "Failed to start the work item",
+    "workCompleteFailed": "Failed to complete the work item",
+    "workCancelFailed": "Failed to cancel the work item",
+    "workReopenFailed": "Failed to reopen the work item",
+    "workActivityFailed": "Failed to load the activity timeline",
     "photoDeleteFailed": "Failed to delete the photo",
     "signatureDeleteFailed": "Failed to delete the signature"
   },
@@ -213,6 +222,35 @@
     "editWork": "Update Work Item",
     "assigneePlaceholder": "Technician or assignee name",
     "updateError": "Unable to update this work item. Check the status transition.",
+    "completedOn": "Completed on:",
+    "cancelledOn": "Cancelled on:",
+    "cancellationReason": "Cancellation reason",
+    "actions": {
+      "start": "Start Work",
+      "complete": "Mark Completed",
+      "cancel": "Cancel Work",
+      "reopen": "Reopen Work",
+      "edit": "Edit Details"
+    },
+    "messages": {
+      "started": "Work item started successfully",
+      "completed": "Work item completed successfully",
+      "cancelled": "Work item cancelled successfully",
+      "reopened": "Work item reopened successfully"
+    },
+    "dialogs": {
+      "cancelTitle": "Cancel Work",
+      "cancelWorkDescription": "This action will appear in the activity timeline with the reason.",
+      "cancelReason": "Cancellation reason",
+      "cancelReasonPlaceholder": "Enter the cancellation reason...",
+      "canNotCompleteOrCancel": "Cannot complete or cancel at this time.",
+      "reopenTitle": "Reopen Work",
+      "reopenWorkDescription": "This action will appear in the activity timeline with the reason.",
+      "reopenReason": "Reopen reason",
+      "reopenReasonPlaceholder": "Enter the reopen reason...",
+      "reopenTargetStatus": "New status after reopening",
+      "editWorkDescription": "Edit the work details without changing its status."
+    },
     "statuses": {
       "pending": "Pending",
       "in_progress": "In Progress",
@@ -304,9 +342,34 @@
   "activity": {
     "title": "Activity Timeline",
     "noActivity": "No activity recorded yet",
+    "reason": "Reason",
+    "statusValue": {
+      "card": {
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "work": {
+        "pending": "Pending",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      }
+    },
     "status": {
       "open": "Card opened",
       "closed": "Card closed"
+    },
+    "types": {
+      "cardCreated": "Maintenance card created",
+      "cardClosed": "Maintenance card closed",
+      "cardReopened": "Maintenance card reopened",
+      "workCreated": "Work item added: {{description}}",
+      "workUpdated": "Work item updated: {{description}}",
+      "workStarted": "Work item started: {{description}}",
+      "workCompleted": "Work item completed: {{description}}",
+      "workCancelled": "Work item cancelled: {{description}}",
+      "workReopened": "Work item reopened: {{description}}",
+      "workRemoved": "Work item removed: {{description}}"
     },
     "card_created": "Card created",
     "card_status_changed": "Card status changed",
