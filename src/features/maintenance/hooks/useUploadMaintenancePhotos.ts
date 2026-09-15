@@ -12,6 +12,7 @@ export function useUploadMaintenancePhotos() {
     mutationFn: ({ cardId, files }: { cardId: number; files: File[] }) =>
       maintenanceApi.uploadPhotos(cardId, files),
     onSuccess: (_data, { cardId }) => {
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.photos(String(cardId)) })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(String(cardId)) })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
       toast.success(t("messages.photosUploaded", "Photos uploaded successfully"))

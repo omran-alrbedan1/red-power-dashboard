@@ -127,7 +127,8 @@
     },
     "form": {
       "searchOptions": "ابحث في الخيارات...",
-      "noOptions": "لا توجد خيارات"
+      "noOptions": "لا توجد خيارات",
+      "selectOptions": "اختر الخيارات"
     },
     "datePicker": {
       "placeholder": "اختر تاريخاً"

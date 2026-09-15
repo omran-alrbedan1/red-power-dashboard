@@ -64,6 +64,7 @@ export interface CustomFormFieldProps<T extends FieldValues = FieldValues> {
   options?: Option[]
   searchPlaceholder?: string
   emptyMessage?: string
+  footer?: React.ReactNode
   min?: number
   max?: number
   step?: number

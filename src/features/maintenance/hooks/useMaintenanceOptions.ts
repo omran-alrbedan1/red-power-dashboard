@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { useQuery } from "@tanstack/react-query"
 import { maintenanceApi } from "../services/maintenance-api.service"
 import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
@@ -7,8 +8,9 @@ const STALE_TIME = 5 * 60 * 1000
 const GC_TIME = 30 * 60 * 1000
 
 export function useMaintenanceOptions(kind: MaintenanceOptionKind) {
+  const { i18n } = useTranslation("maintenance")
   return useQuery({
-    queryKey: maintenanceQueryKeys.options(kind),
+    queryKey: maintenanceQueryKeys.options(kind, i18n.language),
     queryFn: () => maintenanceApi.options(kind),
     retry: 1,
     staleTime: STALE_TIME,

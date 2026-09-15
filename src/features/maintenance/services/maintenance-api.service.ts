@@ -1,4 +1,4 @@
-import { apiRequest, apiUpload, apiDownload } from "@/lib/api/client"
+import { apiRequest, apiUpload, apiDownload, ApiError } from "@/lib/api/client"
 import { cleanParams } from "@/lib/api/params"
 import type { ApiPaginated } from "@/lib/api/contracts"
 import type {
@@ -25,6 +25,45 @@ export type { MaintenanceOptionKind, CreateMaintenanceCardInput }
 export type { ApiFuelLevel } from "../types/api-maintenance.types"
 
 export type FuelLevel = PersistedFuelLevel
+
+export interface SelectorVehicle {
+  id: number
+  make: string
+  model: string
+  plateNumber: string
+  manufactureYear: number
+  vin?: string
+  currentOwnership: { id: number; customerId: number } | null
+}
+
+interface ApiSelectorVehicle {
+  id: number
+  make: string
+  model: string
+  plateNumber: string
+  manufactureYear: number
+  vin?: string | null
+  ownershipId?: number
+  currentOwnership?: { id: number; customerId: number } | null
+}
+
+const toSelectorVehicle = (
+  vehicle: ApiSelectorVehicle,
+  ownerCustomerId: number
+): SelectorVehicle => {
+  const ownershipId = vehicle.ownershipId ?? vehicle.currentOwnership?.id
+  return {
+    id: vehicle.id,
+    make: vehicle.make,
+    model: vehicle.model,
+    plateNumber: vehicle.plateNumber,
+    manufactureYear: vehicle.manufactureYear,
+    vin: vehicle.vin ?? undefined,
+    currentOwnership: ownershipId
+      ? { id: ownershipId, customerId: vehicle.currentOwnership?.customerId ?? ownerCustomerId }
+      : null,
+  }
+}
 
 export const toApiFuelLevel = (level: PersistedFuelLevel): ApiFuelLevel => {
   switch (level) {
@@ -102,12 +141,21 @@ export const maintenanceApi = {
         items: page.items.map(mapListRow),
       }),
     ),
+  customerVehicles: async (customerId: number) => {
+    const response = await apiRequest<{ currentVehicles?: ApiSelectorVehicle[] }>({
+      url: `/customers/${customerId}`,
+    })
+    return (response.currentVehicles ?? []).map((vehicle) => toSelectorVehicle(vehicle, customerId))
+  },
   getById: (id: number) =>
     apiRequest<ApiMaintenanceCardDetail>({ url: `/maintenance-cards/${id}` }).then(toDetail),
   update: (cardId: number, input: UpdateMaintenanceCardInput) =>
     apiRequest<ApiMaintenanceCardDetail>({ method: "PATCH", url: `/maintenance-cards/${cardId}`, data: input }).then(toDetail),
     options: (kind: MaintenanceOptionKind) =>
-      apiRequest<MaintenanceOption[]>({ url: `/maintenance-card-options/${kind}`, params: { isActive: true } }),
+      apiRequest<ApiPaginated<MaintenanceOption>>({
+        url: `/maintenance-card-options/${kind}`,
+        params: { isActive: true },
+      }).then((page) => page.items),
     createWorkItem: ({ cardId, ...input }: CreateWorkItemInput) =>
       apiRequest<{ id: number }>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works`, data: input }),
   updateWorkItem: (workItemId: number, { cardId, ...input }: UpdateWorkItemInput) =>
@@ -127,6 +175,18 @@ export const maintenanceApi = {
     const form = new FormData()
     form.append("file", file)
     return apiUpload<MaintenanceSignature>(`/maintenance-cards/${cardId}/signature`, form)
+  },
+  getPhotos: (cardId: number) =>
+    apiRequest<MaintenancePhoto[]>({ url: `/maintenance-cards/${cardId}/photos` }),
+  getSignature: async (cardId: number) => {
+    try {
+      return await apiRequest<MaintenanceSignature | null>({
+        url: `/maintenance-cards/${cardId}/signature`,
+      })
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null
+      throw error
+    }
   },
   downloadPhoto: (cardId: number, photoId: number) =>
     apiDownload(`/maintenance-cards/${cardId}/photos/${photoId}/content`),

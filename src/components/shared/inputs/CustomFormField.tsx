@@ -84,6 +84,7 @@
       iconPosition,
       iconClassName,
       options,
+      footer,
       min,
       max,
       step,
@@ -142,7 +143,7 @@
           return <SelectField {...commonProps} placeholder={props.placeholder} options={options} />
         
         case FormFieldType.MULTI_SELECT:
-          return <MultiSelectField {...commonProps} placeholder={props.placeholder} options={options} searchPlaceholder={props.searchPlaceholder} emptyMessage={props.emptyMessage} />
+          return <MultiSelectField {...commonProps} placeholder={props.placeholder} options={options} searchPlaceholder={props.searchPlaceholder} emptyMessage={props.emptyMessage} footer={footer} />
         
         case FormFieldType.COMBOBOX:
           return <ComboboxField {...commonProps} placeholder={props.placeholder} options={options} searchPlaceholder={props.searchPlaceholder} emptyMessage={props.emptyMessage} />
@@ -193,7 +194,7 @@
         default:
           return null
       }
-    }, [fieldType, props, disabled, inputClassName, ariaLabel, ariaDescribedBy, leftIcon, rightIcon, iconPosition, iconClassName, maxLength, min, max, step, options, dateOptions, timeOptions, sliderMarks, fileUploadOptions, maxRating, autocompleteOptions, colorPickerOptions, otpLength, tagInputOptions, currency, name, label])
+    }, [fieldType, props, disabled, inputClassName, ariaLabel, ariaDescribedBy, leftIcon, rightIcon, iconPosition, iconClassName, maxLength, min, max, step, options, dateOptions, timeOptions, sliderMarks, fileUploadOptions, maxRating, autocompleteOptions, colorPickerOptions, otpLength, tagInputOptions, currency, name, label, footer])
 
     const renderLabel = () => {
       if (!label && fieldType !== FormFieldType.CHECKBOX && fieldType !== FormFieldType.SWITCH) {

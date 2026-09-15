@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -22,7 +22,18 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
 }) => {
   const { t } = useTranslation("common")
   const [open, setOpen] = useState(false)
+  const [placeAbove, setPlaceAbove] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    if (!open) return
+    const trigger = containerRef.current
+    const popover = popoverRef.current
+    if (!trigger || !popover) return
+    const spaceBelow = window.innerHeight - trigger.getBoundingClientRect().bottom
+    setPlaceAbove(popover.offsetHeight > spaceBelow)
+  }, [open])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -78,7 +89,13 @@ export const DatePickerField: React.FC<DatePickerFieldProps> = ({
         )}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 bg-popover border-border rounded-md shadow-lg min-w-[280px]">
+        <div
+          ref={popoverRef}
+          className={cn(
+            "absolute z-50 bg-popover rounded-md shadow-lg min-w-[280px]",
+            placeAbove ? "bottom-full mb-1" : "top-full mt-1"
+          )}
+        >
           <Calendar
             mode="single"
             selected={field.value ? new Date(field.value) : undefined}

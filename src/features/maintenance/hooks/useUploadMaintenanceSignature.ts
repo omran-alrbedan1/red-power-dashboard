@@ -12,6 +12,7 @@ export function useUploadMaintenanceSignature() {
     mutationFn: ({ cardId, file }: { cardId: number; file: File }) =>
       maintenanceApi.uploadSignature(cardId, file),
     onSuccess: (_data, { cardId }) => {
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.signature(String(cardId)) })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(String(cardId)) })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
       toast.success(t("messages.signatureUploaded", "Signature uploaded successfully"))

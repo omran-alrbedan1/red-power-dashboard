@@ -1,58 +1,116 @@
+import type { ReactNode } from "react"
+import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { useState } from "react"
-import {
-  User2,
-  Car,
-  ClipboardList,
-  Wrench,
-  BadgeCheck,
-  Boxes,
-  Fuel,
-  History,
-  LockKeyhole,
-  Unlock,
-  Pencil,
-} from "lucide-react"
+import { BadgeCheck, Boxes, Calendar, Car, ClipboardList, FileText, Fuel, History, LockKeyhole, Mail, Pencil, Unlock, User2, Wrench } from "lucide-react"
+
 import PageHeader from "@/components/shared/headers/PageHeader"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import EmptyState from "@/components/shared/states/EmptyState"
 import ErrorState from "@/components/shared/states/ErrorState"
-import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
+import { Button } from "@/components/ui/button"
+
 import { useAuth } from "@/features/auth/context/AuthContext"
+import { formatDateTime } from "@/lib/formatter"
 import { isSuperAdmin } from "@/lib/permissions"
-import { useReopenCard } from "../hooks/useReopenCard"
-import { ReceiptHeader } from "../components/sections/ReceiptHeader"
+
 import { ActivityTimeline } from "../components/ActivityTimeline"
 import { CloseCardDialog } from "../components/CloseCardDialog"
 import { ClosureGuardBadge } from "../components/ClosureGuardBadge"
 import { EditReceiptCard } from "../components/sections/EditReceiptCard"
-import { formatDateTime } from "@/lib/formatter"
+import { MaintenanceMediaSection } from "../components/sections/MaintenanceMediaSection"
+import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
+import { useReopenCard } from "../hooks/useReopenCard"
+
+interface SectionCardProps {
+  icon: ReactNode
+  title: string
+  children: ReactNode
+  className?: string
+}
+
+function SectionCard({ icon, title, children, className = "" }: SectionCardProps) {
+  return (
+    <section className={`rounded-2xl border border-border bg-card p-6 shadow-sm ${className}`}>
+      <div className="mb-6 flex items-center gap-3 border-b border-border pb-4">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">{icon}</span>
+        <h2 className="text-base font-bold text-foreground">{title}</h2>
+      </div>
+
+      {children}
+    </section>
+  )
+}
+
+interface DetailItemProps {
+  label: string
+  value?: ReactNode
+  ltr?: boolean
+  className?: string
+}
+
+function DetailItem({ label, value, ltr = false, className = "" }: DetailItemProps) {
+  return (
+    <div className={`flex min-w-0 items-center justify-between gap-4 ${className}`}>
+      <span className="shrink-0 text-xs font-medium text-muted-foreground">{label}</span>
+      <span className="min-w-0 break-words text-sm font-semibold text-foreground" dir={ltr ? "ltr" : undefined}>{value ?? "—"}</span>
+    </div>
+  )
+}
+
+interface OptionPillsProps {
+  values: Array<{
+    id: number
+    label: string
+  }>
+}
+
+function OptionPills({ values }: OptionPillsProps) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {values.map((option) => (
+        <span key={option.id} className="inline-flex items-center rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-xs font-medium text-foreground">{option.label}</span>
+      ))}
+    </div>
+  )
+}
+
+function StatusBadge({ status, label }: { status: string; label: string }) {
+  const isOpen = status === "open"
+
+  return (
+    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold ${isOpen ? "bg-emerald-50 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+      <span className={`size-2 rounded-full ${isOpen ? "bg-emerald-500" : "bg-muted-foreground"}`} />
+      {label}
+    </span>
+  )
+}
 
 const ReceiptDetailsPage: React.FC = () => {
   const { t, i18n } = useTranslation("maintenance")
   const { t: tCommon } = useTranslation("common")
-  const isAr = i18n.language === "ar"
+
   const { cardId } = useParams<{ cardId: string }>()
   const { user } = useAuth()
+
   const { data: card, isLoading, isError } = useMaintenanceCard(cardId)
-  const [isEditing, setIsEditing] = useState(false)
-  const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
-  const isCardClosed = card?.status === "closed"
-  const isSuperAdminUser = isSuperAdmin(user?.role)
   const reopenCard = useReopenCard()
 
+  const [isEditing, setIsEditing] = useState(false)
+  const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
+
+  const direction = i18n.dir()
+  const locale = direction === "rtl" ? "ar-SA" : "en-GB"
+  const isSuperAdminUser = isSuperAdmin(user?.role)
+
   const handleReopen = () => {
-    if (cardId) {
-      reopenCard.mutate(Number(cardId))
-    }
+    if (!cardId) return
+    reopenCard.mutate(Number(cardId))
   }
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-muted-foreground">{t("saving")}</div>
+      <div dir={direction} className="flex min-h-[300px] items-center justify-center rounded-2xl border border-border bg-card">
+        <p className="text-sm font-medium text-muted-foreground">{t("saving")}</p>
       </div>
     )
   }
@@ -65,369 +123,231 @@ const ReceiptDetailsPage: React.FC = () => {
     return <EmptyState title={t("empty")} description="" />
   }
 
-  const workTotal = card.requiredWorks.reduce((sum, item) => {
-    const cost = Number(item.estimatedCost) || 0
-    return sum + cost
-  }, 0)
+  const isCardClosed = card.status === "closed"
 
-  const canClose = card.requiredWorks
-    .filter((work) => work.isRequired)
-    .every((work) => work.status === "completed" || work.status === "cancelled")
+  const workTotal = card.requiredWorks.reduce((sum, item) => sum + (Number(item.estimatedCost) || 0), 0)
+
+  const canClose = card.requiredWorks.filter((work) => work.isRequired).every((work) => work.status === "completed" || work.status === "cancelled")
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title={t("details")}
-        description={`${t("receiptNumber")}: ${card.cardNumber}`}
-        showBackButton
-        backButtonLabel={t("backToList")}
-      />
+    <div dir={direction} className="mx-auto max-w-7xl space-y-6">
+      <PageHeader title={t("details")} description={`${t("receiptNumber")}: ${card.cardNumber}`} showBackButton backButtonLabel={t("backToList")} />
 
-      <Card>
-        <CardHeader className="flex-row flex-wrap items-center justify-between gap-3 space-y-0">
-          <ReceiptHeader
-            receiptNumber={card.cardNumber}
-            status={card.status}
-            createdAt={card.receivedAt}
-          />
-          {card.status !== "closed" && (
-            <Button
-              type="button"
-              variant={isEditing ? "outline" : "default"}
-              onClick={() => setIsEditing((editing) => !editing)}
-              className="gap-1.5"
-            >
-              <Pencil className="h-4 w-4" />
-              {isEditing ? tCommon("common.cancel") : t("editCard")}
-            </Button>
-          )}
-        </CardHeader>
-      </Card>
+      <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+          <div className="grid flex-1 gap-5 sm:grid-cols-3">
+            <div className="flex items-center gap-3">
+              <StatusBadge status={card.status} label={t(`statuses.${card.status}`)} />
+
+              <div>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Calendar className="size-3.5" />
+                  <span>{t("receivedAt")}</span>
+                </div>
+
+                <p className="mt-1 text-xs font-semibold text-foreground">{formatDateTime(card.receivedAt, locale)}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                <Mail className="size-4" />
+              </span>
+
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">{t("customer.email")}</p>
+                <p className="mt-1 truncate text-xs font-semibold text-foreground" dir="ltr">{card.customer?.email || "—"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <FileText className="size-4" />
+              </span>
+
+              <div>
+                <p className="text-xs text-muted-foreground">{t("receiptNumber")}</p>
+                <p className="mt-1 text-xs font-semibold text-foreground" dir="ltr">{card.cardNumber}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {!isCardClosed && (
+              <Button type="button" onClick={() => setIsEditing((current) => !current)} className="gap-2">
+                <Pencil className="size-4" />
+                {isEditing ? tCommon("common.cancel") : t("editCard")}
+              </Button>
+            )}
+
+            {!isCardClosed && (
+              <Button type="button" variant="outline" disabled={!canClose} onClick={() => setIsCloseDialogOpen(true)} className="gap-2">
+                <LockKeyhole className="size-4" />
+                {t("closeCard.close")}
+              </Button>
+            )}
+
+            {isCardClosed && isSuperAdminUser && (
+              <Button type="button" variant="outline" disabled={reopenCard.isPending} onClick={handleReopen} className="gap-2">
+                <Unlock className="size-4" />
+                {reopenCard.isPending ? t("saving") : t("reopenCard.reopen")}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {!isCardClosed && (
+          <div className="mt-5 border-t border-border pt-4">
+            <ClosureGuardBadge requiredWorks={card.requiredWorks} />
+          </div>
+        )}
+      </section>
 
       {isEditing && (
-        <EditReceiptCard card={card} onCancel={() => setIsEditing(false)} onSaved={() => setIsEditing(false)} />
+        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+          <EditReceiptCard card={card} onCancel={() => setIsEditing(false)} onSaved={() => setIsEditing(false)} />
+        </section>
       )}
-
-      {card.status !== "closed" && (
-        <Card>
-          <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-medium text-text-primary">{t("closeCard.title")}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{t("closeCard.summary")}</p>
-            </div>
-            <Button className="shrink-0" onClick={() => setIsCloseDialogOpen(true)} disabled={!canClose}>
-              <LockKeyhole className="h-4 w-4" />
-              {t("closeCard.close")}
-            </Button>
-          </CardContent>
-          <CardContent className="pt-0">
-            <ClosureGuardBadge requiredWorks={card.requiredWorks} />
-          </CardContent>
-        </Card>
-      )}
-
-      {isCardClosed && isSuperAdminUser && (
-        <Card>
-          <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-medium text-text-primary">{t("reopenCard.title")}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{t("reopenCard.summary")}</p>
-            </div>
-            <Button className="shrink-0" variant="outline" onClick={handleReopen} disabled={reopenCard.isPending}>
-              <Unlock className="h-4 w-4" />
-              {reopenCard.isPending ? t("saving") : t("reopenCard.reopen")}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <User2 className="h-4 w-4 text-primary" />
-            {t("sections.customer")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs text-muted-foreground">{t("customer.name")}</label>
-              <p className="font-medium text-text-primary">{card.customer?.name ?? "-"}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">{t("customer.phone")}</label>
-              <p className="font-medium text-text-primary" dir="ltr">
-                {card.customer?.phone ?? "-"}
-              </p>
-            </div>
-            {card.customer?.email && (
-              <div className="sm:col-span-2">
-                <label className="text-xs text-muted-foreground">{t("customer.email")}</label>
-                <p className="font-medium text-text-primary" dir="ltr">
-                  {card.customer.email}
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Car className="h-4 w-4 text-primary" />
-            {t("sections.vehicle")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.make")}</label>
-              <p className="font-medium text-text-primary">{card.vehicle?.make ?? "-"}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.model")}</label>
-              <p className="font-medium text-text-primary">{card.vehicle?.model ?? "-"}</p>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.plateNumber")}</label>
-              <p className="font-medium text-text-primary" dir="ltr">
-                {card.vehicle?.plateNumber ?? "-"}
-              </p>
-            </div>
-            {card.vehicle?.manufactureYear && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.year")}</label>
-                <p className="font-medium text-text-primary" dir="ltr">
-                  {card.vehicle.manufactureYear}
-                </p>
-              </div>
-            )}
-            {card.vehicle?.vin && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.vin")}</label>
-                <p className="font-medium text-text-primary" dir="ltr">
-                  {card.vehicle.vin}
-                </p>
-              </div>
-            )}
-            <div>
-              <label className="text-xs text-muted-foreground">{t("vehicle.mileage")}</label>
-              <p className="font-medium text-text-primary" dir="ltr">
-                {card.mileage} {t("units.km")}
-              </p>
-            </div>
-            {card.vehicle?.transmission && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("vehicle.transmissionType")}</label>
-                <p className="font-medium text-text-primary">
-                  {t(`vehicle.transmission_type.${card.vehicle.transmission}`)}
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
 
       {!isEditing && (
-      <>
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <ClipboardList className="h-4 w-4 text-primary" />
-            {t("sections.reason")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="text-xs text-muted-foreground">{t("reason.title")}</label>
-            <p className="font-medium text-text-primary">
-              {card.visitReasons.map((reason) => reason.label).join("، ") || "-"}
-            </p>
-          </div>
-          {card.customerComplaint && (
-            <div>
-              <label className="text-xs text-muted-foreground">{t("reason.complaint")}</label>
-              <p className="font-medium text-text-primary">{card.customerComplaint}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Fuel className="h-4 w-4 text-primary" />
-            {t("sections.condition")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <label className="text-xs text-muted-foreground">{t("condition.fuelLevel")}</label>
-            <p className="font-medium text-text-primary">
-              {t(`condition.fuelLevels.${card.fuelLevel}`)}
-            </p>
-          </div>
-          {card.conditionOptions.length > 0 && (
-            <div>
-              <label className="text-xs text-muted-foreground">{t("condition.options")}</label>
-              <div className="flex flex-wrap gap-2">
-                {card.conditionOptions.map((option) => (
-                  <span
-                    key={option.id}
-                    className="inline-flex items-center rounded-full border border-border bg-muted px-3 py-1 text-sm"
-                  >
-                    {option.label}
-                  </span>
-                ))}
+        <>
+          <div className="grid gap-6 lg:grid-cols-12">
+            <SectionCard icon={<User2 className="size-4" />} title={t("sections.customer")} className="lg:col-span-4">
+              <div className="space-y-4">
+                <DetailItem label={t("customer.name")} value={card.customer?.name} />
+                <DetailItem label={t("customer.phone")} value={card.customer?.phone} ltr />
+                {card.customer?.email && <DetailItem label={t("customer.email")} value={card.customer.email} ltr />}
               </div>
-            </div>
-          )}
-          {card.inspectionNotes && (
-            <div>
-              <label className="text-xs text-muted-foreground">{t("condition.otherNotes")}</label>
-              <p className="font-medium text-text-primary">{card.inspectionNotes}</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </SectionCard>
 
-      {card.itemOptions.length > 0 && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm">
-              <Boxes className="h-4 w-4 text-primary" />
-              {t("sections.itemsLeft")}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {card.itemOptions.map((option) => (
-                <span
-                  key={option.id}
-                  className="inline-flex items-center rounded-full border border-border bg-muted px-3 py-1 text-sm"
-                >
-                  {option.label}
-                </span>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+            <SectionCard icon={<Car className="size-4" />} title={t("sections.vehicle")} className="lg:col-span-8">
+              <div className="grid gap-x-12 gap-y-4 sm:grid-cols-2">
+                <DetailItem label={t("vehicle.make")} value={card.vehicle?.make} />
+                <DetailItem label={t("vehicle.plateNumber")} value={card.vehicle?.plateNumber} ltr />
+                <DetailItem label={t("vehicle.model")} value={card.vehicle?.model} />
+                <DetailItem label={t("vehicle.vin")} value={card.vehicle?.vin} ltr />
+                <DetailItem label={t("vehicle.year")} value={card.vehicle?.manufactureYear} ltr />
+                <DetailItem label={t("vehicle.transmissionType")} value={card.vehicle?.transmission ? t(`vehicle.transmission_type.${card.vehicle.transmission}`) : undefined} />
+                <DetailItem label={t("vehicle.mileage")} value={`${card.mileage} ${t("units.km")}`} ltr />
+              </div>
+            </SectionCard>
+          </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Wrench className="h-4 w-4 text-primary" />
-            {t("sections.work")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {card.requiredWorks.length > 0 ? (
-            <div className="space-y-3">
-              {card.requiredWorks.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid gap-3 rounded-lg border border-border bg-muted/20 p-3 sm:grid-cols-2 lg:grid-cols-4"
-                >
-                  <div className="lg:col-span-2 flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <label className="text-xs text-muted-foreground">{t("work.description")}</label>
-                      <p className="font-medium text-text-primary">{item.description}</p>
-                    </div>
-                    {item.isRequired && (
-                      <span className="shrink-0 rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                        {t("work.required")}
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground">{t("work.estimate")}</label>
-                    <p className="font-medium text-text-primary" dir="ltr">
-                      {item.estimatedCost !== null ? item.estimatedCost : "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-xs text-muted-foreground">{t("work.status")}</label>
-                    <p className="font-medium text-text-primary">
-                      {t(`work.statuses.${item.status}`)}
-                    </p>
-                  </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            <SectionCard icon={<ClipboardList className="size-4" />} title={t("sections.reason")}>
+              <div className="space-y-5">
+                <div>
+                  <p className="mb-2 text-xs font-medium text-muted-foreground">{t("reason.title")}</p>
+                  {card.visitReasons.length > 0 ? <OptionPills values={card.visitReasons} /> : <p className="text-sm text-muted-foreground">—</p>}
                 </div>
-              ))}
-              <div className="flex items-center justify-between rounded-lg border border-border bg-background px-4 py-3">
-                <span className="text-sm text-muted-foreground">{t("work.total")}</span>
-                <span className="text-base font-semibold text-text-primary">{workTotal}</span>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{t("work.noWork")}</p>
-          )}
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <BadgeCheck className="h-4 w-4 text-primary" />
-            {t("sections.approval")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="text-xs text-muted-foreground">{t("approval.approved")}</label>
-              <p className="font-medium text-text-primary">
-                {card.customerApproved ? t("approval.approved") : t("approval.notApproved")}
-              </p>
-            </div>
-            {card.customerApproved && card.customerApprovalName && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.customerName")}</label>
-                <p className="font-medium text-text-primary">{card.customerApprovalName}</p>
+                {card.customerComplaint && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">{t("reason.complaint")}</p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">{card.customerComplaint}</p>
+                  </div>
+                )}
               </div>
-            )}
-            {card.customerApproved && card.customerApprovedAt && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.approvedAt")}</label>
-                <p className="font-medium text-text-primary">
-                  {formatDateTime(card.customerApprovedAt, isAr ? "ar-SA" : "en-GB")}
-                </p>
+            </SectionCard>
+
+            <SectionCard icon={<Fuel className="size-4" />} title={t("sections.condition")}>
+              <div className="space-y-5">
+                <DetailItem label={t("condition.fuelLevel")} value={t(`condition.fuelLevels.${card.fuelLevel}`)} />
+
+                {card.conditionOptions.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-xs font-medium text-muted-foreground">{t("condition.options")}</p>
+                    <OptionPills values={card.conditionOptions} />
+                  </div>
+                )}
+
+                {card.inspectionNotes && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground">{t("condition.otherNotes")}</p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">{card.inspectionNotes}</p>
+                  </div>
+                )}
               </div>
-            )}
-            {card.expectedDeliveryAt && (
-              <div>
-                <label className="text-xs text-muted-foreground">{t("approval.deliveryDate")}</label>
-                <p className="font-medium text-text-primary">
-                  {formatDateTime(card.expectedDeliveryAt, isAr ? "ar-SA" : "en-GB")}
-                </p>
-              </div>
-            )}
+            </SectionCard>
+
+            <SectionCard icon={<Boxes className="size-4" />} title={t("sections.itemsLeft")}>
+              {card.itemOptions.length > 0 ? <OptionPills values={card.itemOptions} /> : <p className="text-sm text-muted-foreground">—</p>}
+            </SectionCard>
           </div>
-        </CardContent>
-      </Card>
 
-      </>
-      )}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <History className="h-4 w-4 text-primary" />
-            {t("activity.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ActivityTimeline events={card.statusEvents} />
-        </CardContent>
-      </Card>
+          <SectionCard icon={<Wrench className="size-4" />} title={t("sections.work")}>
+            {card.requiredWorks.length > 0 ? (
+              <div className="overflow-hidden rounded-xl border border-border">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[620px] text-sm">
+                    <thead>
+                      <tr className="bg-muted/40 text-xs font-medium text-muted-foreground">
+                        <th className="px-4 py-3 text-start">#</th>
+                        <th className="px-4 py-3 text-start">{t("work.description")}</th>
+                        <th className="px-4 py-3 text-center">{t("work.status")}</th>
+                        <th className="px-4 py-3 text-end">{t("work.estimate")}</th>
+                      </tr>
+                    </thead>
 
-      {card && (
-        <CloseCardDialog
-          card={card}
-          open={isCloseDialogOpen}
-          onOpenChange={setIsCloseDialogOpen}
-        />
+                    <tbody className="divide-y divide-border">
+                      {card.requiredWorks.map((item, index) => (
+                        <tr key={item.id}>
+                          <td className="px-4 py-3.5 text-muted-foreground">{index + 1}</td>
+
+                          <td className="px-4 py-3.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-semibold text-foreground">{item.description}</span>
+
+                              {item.isRequired && <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">{t("work.required")}</span>}
+                            </div>
+                          </td>
+
+                          <td className="px-4 py-3.5 text-center">
+                            <span className="inline-flex rounded-full bg-muted px-3 py-1 text-xs font-medium text-foreground">{t(`work.statuses.${item.status}`)}</span>
+                          </td>
+
+                          <td className="px-4 py-3.5 text-end font-semibold text-foreground" >{item.estimatedCost !== null ? item.estimatedCost : "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-border bg-muted/20 px-5 py-4">
+                  <span className="text-sm font-semibold text-foreground">{t("work.total")}</span>
+                  <span className="text-lg font-bold text-primary" dir="ltr">{workTotal}</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">{t("work.noWork")}</p>
+            )}
+          </SectionCard>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <SectionCard icon={<BadgeCheck className="size-4" />} title={t("sections.approval")}>
+              <div className="space-y-4">
+                <DetailItem label={t("approval.status")} value={card.customerApproved ? t("approval.approved") : t("approval.notApproved")} />
+
+                {card.customerApprovalName && <DetailItem label={t("approval.customerName")} value={card.customerApprovalName} />}
+
+                {card.customerApprovedAt && <DetailItem label={t("approval.approvedAt")} value={formatDateTime(card.customerApprovedAt, locale)} />}
+
+                {card.expectedDeliveryAt && <DetailItem label={t("approval.deliveryDate")} value={formatDateTime(card.expectedDeliveryAt, locale)} />}
+              </div>
+            </SectionCard>
+
+            <SectionCard icon={<FileText className="size-4" />} title={t("media.title")}>
+              <MaintenanceMediaSection cardId={card.id} />
+            </SectionCard>
+          </div>
+        </>
       )}
+
+      <SectionCard icon={<History className="size-4" />} title={t("activity.title")}>
+        <ActivityTimeline events={card.statusEvents} />
+      </SectionCard>
+
+      <CloseCardDialog card={card} open={isCloseDialogOpen} onOpenChange={setIsCloseDialogOpen} />
     </div>
   )
 }

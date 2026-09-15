@@ -14,6 +14,7 @@
   "save": "Save Card",
   "saving": "Saving...",
   "editCard": "Edit Card",
+
   "messages": {
     "cardCreated": "Card created successfully",
     "cardUpdated": "Card updated successfully",
@@ -22,6 +23,7 @@
     "photosUploaded": "Photos uploaded successfully",
     "signatureUploaded": "Signature uploaded successfully"
   },
+
   "errors": {
     "createFailed": "Failed to create the card",
     "updateFailed": "Failed to update the card",
@@ -30,12 +32,16 @@
     "reopenUnauthorized": "Only super admins can reopen cards",
     "mediaUploadFailed": "Failed to upload the attached files"
   },
+
   "options": {
-    "error": "Unable to load the options"
+    "error": "Unable to load the options",
+    "manage": "Manage options"
   },
+
   "units": {
     "km": "km"
   },
+
   "statuses": {
     "draft": "Draft",
     "open": "Open",
@@ -45,6 +51,7 @@
     "closed": "Closed",
     "cancelled": "Cancelled"
   },
+
   "sections": {
     "header": "Card Information",
     "customer": "Customer",
@@ -55,6 +62,7 @@
     "work": "Work & Estimate",
     "approval": "Approval & Delivery"
   },
+
   "customer": {
     "title": "Customer",
     "select": "Select Customer",
@@ -68,6 +76,7 @@
     "selectError": "Unable to load customers",
     "createHint": "Pick an existing customer or enter details below to create a new one."
   },
+
   "vehicle": {
     "title": "Vehicle",
     "select": "Select Vehicle",
@@ -99,6 +108,7 @@
       "manual": "Manual"
     }
   },
+
   "reason": {
     "title": "Visit Reason",
     "options": {
@@ -113,6 +123,7 @@
     "otherReason": "Reason (Other)",
     "complaint": "Customer Complaint / Notes"
   },
+
   "condition": {
     "title": "Condition at Receipt",
     "fuelLevel": "Fuel Level",
@@ -134,11 +145,13 @@
     "yes": "Yes",
     "no": "No"
   },
+
   "itemsLeft": {
     "title": "Items Left in the Car",
     "add": "Add Item",
     "placeholder": "Type an item then add it"
   },
+
   "work": {
     "title": "Work & Estimate",
     "description": "Work Description",
@@ -162,8 +175,10 @@
       "cancelled": "Cancelled"
     }
   },
+
   "approval": {
     "title": "Approval & Delivery",
+    "status": "Approval Status",
     "approved": "Customer Approval",
     "notApproved": "Awaiting Approval",
     "amount": "Approved Amount",
@@ -174,6 +189,7 @@
     "receiver": "Receiver / Technician",
     "hint": "The card will be saved with the customer approval and expected delivery when available."
   },
+
   "validation": {
     "customerNameRequired": "Customer name is required",
     "customerPhoneRequired": "Customer phone is required",
@@ -185,17 +201,20 @@
     "estimateNegative": "Estimated cost must be positive",
     "emailInvalid": "Invalid email address"
   },
+
   "list": {
     "noResults": "No matching cards",
     "customer": "Customer",
     "vehicle": "Vehicle"
   },
+
   "filter": {
     "title": "Filter Cards",
     "search": "Search by receipt number",
     "status": "Status",
     "receivedAt": "Received At"
   },
+
   "wizard": {
     "step1": "Customer",
     "step2": "Vehicle",
@@ -205,6 +224,7 @@
     "next": "Next",
     "saveCard": "Save Card"
   },
+
   "media": {
     "title": "Photos & Signature",
     "createdSummary": "Card {{cardNumber}} was created. You can attach photos and a customer signature before finishing.",
@@ -216,8 +236,23 @@
     "signatureUploaded": "Signature uploaded successfully.",
     "skip": "Skip for now",
     "done": "View Card",
-    "error": "Unable to upload the attached files. Try again."
+    "error": "Unable to upload the attached files. Try again.",
+    "dragHint": "Drag & drop images here, or click to browse",
+    "browseFiles": "Browse images",
+    "imagesOnly": "Only image files are accepted",
+    "maxImages": "Maximum {{count}} images",
+    "removeFile": "Remove file",
+    "loading": "Loading media...",
+    "loadError": "Unable to load the attached media.",
+    "loadErrorHint": "Check your connection and try again.",
+    "retry": "Try again",
+    "noPhotos": "No photos uploaded yet.",
+    "noPhotosHint": "Receipt photos will appear here once uploaded.",
+    "noSignature": "No customer signature yet.",
+    "uploadedAt": "Uploaded At",
+    "photoAlt": "Receipt photo {{count}}"
   },
+
   "activity": {
     "title": "Activity Timeline",
     "noActivity": "No activity recorded yet",
@@ -237,11 +272,13 @@
     "card_closed": "Card closed",
     "card_cancelled": "Card cancelled"
   },
+
   "closureGuard": {
     "title": "Cannot close yet",
     "requiredWorkRemaining": "{{count}} required work item(s) remain open",
     "remainingWork": "Remaining work"
   },
+
   "closeCard": {
     "title": "Close maintenance card",
     "summary": "All required work must be completed or cancelled before closing.",

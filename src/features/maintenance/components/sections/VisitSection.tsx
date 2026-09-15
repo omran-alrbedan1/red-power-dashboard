@@ -1,12 +1,16 @@
 import { useTranslation } from "react-i18next"
-import { Fuel, Gauge, Boxes, MessageSquareText, RefreshCw } from "lucide-react"
+import { Link } from "react-router-dom"
+import { Fuel, Gauge, Boxes, MessageSquareText, RefreshCw, Settings2 } from "lucide-react"
 import type { Control, FieldValues, Path } from "react-hook-form"
 import CustomFormField, {
   FormFieldType,
 } from "@/components/shared/inputs/CustomFormField"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/features/auth/context/AuthContext"
+import { canManageMaintenanceOptions } from "@/lib/permissions"
 import type { Option } from "@/types/customFormField.types"
+import type { MaintenanceOptionKind } from "../../services/maintenance-api.service"
 
 const FUEL_LEVEL_KEYS = [
   "empty",
@@ -37,6 +41,8 @@ export const VisitSection = <T extends FieldValues>({
 }: VisitSectionProps<T>) => {
   const { t, i18n } = useTranslation("maintenance")
   const { t: tCommon } = useTranslation("common")
+  const { user } = useAuth()
+  const canManageOptions = canManageMaintenanceOptions(user?.role)
   const formDir = i18n.language === "ar" ? "rtl" : "ltr"
 
   const fuelLevelOptions: Option[] = FUEL_LEVEL_KEYS.map((key) => ({
@@ -46,6 +52,17 @@ export const VisitSection = <T extends FieldValues>({
 
   const searchPlaceholder = tCommon("common.form.searchOptions")
   const emptyMessage = tCommon("common.form.noOptions")
+
+  const manageOptionsFooter = (kind: MaintenanceOptionKind) =>
+    canManageOptions ? (
+      <Link
+        to={`/maintenance-options?kind=${kind}`}
+        className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-primary transition-colors hover:bg-primary/5"
+      >
+        <Settings2 className="h-3.5 w-3.5" />
+        {t("options.manage")}
+      </Link>
+    ) : undefined
 
   return (
     <div className="space-y-6">
@@ -79,6 +96,7 @@ export const VisitSection = <T extends FieldValues>({
             dir={formDir}
             searchPlaceholder={searchPlaceholder}
             emptyMessage={emptyMessage}
+            footer={manageOptionsFooter("visit-reasons")}
           />
         )}
         <CustomFormField
@@ -122,6 +140,7 @@ export const VisitSection = <T extends FieldValues>({
             dir={formDir}
             searchPlaceholder={searchPlaceholder}
             emptyMessage={emptyMessage}
+            footer={manageOptionsFooter("vehicle-conditions")}
           />
         )}
 
@@ -153,6 +172,7 @@ export const VisitSection = <T extends FieldValues>({
             dir={formDir}
             searchPlaceholder={searchPlaceholder}
             emptyMessage={emptyMessage}
+            footer={manageOptionsFooter("vehicle-items")}
           />
         )}
       </div>

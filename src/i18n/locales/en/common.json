@@ -127,7 +127,8 @@
     },
     "form": {
       "searchOptions": "Search options...",
-      "noOptions": "No options found"
+      "noOptions": "No options found",
+      "selectOptions": "Select options"
     },
     "datePicker": {
       "placeholder": "Pick a date"

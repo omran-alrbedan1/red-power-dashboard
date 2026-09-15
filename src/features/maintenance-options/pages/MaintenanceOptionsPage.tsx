@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useSearchParams } from "react-router-dom"
 import { CircleAlert, Plus, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -41,7 +42,15 @@ const MaintenanceOptionsPage: React.FC = () => {
       defaults: maintenanceOptionFilterDefaultValues,
     })
 
-  const [activeKind, setActiveKind] = useState<MaintenanceOptionKind>("visit-reasons")
+  const [searchParams] = useSearchParams()
+  const requestedKind = searchParams.get("kind")
+  const initialKind: MaintenanceOptionKind =
+    requestedKind !== null &&
+    OPTION_KINDS.some(({ kind }) => kind === requestedKind)
+      ? (requestedKind as MaintenanceOptionKind)
+      : "visit-reasons"
+
+  const [activeKind, setActiveKind] = useState<MaintenanceOptionKind>(initialKind)
   const [dialog, setDialog] = useState<OptionDialogState | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<MaintenanceOptionRow | null>(null)
 

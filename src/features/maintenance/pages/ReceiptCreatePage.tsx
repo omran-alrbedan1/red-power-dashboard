@@ -35,6 +35,7 @@ import { WorkSection } from "../components/sections/WorkSection"
 import { DeliverySection } from "../components/sections/DeliverySection"
 import { MediaReceiptStep } from "../components/sections/MediaReceiptStep"
 import { buildExpectedDelivery } from "../utils/expected-delivery"
+import { images } from "@/constants/images"
 
 type StepNumber = 1 | 2 | 3 | 4
 
@@ -140,6 +141,13 @@ const ReceiptCreatePage: React.FC = () => {
   const handleCustomerChange = (customerId: number | null) => {
     setSelectedCustomerId(customerId)
     setVehicleConflict(null)
+    setSelectedVehicleId(null)
+    setVehicleOwnershipId(null)
+    form.resetField("vehicleMake")
+    form.resetField("vehicleModel")
+    form.resetField("vehiclePlate")
+    form.resetField("vehicleYear")
+    form.resetField("vehicleVin")
   }
 
   const applyVehicleSelection = (selection: VehicleSelectSelection) => {
@@ -299,6 +307,7 @@ const ReceiptCreatePage: React.FC = () => {
       <PageHeader
         title={t("newCard")}
         description={t("subtitle")}
+        backgroundImage={ images.createCardHero}
         showBackButton
         backButtonLabel={t("backToList")}
       />
@@ -351,7 +360,11 @@ const ReceiptCreatePage: React.FC = () => {
                 <label className="mb-1.5 block text-xs font-medium text-text-secondary">
                   {t("vehicle.select")}
                 </label>
-                <VehicleSelect value={selectedVehicleId} onChange={handleVehicleSelect} />
+                <VehicleSelect
+                  value={selectedVehicleId}
+                  onChange={handleVehicleSelect}
+                  customerId={selectedCustomerId}
+                />
               </div>
               {vehicleConflict && (
                 <div className="flex flex-col gap-2 rounded-md border border-primary/30 bg-primary/5 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">

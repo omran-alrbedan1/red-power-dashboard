@@ -2,15 +2,12 @@ import { useQuery } from "@tanstack/react-query"
 import { apiRequest } from "@/lib/api/client"
 import type { ApiPaginated } from "@/lib/api/contracts"
 import { maintenanceQueryKeys } from "../services/maintenance-query-keys"
+import type { SelectorVehicle } from "../services/maintenance-api.service"
 
 const STALE_TIME = 30 * 1000
 const GC_TIME = 5 * 60 * 1000
 
 interface SelectorCustomer { id: number; name: string; phone: string; email?: string }
-interface SelectorVehicle {
-  id: number; make: string; model: string; plateNumber: string; manufactureYear: number; vin?: string
-  currentOwnership: { id: number; customerId: number } | null
-}
 
 export function useSelectorData() {
   return useQuery({

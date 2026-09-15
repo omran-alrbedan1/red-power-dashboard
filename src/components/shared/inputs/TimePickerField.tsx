@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState, useLayoutEffect } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Clock } from "lucide-react"
@@ -21,8 +21,19 @@ export const TimePickerField: React.FC<TimePickerFieldProps> = ({
 }) => {
   const { t } = useTranslation("common")
   const [open, setOpen] = useState(false)
+  const [placeAbove, setPlaceAbove] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
   const interval = timeOptions?.interval || 30
+
+  useLayoutEffect(() => {
+    if (!open) return
+    const trigger = containerRef.current
+    const popover = popoverRef.current
+    if (!trigger || !popover) return
+    const spaceBelow = window.innerHeight - trigger.getBoundingClientRect().bottom
+    setPlaceAbove(popover.offsetHeight > spaceBelow)
+  }, [open])
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {
@@ -74,7 +85,13 @@ export const TimePickerField: React.FC<TimePickerFieldProps> = ({
           : timeOptions?.placeholder || t("timePicker.placeholder")}
       </Button>
       {open && (
-        <div className="absolute top-full z-50 mt-1 w-full rounded-md border border-border bg-popover shadow-lg">
+        <div
+          ref={popoverRef}
+          className={cn(
+            "absolute z-50 w-full rounded-md border border-border bg-popover shadow-lg",
+            placeAbove ? "bottom-full mb-1" : "top-full mt-1"
+          )}
+        >
           <div role="listbox" className="max-h-60 overflow-y-auto p-2">
             {timeSlots.map((time) => (
               <Button

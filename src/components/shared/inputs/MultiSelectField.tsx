@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +22,7 @@ interface MultiSelectFieldProps {
   options?: Option[]
   searchPlaceholder?: string
   emptyMessage?: string
+  footer?: ReactNode
 }
 
 export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
@@ -31,7 +33,9 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
   options = [],
   searchPlaceholder = "Search options...",
   emptyMessage = "No options found",
+  footer,
 }) => {
+  const { t } = useTranslation("common")
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -88,7 +92,7 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
             ))}
           </span>
         ) : (
-          placeholder ?? "Select options"
+          placeholder ?? t("common.form.selectOptions")
         )}
       </Button>
       {open && (
@@ -117,6 +121,11 @@ export const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
               </CommandGroup>
             </CommandList>
           </Command>
+          {footer && (
+            <div className="border-t border-border">
+              {footer}
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import { Camera, Upload, CheckCircle2 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ImageDropzone } from "@/components/shared/inputs"
 import { useUploadMaintenancePhotos } from "../../hooks/useUploadMaintenancePhotos"
 import { useUploadMaintenanceSignature } from "../../hooks/useUploadMaintenanceSignature"
 
@@ -59,14 +60,11 @@ export const MediaReceiptStep: React.FC<MediaReceiptStepProps> = ({
 
         <div className="space-y-2">
           <p className="text-xs font-medium text-text-secondary">{t("media.photos")}</p>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              className="block w-full text-sm file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary"
-              onChange={(event) => setPhotos(Array.from(event.target.files ?? []))}
-            />
+          <ImageDropzone files={photos} onChange={setPhotos} multiple maxCount={6} />
+          {uploadPhotos.isSuccess && (
+            <p className="text-sm text-emerald-600">{t("media.photosUploaded")}</p>
+          )}
+          <div className="flex justify-end">
             <Button
               type="button"
               variant="outline"
@@ -78,20 +76,18 @@ export const MediaReceiptStep: React.FC<MediaReceiptStepProps> = ({
               {t("media.uploadPhotos")}
             </Button>
           </div>
-          {uploadPhotos.isSuccess && (
-            <p className="text-sm text-emerald-600">{t("media.photosUploaded")}</p>
-          )}
         </div>
 
         <div className="space-y-2">
           <p className="text-xs font-medium text-text-secondary">{t("media.signature")}</p>
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-              type="file"
-              accept="image/*"
-              className="block w-full text-sm file:me-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary"
-              onChange={(event) => setSignatureFile(event.target.files?.[0] ?? null)}
-            />
+          <ImageDropzone
+            files={signatureFile ? [signatureFile] : []}
+            onChange={(next) => setSignatureFile(next[0] ?? null)}
+          />
+          {uploadSignature.isSuccess && (
+            <p className="text-sm text-emerald-600">{t("media.signatureUploaded")}</p>
+          )}
+          <div className="flex justify-end">
             <Button
               type="button"
               variant="outline"
@@ -103,9 +99,6 @@ export const MediaReceiptStep: React.FC<MediaReceiptStepProps> = ({
               {t("media.uploadSignature")}
             </Button>
           </div>
-          {uploadSignature.isSuccess && (
-            <p className="text-sm text-emerald-600">{t("media.signatureUploaded")}</p>
-          )}
         </div>
 
         {mediaError && <p className="text-sm text-primary">{mediaError}</p>}
