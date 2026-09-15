@@ -81,9 +81,9 @@ export type ReceiptFormInputValues = z.input<
 
 export const FUEL_LEVEL_VALUES: readonly string[] = FUEL_LEVELS
 
-export const editReceiptFormSchema = (t: (key: string) => string) =>
+export const editMaintenanceCardSchema = (t: (key: string) => string) =>
   z.object({
-    mileage: z.union([z.number().min(0), z.literal("")]).optional(),
+    mileage: z.number().int().min(0, { message: t("validation.mileageNegative") }),
     visitReasonIds: z
       .array(z.string())
       .min(1, { message: t("validation.reasonRequired") }),
@@ -96,12 +96,38 @@ export const editReceiptFormSchema = (t: (key: string) => string) =>
     approvalName: z.string().optional(),
     deliveryDate: z.date().optional().nullable(),
     deliveryTime: z.date().optional().nullable(),
+  }).superRefine((values, context) => {
+    if (values.approved && !values.approvalName?.trim()) {
+      context.addIssue({
+        code: "custom",
+        path: ["approvalName"],
+        message: t("validation.approvalNameRequired"),
+      })
+    }
   })
 
-export type EditReceiptFormValues = z.output<
-  ReturnType<typeof editReceiptFormSchema>
+export type EditMaintenanceCardFormValues = z.output<
+  ReturnType<typeof editMaintenanceCardSchema>
 >
 
-export type EditReceiptFormInputValues = z.input<
-  ReturnType<typeof editReceiptFormSchema>
+export type EditMaintenanceCardFormInputValues = z.input<
+  ReturnType<typeof editMaintenanceCardSchema>
 >
+
+export const editWorkItemSchema = (t: (key: string) => string) =>
+  z.object({
+    description: z.string().trim().min(1, { message: t("validation.workDescriptionRequired") }),
+    estimatedCost: z.union([z.number().min(0, { message: t("validation.estimateNegative") }), z.literal("")]),
+    isRequired: z.boolean(),
+    displayOrder: z.number().int().min(0, { message: t("validation.displayOrderNegative") }),
+    status: z.enum(["pending", "in_progress", "completed", "cancelled"]),
+  })
+
+export type EditWorkItemFormValues = z.output<ReturnType<typeof editWorkItemSchema>>
+export type EditWorkItemFormInputValues = z.input<ReturnType<typeof editWorkItemSchema>>
+
+export const createEditWorkItemSchema = (t: (key: string) => string) =>
+  editWorkItemSchema(t).omit({ status: true })
+
+export type CreateEditWorkItemFormValues = z.output<ReturnType<typeof createEditWorkItemSchema>>
+export type CreateEditWorkItemFormInputValues = z.input<ReturnType<typeof createEditWorkItemSchema>>

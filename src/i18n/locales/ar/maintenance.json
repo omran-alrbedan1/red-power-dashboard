@@ -21,7 +21,12 @@
     "cardClosed": "تم إغلاق البطاقة بنجاح",
     "cardReopened": "تم إعادة فتح البطاقة بنجاح",
     "photosUploaded": "تم رفع الصور بنجاح",
-    "signatureUploaded": "تم رفع التوقيع بنجاح"
+    "signatureUploaded": "تم رفع التوقيع بنجاح",
+    "workCreated": "تمت إضافة العمل بنجاح",
+    "workUpdated": "تم تحديث العمل بنجاح",
+    "workDeleted": "تم حذف العمل بنجاح",
+    "photoDeleted": "تم حذف الصورة بنجاح",
+    "signatureDeleted": "تم حذف التوقيع بنجاح"
   },
 
   "errors": {
@@ -30,7 +35,12 @@
     "closeFailed": "تعذر إغلاق البطاقة",
     "reopenFailed": "تعذر إعادة فتح البطاقة",
     "reopenUnauthorized": "إعادة فتح البطاقات متاحة لمدير النظام فقط",
-    "mediaUploadFailed": "تعذر رفع الملفات المرفقة"
+    "mediaUploadFailed": "تعذر رفع الملفات المرفقة",
+    "workCreateFailed": "تعذرت إضافة العمل",
+    "workUpdateFailed": "تعذر تحديث العمل",
+    "workDeleteFailed": "تعذر حذف العمل",
+    "photoDeleteFailed": "تعذر حذف الصورة",
+    "signatureDeleteFailed": "تعذر حذف التوقيع"
   },
 
   "options": {
@@ -61,6 +71,41 @@
     "itemsLeft": "الأغراض داخل السيارة",
     "work": "الأعمال والتقدير",
     "approval": "الموافقة والتسليم"
+  },
+
+  "edit": {
+    "title": "تعديل بطاقة الصيانة",
+    "loading": "جاري تحميل بطاقة الصيانة...",
+    "backToDetails": "العودة إلى تفاصيل البطاقة",
+    "notFoundTitle": "بطاقة الصيانة غير موجودة",
+    "notFoundDescription": "بطاقة الصيانة غير موجودة أو لم تعد متاحة.",
+    "loadErrorTitle": "تعذر تحميل بطاقة الصيانة",
+    "loadErrorDescription": "تعذر تحميل بطاقة الصيانة. يرجى المحاولة مجدداً.",
+    "forbiddenTitle": "التعديل غير متاح",
+    "forbiddenDescription": "لا يملك حسابك صلاحية تعديل بطاقات الصيانة.",
+    "closedTitle": "بطاقة الصيانة مغلقة",
+    "closedAdminDescription": "البطاقات المغلقة للقراءة فقط. اطلب من مدير النظام الأعلى إعادة فتح البطاقة قبل تعديلها.",
+    "closedSuperAdminDescription": "البطاقات المغلقة للقراءة فقط. أعد فتح البطاقة قبل إجراء أي تعديل.",
+    "searchOptions": "البحث في الخيارات",
+    "noOptions": "لا توجد خيارات مطابقة",
+    "approvalTimestampHint": "يُسجل وقت موافقة جديد عند اعتماد موافقة الزبون للمرة الأولى.",
+    "sections": {
+      "cardInfo": "معلومات البطاقة والاستلام"
+    },
+    "work": {
+      "displayOrder": "ترتيب العرض",
+      "saveWork": "حفظ العمل",
+      "confirmDelete": "هل تريد حذف هذا العمل؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "media": {
+      "addPhotos": "إضافة صور",
+      "replaceSignature": "رفع التوقيع أو استبداله",
+      "replaceSignatureHint": "يؤدي رفع توقيع جديد إلى استبدال التوقيع الحالي.",
+      "deletePhoto": "حذف الصورة",
+      "deleteSignature": "حذف التوقيع",
+      "confirmDeletePhoto": "هل تريد حذف هذه الصورة؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirmDeleteSignature": "هل تريد حذف توقيع الزبون؟ لا يمكن التراجع عن هذا الإجراء."
+    }
   },
 
   "customer": {
@@ -199,7 +244,10 @@
     "reasonRequired": "سبب الزيارة مطلوب",
     "workDescriptionRequired": "وصف العمل مطلوب",
     "estimateNegative": "التكلفة يجب أن تكون موجباً",
-    "emailInvalid": "البريد الإلكتروني غير صالح"
+    "emailInvalid": "البريد الإلكتروني غير صالح",
+    "mileageNegative": "يجب أن تكون قراءة العداد صفراً أو أكبر",
+    "approvalNameRequired": "اسم الموافق مطلوب عند تفعيل موافقة الزبون",
+    "displayOrderNegative": "يجب أن يكون ترتيب العرض صفراً أو أكبر"
   },
 
   "list": {
@@ -286,5 +334,9 @@
     "ready": "اكتملت كل الأعمال المطلوبة. البطاقة جاهزة للإغلاق.",
     "close": "إغلاق البطاقة",
     "error": "تعذر إغلاق البطاقة. أعد المحاولة بعد مراجعة الأعمال المطلوبة."
+  },
+
+  "reopenCard": {
+    "reopen": "إعادة فتح البطاقة"
   }
 }

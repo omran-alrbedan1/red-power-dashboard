@@ -8,6 +8,7 @@ import Login from "./features/auth/pages/Login"
 import MaintenanceListPage from "./features/maintenance/pages/MaintenanceListPage"
 import ReceiptCreatePage from "./features/maintenance/pages/ReceiptCreatePage"
 import ReceiptDetailsPage from "./features/maintenance/pages/ReceiptDetailsPage"
+import MaintenanceEditPage from "./features/maintenance/pages/MaintenanceEditPage"
 import ProfilePage from "./features/staff/pages/ProfilePage"
 import SettingsPage from "./features/settings/pages/SettingsPage"
 import EmployeesPage from "./features/employees/pages/EmployeesPage"
@@ -54,6 +55,7 @@ function App() {
           {/* Maintenance */}
           <Route path="maintenance" element={<MaintenanceListPage />} />
           <Route path="maintenance/new" element={<ReceiptCreatePage />} />
+          <Route path="maintenance/:cardId/edit" element={<MaintenanceEditPage />} />
           <Route path="maintenance/:cardId" element={<ReceiptDetailsPage />} />
 
           {/* Maintenance Options (Super Admin only) */}

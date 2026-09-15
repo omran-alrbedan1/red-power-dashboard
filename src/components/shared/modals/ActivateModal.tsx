@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { X, Power, AlertCircle } from 'lucide-react'
+import { X, Power } from 'lucide-react'
 import {
   Dialog,
   DialogContent,

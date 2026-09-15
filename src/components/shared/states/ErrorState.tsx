@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils"
 import { 
   AlertCircle, 
   RefreshCw, 
-  Home, 
   WifiOff,
   Server,
   Lock,

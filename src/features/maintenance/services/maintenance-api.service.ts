@@ -91,22 +91,19 @@ export interface MaintenanceCardListParams {
   receivedTo?: string
 }
 
-export type UpdateMaintenanceCardInput = Partial<
-  Pick<
-    CreateMaintenanceCardInput,
-    | "expectedDeliveryAt"
-    | "mileage"
-    | "fuelLevel"
-    | "customerComplaint"
-    | "inspectionNotes"
-    | "customerApproved"
-    | "customerApprovalName"
-    | "customerApprovedAt"
-    | "visitReasonIds"
-    | "vehicleConditionOptionIds"
-    | "vehicleItemOptionIds"
-  >
->
+export interface UpdateMaintenanceCardInput {
+  expectedDeliveryAt?: string | null
+  mileage?: number
+  fuelLevel?: ApiFuelLevel
+  customerComplaint?: string
+  inspectionNotes?: string
+  customerApproved?: boolean
+  customerApprovalName?: string
+  customerApprovedAt?: string
+  visitReasonIds?: number[]
+  vehicleConditionOptionIds?: number[]
+  vehicleItemOptionIds?: number[]
+}
 
 export interface CreateWorkItemInput {
   cardId: number
@@ -176,6 +173,10 @@ export const maintenanceApi = {
     form.append("file", file)
     return apiUpload<MaintenanceSignature>(`/maintenance-cards/${cardId}/signature`, form)
   },
+  deletePhoto: (cardId: number, photoId: number) =>
+    apiRequest<void>({ method: "DELETE", url: `/maintenance-cards/${cardId}/photos/${photoId}` }),
+  deleteSignature: (cardId: number) =>
+    apiRequest<void>({ method: "DELETE", url: `/maintenance-cards/${cardId}/signature` }),
   getPhotos: (cardId: number) =>
     apiRequest<MaintenancePhoto[]>({ url: `/maintenance-cards/${cardId}/photos` }),
   getSignature: async (cardId: number) => {

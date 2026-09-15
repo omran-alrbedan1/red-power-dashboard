@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { Camera, ImageOff, PenLine, RefreshCw } from "lucide-react"
+import { Camera, ImageOff, PenLine, RefreshCw, Trash2 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useBlobObjectUrl } from "@/hooks/useBlobObjectUrl"
@@ -16,12 +16,53 @@ const CONTENT_GC_TIME = 5 * 60 * 1000
 
 interface MaintenanceMediaSectionProps {
   cardId: number
+  onDeletePhoto?: (photoId: number) => void
+  onDeleteSignature?: () => void
+  deletingPhotoId?: number | null
+  isDeletingSignature?: boolean
+  embedded?: boolean
 }
 
-export const MaintenanceMediaSection: React.FC<MaintenanceMediaSectionProps> = ({ cardId }) => {
+export const MaintenanceMediaSection: React.FC<MaintenanceMediaSectionProps> = ({ cardId, onDeletePhoto, onDeleteSignature, deletingPhotoId, isDeletingSignature = false, embedded = false }) => {
   const { t } = useTranslation("maintenance")
   const photosQuery = useMaintenancePhotos(String(cardId))
   const signatureQuery = useMaintenanceSignature(String(cardId))
+
+  const content = (
+    <>
+      <div className="space-y-2">
+        <p className="text-xs font-medium text-text-secondary">{t("media.photos")}</p>
+        {photosQuery.isPending ? (
+          <MediaLoading label={t("media.loading")} />
+        ) : photosQuery.isError ? (
+          <MediaError onRetry={() => photosQuery.refetch()} />
+        ) : photosQuery.data && photosQuery.data.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {photosQuery.data.map((photo, index) => (
+              <PhotoThumbnail key={photo.id} cardId={cardId} photo={photo} index={index} onDelete={onDeletePhoto} isDeleting={deletingPhotoId === photo.id} />
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("media.noPhotos")}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-xs font-medium text-text-secondary">{t("media.signature")}</p>
+        {signatureQuery.isPending ? (
+          <MediaLoading label={t("media.loading")} />
+        ) : signatureQuery.isError ? (
+          <MediaError onRetry={() => signatureQuery.refetch()} />
+        ) : signatureQuery.data ? (
+          <SignatureDisplay cardId={cardId} signature={signatureQuery.data} onDelete={onDeleteSignature} isDeleting={isDeletingSignature} />
+        ) : (
+          <p className="text-sm text-muted-foreground">{t("media.noSignature")}</p>
+        )}
+      </div>
+    </>
+  )
+
+  if (embedded) return <div className="space-y-6">{content}</div>
 
   return (
     <Card>
@@ -32,35 +73,7 @@ export const MaintenanceMediaSection: React.FC<MaintenanceMediaSectionProps> = (
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-text-secondary">{t("media.photos")}</p>
-          {photosQuery.isPending ? (
-            <MediaLoading label={t("media.loading")} />
-          ) : photosQuery.isError ? (
-            <MediaError onRetry={() => photosQuery.refetch()} />
-          ) : photosQuery.data && photosQuery.data.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {photosQuery.data.map((photo, index) => (
-                <PhotoThumbnail key={photo.id} cardId={cardId} photo={photo} index={index} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">{t("media.noPhotos")}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-text-secondary">{t("media.signature")}</p>
-          {signatureQuery.isPending ? (
-            <MediaLoading label={t("media.loading")} />
-          ) : signatureQuery.isError ? (
-            <MediaError onRetry={() => signatureQuery.refetch()} />
-          ) : signatureQuery.data ? (
-            <SignatureDisplay cardId={cardId} signature={signatureQuery.data} />
-          ) : (
-            <p className="text-sm text-muted-foreground">{t("media.noSignature")}</p>
-          )}
-        </div>
+        {content}
       </CardContent>
     </Card>
   )
@@ -90,9 +103,11 @@ interface PhotoThumbnailProps {
   cardId: number
   photo: MaintenancePhoto
   index: number
+  onDelete?: (photoId: number) => void
+  isDeleting?: boolean
 }
 
-const PhotoThumbnail: React.FC<PhotoThumbnailProps> = ({ cardId, photo, index }) => {
+const PhotoThumbnail: React.FC<PhotoThumbnailProps> = ({ cardId, photo, index, onDelete, isDeleting = false }) => {
   const { t, i18n } = useTranslation("maintenance")
   const isAr = i18n.language === "ar"
   const { data: blob, isPending, isError, refetch } = useQuery({
@@ -104,7 +119,8 @@ const PhotoThumbnail: React.FC<PhotoThumbnailProps> = ({ cardId, photo, index })
   const src = useBlobObjectUrl(blob)
 
   return (
-    <figure className="overflow-hidden rounded-lg border border-border bg-muted">
+    <figure className="relative overflow-hidden rounded-lg border border-border bg-muted">
+      {onDelete && <Button type="button" variant="destructive" size="icon" onClick={() => onDelete(photo.id)} disabled={isDeleting} className="absolute end-2 top-2 z-10 size-8" aria-label={t("edit.media.deletePhoto")}><Trash2 className="size-4" /></Button>}
       <div className="aspect-square w-full">
         {isPending ? (
           <div className="h-full w-full animate-pulse bg-muted" />
@@ -147,9 +163,11 @@ const PhotoThumbnail: React.FC<PhotoThumbnailProps> = ({ cardId, photo, index })
 interface SignatureDisplayProps {
   cardId: number
   signature: MaintenanceSignature
+  onDelete?: () => void
+  isDeleting?: boolean
 }
 
-const SignatureDisplay: React.FC<SignatureDisplayProps> = ({ cardId }) => {
+const SignatureDisplay: React.FC<SignatureDisplayProps> = ({ cardId, onDelete, isDeleting = false }) => {
   const { t } = useTranslation("maintenance")
   const { data: blob, isPending, isError, refetch } = useQuery({
     queryKey: maintenanceQueryKeys.signatureContent(cardId),
@@ -160,7 +178,8 @@ const SignatureDisplay: React.FC<SignatureDisplayProps> = ({ cardId }) => {
   const src = useBlobObjectUrl(blob)
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-background">
+    <div className="relative overflow-hidden rounded-lg border border-border bg-background">
+      {onDelete && <Button type="button" variant="destructive" size="icon" onClick={onDelete} disabled={isDeleting} className="absolute end-2 top-2 z-10 size-8" aria-label={t("edit.media.deleteSignature")}><Trash2 className="size-4" /></Button>}
       {isPending ? (
         <div className="h-40 animate-pulse bg-muted" />
       ) : isError || !src ? (

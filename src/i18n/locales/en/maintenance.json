@@ -21,7 +21,12 @@
     "cardClosed": "Card closed successfully",
     "cardReopened": "Card reopened successfully",
     "photosUploaded": "Photos uploaded successfully",
-    "signatureUploaded": "Signature uploaded successfully"
+    "signatureUploaded": "Signature uploaded successfully",
+    "workCreated": "Work item added successfully",
+    "workUpdated": "Work item updated successfully",
+    "workDeleted": "Work item deleted successfully",
+    "photoDeleted": "Photo deleted successfully",
+    "signatureDeleted": "Signature deleted successfully"
   },
 
   "errors": {
@@ -30,7 +35,12 @@
     "closeFailed": "Failed to close the card",
     "reopenFailed": "Failed to reopen the card",
     "reopenUnauthorized": "Only super admins can reopen cards",
-    "mediaUploadFailed": "Failed to upload the attached files"
+    "mediaUploadFailed": "Failed to upload the attached files",
+    "workCreateFailed": "Failed to add the work item",
+    "workUpdateFailed": "Failed to update the work item",
+    "workDeleteFailed": "Failed to delete the work item",
+    "photoDeleteFailed": "Failed to delete the photo",
+    "signatureDeleteFailed": "Failed to delete the signature"
   },
 
   "options": {
@@ -61,6 +71,41 @@
     "itemsLeft": "Items Left in the Car",
     "work": "Work & Estimate",
     "approval": "Approval & Delivery"
+  },
+
+  "edit": {
+    "title": "Edit Maintenance Card",
+    "loading": "Loading maintenance card...",
+    "backToDetails": "Back to Card Details",
+    "notFoundTitle": "Maintenance card not found",
+    "notFoundDescription": "The maintenance card does not exist or is no longer available.",
+    "loadErrorTitle": "Unable to load maintenance card",
+    "loadErrorDescription": "The maintenance card could not be loaded. Please try again.",
+    "forbiddenTitle": "Editing is not available",
+    "forbiddenDescription": "Your account does not have permission to edit maintenance cards.",
+    "closedTitle": "This maintenance card is closed",
+    "closedAdminDescription": "Closed cards are read-only. Ask a super administrator to reopen this card before editing it.",
+    "closedSuperAdminDescription": "Closed cards are read-only. Reopen this card before making changes.",
+    "searchOptions": "Search options",
+    "noOptions": "No options found",
+    "approvalTimestampHint": "A new approval timestamp is recorded when approval is granted for the first time.",
+    "sections": {
+      "cardInfo": "Card / Intake Information"
+    },
+    "work": {
+      "displayOrder": "Display Order",
+      "saveWork": "Save Work",
+      "confirmDelete": "Delete this work item? This action cannot be undone."
+    },
+    "media": {
+      "addPhotos": "Add Photos",
+      "replaceSignature": "Upload or Replace Signature",
+      "replaceSignatureHint": "Uploading a signature replaces the current signature.",
+      "deletePhoto": "Delete photo",
+      "deleteSignature": "Delete signature",
+      "confirmDeletePhoto": "Delete this photo? This action cannot be undone.",
+      "confirmDeleteSignature": "Delete the customer signature? This action cannot be undone."
+    }
   },
 
   "customer": {
@@ -199,7 +244,10 @@
     "reasonRequired": "Visit reason is required",
     "workDescriptionRequired": "Work description is required",
     "estimateNegative": "Estimated cost must be positive",
-    "emailInvalid": "Invalid email address"
+    "emailInvalid": "Invalid email address",
+    "mileageNegative": "Mileage must be zero or greater",
+    "approvalNameRequired": "Approval name is required when customer approval is enabled",
+    "displayOrderNegative": "Display order must be zero or greater"
   },
 
   "list": {
@@ -286,5 +334,9 @@
     "ready": "All required work is complete. This card is ready to close.",
     "close": "Close card",
     "error": "Unable to close the card. Review required work and try again."
+  },
+
+  "reopenCard": {
+    "reopen": "Reopen Card"
   }
 }

@@ -15,6 +15,7 @@ interface CloseCardDialogProps {
 
 export function CloseCardDialog({ card, open, onOpenChange }: CloseCardDialogProps) {
   const { t } = useTranslation("maintenance")
+  const { t: tCommon } = useTranslation("common")
   const closeCard = useCloseCard()
   const closure = getClosureStatus(card.requiredWorks)
 
@@ -47,7 +48,7 @@ export function CloseCardDialog({ card, open, onOpenChange }: CloseCardDialogPro
         )}
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>{t("cancel")}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{tCommon("common.cancel")}</Button>
           <Button onClick={handleClose} disabled={!closure.allowed || closeCard.isPending}>
             {closeCard.isPending ? t("saving") : t("closeCard.close")}
           </Button>

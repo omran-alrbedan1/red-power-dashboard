@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { BadgeCheck, Boxes, Calendar, Car, ClipboardList, FileText, Fuel, History, LockKeyhole, Mail, Pencil, Unlock, User2, Wrench } from "lucide-react"
 
@@ -11,12 +11,11 @@ import { Button } from "@/components/ui/button"
 
 import { useAuth } from "@/features/auth/context/AuthContext"
 import { formatDateTime } from "@/lib/formatter"
-import { isSuperAdmin } from "@/lib/permissions"
+import { canEditMaintenanceCard, isSuperAdmin } from "@/lib/permissions"
 
 import { ActivityTimeline } from "../components/ActivityTimeline"
 import { CloseCardDialog } from "../components/CloseCardDialog"
 import { ClosureGuardBadge } from "../components/ClosureGuardBadge"
-import { EditReceiptCard } from "../components/sections/EditReceiptCard"
 import { MaintenanceMediaSection } from "../components/sections/MaintenanceMediaSection"
 import { useMaintenanceCard } from "../hooks/useMaintenanceCard"
 import { useReopenCard } from "../hooks/useReopenCard"
@@ -87,20 +86,19 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
 
 const ReceiptDetailsPage: React.FC = () => {
   const { t, i18n } = useTranslation("maintenance")
-  const { t: tCommon } = useTranslation("common")
-
   const { cardId } = useParams<{ cardId: string }>()
+  const navigate = useNavigate()
   const { user } = useAuth()
 
   const { data: card, isLoading, isError } = useMaintenanceCard(cardId)
   const reopenCard = useReopenCard()
 
-  const [isEditing, setIsEditing] = useState(false)
   const [isCloseDialogOpen, setIsCloseDialogOpen] = useState(false)
 
   const direction = i18n.dir()
   const locale = direction === "rtl" ? "ar-SA" : "en-GB"
   const isSuperAdminUser = isSuperAdmin(user?.role)
+  const canEdit = canEditMaintenanceCard(user?.role)
 
   const handleReopen = () => {
     if (!cardId) return
@@ -173,10 +171,10 @@ const ReceiptDetailsPage: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {!isCardClosed && (
-              <Button type="button" onClick={() => setIsEditing((current) => !current)} className="gap-2">
+            {!isCardClosed && canEdit && (
+              <Button type="button" onClick={() => navigate(`/maintenance/${card.id}/edit`)} className="gap-2">
                 <Pencil className="size-4" />
-                {isEditing ? tCommon("common.cancel") : t("editCard")}
+                {t("editCard")}
               </Button>
             )}
 
@@ -203,15 +201,7 @@ const ReceiptDetailsPage: React.FC = () => {
         )}
       </section>
 
-      {isEditing && (
-        <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-          <EditReceiptCard card={card} onCancel={() => setIsEditing(false)} onSaved={() => setIsEditing(false)} />
-        </section>
-      )}
-
-      {!isEditing && (
-        <>
-          <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid gap-6 lg:grid-cols-12">
             <SectionCard icon={<User2 className="size-4" />} title={t("sections.customer")} className="lg:col-span-4">
               <div className="space-y-4">
                 <DetailItem label={t("customer.name")} value={card.customer?.name} />
@@ -340,8 +330,6 @@ const ReceiptDetailsPage: React.FC = () => {
               <MaintenanceMediaSection cardId={card.id} />
             </SectionCard>
           </div>
-        </>
-      )}
 
       <SectionCard icon={<History className="size-4" />} title={t("activity.title")}>
         <ActivityTimeline events={card.statusEvents} />
