@@ -77,6 +77,18 @@ export interface MaintenanceActivityEvent {
   reason?: string | null
 }
 
+export interface ApiWorkStateResponse {
+  id: number
+  status: ApiWorkStatus
+  startedAt?: string | null
+  startedBy?: ApiCreatedByRef | null
+  completedAt?: string | null
+  completedBy?: ApiCreatedByRef | null
+  cancelledAt?: string | null
+  cancelledBy?: ApiCreatedByRef | null
+  cancellationReason?: string | null
+}
+
 export interface MaintenanceStatusEvent {
   id: number
   fromStatus?: ApiCardStatus | null

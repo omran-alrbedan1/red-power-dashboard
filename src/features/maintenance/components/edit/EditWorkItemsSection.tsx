@@ -10,6 +10,7 @@ import { useCreateWorkItem, useDeleteWorkItem, useUpdateWorkItem } from "../../h
 import type { MaintenanceWorkRow } from "../../types/maintenance-detail.types"
 import { createEditWorkItemSchema, editWorkItemSchema, type CreateEditWorkItemFormInputValues, type CreateEditWorkItemFormValues, type EditWorkItemFormInputValues, type EditWorkItemFormValues } from "../../validation/maintenance.validation"
 import { WorkStatusBadge } from "../work/MaintenanceWorkActions"
+import { canDeleteWorkItem } from "../../utils/work-rules"
 
 interface EditWorkItemsSectionProps {
   cardId: number
@@ -20,6 +21,7 @@ function ExistingWorkItem({ cardId, work }: { cardId: number; work: MaintenanceW
   const { t, i18n } = useTranslation("maintenance")
   const updateWork = useUpdateWorkItem()
   const deleteWork = useDeleteWorkItem()
+  const canDelete = canDeleteWorkItem(work)
   const form = useForm<EditWorkItemFormInputValues, unknown, EditWorkItemFormValues>({
     resolver: zodResolver(editWorkItemSchema(t)),
     defaultValues: {
@@ -55,7 +57,7 @@ function ExistingWorkItem({ cardId, work }: { cardId: number; work: MaintenanceW
         <div className="lg:col-span-2"><CustomFormField fieldType={FormFieldType.NUMBER} control={form.control} name="displayOrder" label={t("edit.work.displayOrder")} min={0} dir="ltr" /></div>
         <div className="flex items-end lg:col-span-3"><WorkStatusBadge work={work} /></div>
         <div className="flex items-center lg:col-span-5"><CustomFormField fieldType={FormFieldType.SWITCH} control={form.control} name="isRequired" label={t("work.required")} dir={i18n.dir()} /></div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end lg:col-span-7"><Button type="button" variant="outline" onClick={handleDelete} disabled={deleteWork.isPending || updateWork.isPending}><Trash2 className="size-4" />{t("work.removeRow")}</Button><SubmitButton className="w-full sm:w-auto" isLoading={updateWork.isPending} loadingText={t("saving")} text={t("edit.work.saveWork")} icon={<Save className="size-4" />} disabled={deleteWork.isPending || !form.formState.isDirty} /></div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:justify-end lg:col-span-7">{canDelete && <Button type="button" variant="outline" onClick={handleDelete} disabled={deleteWork.isPending || updateWork.isPending}><Trash2 className="size-4" />{t("work.removeRow")}</Button>}<SubmitButton className="w-full sm:w-auto" isLoading={updateWork.isPending} loadingText={t("saving")} text={t("edit.work.saveWork")} icon={<Save className="size-4" />} disabled={deleteWork.isPending || !form.formState.isDirty} /></div>
       </div>
     </form>
   )

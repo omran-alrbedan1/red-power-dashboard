@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import type { MaintenanceWorkRow } from "../../types/maintenance-detail.types"
 import { useReopenWork, type WorkTargetStatus } from "../../hooks/useMaintenanceWorkActions"
+import { allowedReopenTargets } from "../../utils/work-rules"
 
 interface ReopenWorkDialogProps {
   cardId: number
@@ -26,6 +27,8 @@ export function ReopenWorkDialog({ cardId, work, open, onOpenChange }: ReopenWor
   const [reason, setReason] = useState("")
   const [targetStatus, setTargetStatus] = useState<WorkTargetStatus>("PENDING")
   const reopenWork = useReopenWork()
+
+  const allowedTargets = allowedReopenTargets(work)
 
   const isPending = reopenWork.isPending
   const reasonMissing = !reason.trim()
@@ -75,7 +78,9 @@ export function ReopenWorkDialog({ cardId, work, open, onOpenChange }: ReopenWor
           <div className="space-y-2">
             <Label>{t("work.dialogs.reopenTargetStatus")}</Label>
             <div className="flex gap-2">
-              {TARGET_OPTIONS.map((option) => (
+              {TARGET_OPTIONS.filter((option) =>
+                (allowedTargets as WorkTargetStatus[]).includes(option.value)
+              ).map((option) => (
                 <Button
                   key={option.value}
                   type="button"

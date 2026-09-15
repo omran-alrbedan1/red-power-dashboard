@@ -13,7 +13,7 @@ interface MaintenanceWorkItemProps {
 
 export function MaintenanceWorkItem({ cardId, work, index, readOnly = false }: MaintenanceWorkItemProps) {
   const { t, i18n } = useTranslation("maintenance")
-  const isAr = i18n.language === "ar"
+  const isAr = i18n.dir() === "rtl"
 
   return (
     <div className="rounded-xl border border-border p-4">

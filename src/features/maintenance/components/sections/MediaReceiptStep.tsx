@@ -60,7 +60,7 @@ export const MediaReceiptStep: React.FC<MediaReceiptStepProps> = ({
 
         <div className="space-y-2">
           <p className="text-xs font-medium text-text-secondary">{t("media.photos")}</p>
-          <ImageDropzone files={photos} onChange={setPhotos} multiple maxCount={6} />
+          <ImageDropzone files={photos} onChange={setPhotos} multiple maxCount={20} />
           {uploadPhotos.isSuccess && (
             <p className="text-sm text-emerald-600">{t("media.photosUploaded")}</p>
           )}

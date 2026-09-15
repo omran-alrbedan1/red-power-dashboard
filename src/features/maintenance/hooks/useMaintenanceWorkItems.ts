@@ -12,7 +12,7 @@ function useInvalidateMaintenanceCard() {
     const id = String(cardId)
     void queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(id) })
     void queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
-    void queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.timeline(id) })
+    void queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.workActivity(id) })
     void queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.stats() })
   }
 }

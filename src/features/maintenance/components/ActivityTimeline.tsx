@@ -75,7 +75,7 @@ const getTypeKey = (type: string) => {
 
 export const ActivityTimeline: React.FC<ActivityTimelineProps> = ({ events }) => {
   const { t, i18n } = useTranslation("maintenance")
-  const isAr = i18n.language === "ar"
+  const isAr = i18n.dir() === "rtl"
 
   if (events.length === 0) {
     return (

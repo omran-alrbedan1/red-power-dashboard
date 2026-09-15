@@ -10,9 +10,6 @@ export const maintenanceQueryKeys = {
   // Single maintenance card detail queries
   detail: (cardId: string | number) => ["maintenance-card", String(cardId)] as const,
 
-  // Activity timeline for a specific card
-  timeline: (cardId: string | number) => ["activity", "timeline", String(cardId)] as const,
-
   // Work activity events for a single card (unified timeline)
   workActivity: (cardId: string | number) =>
     ["maintenance-card", String(cardId), "activity"] as const,

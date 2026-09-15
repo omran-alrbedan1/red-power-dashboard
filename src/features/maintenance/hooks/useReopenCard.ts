@@ -23,7 +23,7 @@ export function useReopenCard() {
     onSuccess: (_data, cardId) => {
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(String(cardId)) })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
-      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.timeline(String(cardId)) })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.workActivity(String(cardId)) })
       queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.stats() })
       toast.success(t("messages.cardReopened", "Card reopened successfully"))
     },

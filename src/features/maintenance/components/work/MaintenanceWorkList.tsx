@@ -11,7 +11,9 @@ interface MaintenanceWorkListProps {
 export function MaintenanceWorkList({ cardId, works, readOnly = false }: MaintenanceWorkListProps) {
   const { t } = useTranslation("maintenance")
 
-  const workTotal = works.reduce((sum, item) => sum + (Number(item.estimatedCost) || 0), 0)
+  const workTotal = works
+    .filter((item) => item.status !== "cancelled")
+    .reduce((sum, item) => sum + (Number(item.estimatedCost) || 0), 0)
 
   if (works.length === 0) {
     return <p className="text-sm text-muted-foreground">{t("work.noWork")}</p>

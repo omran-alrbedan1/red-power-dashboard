@@ -6,6 +6,7 @@ import type {
   ApiMaintenanceCardListRow,
   ApiVehicleRef,
   ApiWorkStatus,
+  ApiWorkStateResponse,
   MaintenanceOption,
   MaintenanceStatusEvent,
   MaintenanceWork,
@@ -16,12 +17,17 @@ import type {
   MaintenanceCardStatus,
   MaintenanceStatusEventRow,
   MaintenanceWorkRow,
+  MaintenanceWorkStateRow,
   PersistedFuelLevel,
   PersistedWorkStatus,
 } from "../types/maintenance-detail.types"
 
 export function mapCardStatus(status: ApiCardStatus): MaintenanceCardStatus {
   return status === "CLOSED" ? "closed" : "open"
+}
+
+export function toApiCardStatus(status?: MaintenanceCardStatus | null): ApiCardStatus {
+  return status === "closed" ? "CLOSED" : "OPEN"
 }
 
 export function mapFuelLevel(level: ApiFuelLevel): PersistedFuelLevel {
@@ -80,6 +86,20 @@ function mapWork(work: MaintenanceWork): MaintenanceWorkRow {
     cancelledAt: work.cancelledAt ?? null,
     cancelledBy: mapUserRef(work.cancelledBy),
     cancellationReason: work.cancellationReason ?? null,
+  }
+}
+
+export function mapWorkState(state: ApiWorkStateResponse): MaintenanceWorkStateRow {
+  return {
+    id: state.id,
+    status: mapWorkStatus(state.status),
+    startedAt: state.startedAt ?? null,
+    startedBy: mapUserRef(state.startedBy),
+    completedAt: state.completedAt ?? null,
+    completedBy: mapUserRef(state.completedBy),
+    cancelledAt: state.cancelledAt ?? null,
+    cancelledBy: mapUserRef(state.cancelledBy),
+    cancellationReason: state.cancellationReason ?? null,
   }
 }
 

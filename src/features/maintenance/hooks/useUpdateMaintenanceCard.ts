@@ -22,7 +22,7 @@ export function useUpdateMaintenanceCard() {
       const cardId = String(variables.cardId)
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.detail(cardId) })
       queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.list() })
-      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.timeline(cardId) })
+      queryClient.invalidateQueries({ queryKey: maintenanceQueryKeys.workActivity(cardId) })
       queryClient.invalidateQueries({ queryKey: dashboardQueryKeys.stats() })
       toast.success(t("messages.cardUpdated", "Card updated successfully"))
     },

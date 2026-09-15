@@ -6,6 +6,7 @@ import type {
   ApiMaintenanceCardDetail,
   ApiMaintenanceCardListRow,
   ApiMaintenanceCardDetail as MaintenanceCardDetailApi,
+  ApiWorkStateResponse,
   ApiWorkStatus,
   MaintenanceActivityEvent,
   MaintenanceOption,
@@ -20,7 +21,7 @@ import type {
   PersistedFuelLevel,
   PersistedWorkStatus,
 } from "../types/maintenance-detail.types"
-import { mapDetail, mapListRow } from "./maintenance.mapper"
+import { mapDetail, mapListRow, mapWorkState, toApiCardStatus } from "./maintenance.mapper"
 
 export type { MaintenanceOptionKind, CreateMaintenanceCardInput }
 export type { ApiFuelLevel } from "../types/api-maintenance.types"
@@ -129,10 +130,10 @@ const toApiWorkStatus = (status: PersistedWorkStatus): ApiWorkStatus =>
 export const maintenanceApi = {
   create: (input: CreateMaintenanceCardInput) =>
     apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: "/maintenance-cards", data: input }).then(toDetail),
-  list: (params: MaintenanceCardListParams) =>
+  list: ({ status, ...params }: MaintenanceCardListParams) =>
     apiRequest<ApiPaginated<ApiMaintenanceCardListRow>>({
       url: "/maintenance-cards",
-      params: cleanParams({ ...params }),
+      params: cleanParams({ ...params, ...(status ? { status: toApiCardStatus(status) } : {}) }),
     }).then(
       (page) => ({
         ...page,
@@ -157,17 +158,17 @@ export const maintenanceApi = {
     createWorkItem: ({ cardId, ...input }: CreateWorkItemInput) =>
       apiRequest<{ id: number }>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works`, data: input }),
   updateWorkItem: (workItemId: number, { cardId, ...input }: UpdateWorkItemInput) =>
-    apiRequest<{ id: number }>({ method: "PATCH", url: `/maintenance-cards/${cardId}/required-works/${workItemId}`, data: { ...input, ...(input.status ? { status: toApiWorkStatus(input.status) } : {}) } }),
+    apiRequest<ApiWorkStateResponse>({ method: "PATCH", url: `/maintenance-cards/${cardId}/required-works/${workItemId}`, data: { ...input, ...(input.status ? { status: toApiWorkStatus(input.status) } : {}) } }).then(mapWorkState),
   deleteWorkItem: (cardId: number, workItemId: number) =>
     apiRequest<void>({ method: "DELETE", url: `/maintenance-cards/${cardId}/required-works/${workItemId}` }),
   startWork: (cardId: number, workItemId: number) =>
-    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/start` }).then(toDetail),
+    apiRequest<ApiWorkStateResponse>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/start` }).then(mapWorkState),
   completeWork: (cardId: number, workItemId: number) =>
-    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/complete` }).then(toDetail),
+    apiRequest<ApiWorkStateResponse>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/complete` }).then(mapWorkState),
   cancelWork: (cardId: number, workItemId: number, reason: string) =>
-    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/cancel`, data: { reason } }).then(toDetail),
+    apiRequest<ApiWorkStateResponse>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/cancel`, data: { reason } }).then(mapWorkState),
   reopenWork: (cardId: number, workItemId: number, input: { reason: string; targetStatus?: "PENDING" | "IN_PROGRESS" }) =>
-    apiRequest<ApiMaintenanceCardDetail>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/reopen`, data: input }).then(toDetail),
+    apiRequest<ApiWorkStateResponse>({ method: "POST", url: `/maintenance-cards/${cardId}/required-works/${workItemId}/reopen`, data: input }).then(mapWorkState),
   getActivity: (cardId: number, params?: { page?: number; limit?: number }) =>
     apiRequest<ApiPaginated<MaintenanceActivityEvent>>({ url: `/maintenance-cards/${cardId}/activity`, params }),
   closeCard: (cardId: number) =>

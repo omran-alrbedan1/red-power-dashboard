@@ -48,6 +48,18 @@ export interface MaintenanceWorkRow {
   cancellationReason?: string | null
 }
 
+export interface MaintenanceWorkStateRow {
+  id: number
+  status: PersistedWorkStatus
+  startedAt?: string | null
+  startedBy?: { id: number; name?: string } | null
+  completedAt?: string | null
+  completedBy?: { id: number; name?: string } | null
+  cancelledAt?: string | null
+  cancelledBy?: { id: number; name?: string } | null
+  cancellationReason?: string | null
+}
+
 export interface MaintenanceStatusEventRow {
   id: number
   fromStatus?: MaintenanceCardStatus | null

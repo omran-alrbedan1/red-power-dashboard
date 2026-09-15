@@ -109,7 +109,7 @@ interface PhotoThumbnailProps {
 
 const PhotoThumbnail: React.FC<PhotoThumbnailProps> = ({ cardId, photo, index, onDelete, isDeleting = false }) => {
   const { t, i18n } = useTranslation("maintenance")
-  const isAr = i18n.language === "ar"
+  const isAr = i18n.dir() === "rtl"
   const { data: blob, isPending, isError, refetch } = useQuery({
     queryKey: maintenanceQueryKeys.photoContent(cardId, photo.id),
     queryFn: () => maintenanceApi.downloadPhoto(cardId, photo.id),
